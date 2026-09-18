@@ -9,20 +9,22 @@
 
 ## Estado actual
 
-**Fase 1 — Foundation: COMPLETADA y verificada.**
+**Fase 2 — Onboarding: COMPLETADA y verificada.**
 
 ```
-npm run typecheck   ✓ sin errores
-npm run test        ✓ 38 tests, 4 archivos
-npm run lint        ✓ sin avisos
-npm run build       ✓ 13 rutas
+npm run typecheck          ✓ sin errores
+npm run test               ✓ 58 tests, 6 archivos
+npm run lint               ✓ sin avisos
+npm run build              ✓ 16 rutas
+npm run verify:rls         ✓ 31/31 contra Supabase real
+npm run verify:onboarding  ✓ 10/10 de extremo a extremo
 ```
 
-La aplicación arranca. Sin `.env.local` muestra `/configurar` con los pasos que
-faltan, en vez de un error de servidor.
+El circuito completo funciona: subir fotos → análisis → deduplicación →
+armario con miniaturas recortadas.
 
-**Siguiente paso:** conectar Supabase (ver "Pendiente del usuario") y después
-empezar la Fase 2.
+**Siguiente paso:** Fase 3 (armario editable: filtros, detalle, corrección
+de atributos, alta manual).
 
 ---
 
@@ -32,8 +34,8 @@ empezar la Fase 2.
 |---|---|---|
 | 0 | Planificación técnica | ✅ Aprobada |
 | 1 | Foundation | ✅ Completada |
-| 2 | Onboarding ("Enséñame cómo vistes") | ⬜ Siguiente |
-| 3 | Armario | ⬜ No iniciada |
+| 2 | Onboarding ("Enséñame cómo vistes") | ✅ Completada |
+| 3 | Armario editable | ⬜ Siguiente |
 | 4 | Perfil de estilo | ⬜ No iniciada |
 | 5 | Motor de outfits | ⬜ No iniciada |
 | 6 | "¿Qué me pongo?" | ⬜ No iniciada |
@@ -104,6 +106,34 @@ El script crea dos usuarios de prueba y los borra al terminar: no deja rastro.
 Las claves de Gemini y OpenAI **no hacen falta todavía**: `AI_MODE=mock`.
 
 ---
+
+## Qué existe ya (Fase 2)
+
+**Subida**
+- Selección múltiple con previsualización y borrado antes de subir
+- Compresión a 1280 px en el navegador (elimina el EXIF, y con él la ubicación)
+- Subida directa del navegador a Storage: el archivo no pasa por Next
+- El registro sí pasa por el servidor, que valida la ruta y el cupo del plan
+
+**Análisis**
+- Asíncrono: las fotos quedan en `pending`, la interfaz consulta el progreso
+- Una sola llamada de visión con todas las fotos juntas
+- Recorte de cada prenda con su bbox usando `sharp` → miniatura del armario
+- Lectura cruda guardada en `detected_items` para poder reprocesar sin volver a
+  llamar a la IA
+- Si falla, las fotos quedan en `failed` con su motivo y se puede reintentar sin
+  volver a subirlas
+
+**Deduplicación**
+- Similitud por atributos con pesos, colores confundibles con crédito parcial y
+  categoría eliminatoria
+- Tres desenlaces: fusionar, preguntar o crear prenda nueva
+- Con lectura dudosa **nunca** se fusiona en silencio
+- Pantalla "¿Es la misma prenda?", saltable
+
+**Armario**
+- Prendas reales agrupadas por capa, con miniaturas por URL firmada
+- Aviso de las prendas que la IA no vio con claridad
 
 ## Decisiones tomadas durante la Fase 1
 

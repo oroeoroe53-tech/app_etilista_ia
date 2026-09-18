@@ -82,12 +82,28 @@ export function publicEnv(): PublicEnv {
 
 let serverCache: ServerEnv | null = null
 
+/**
+ * Un `.env` normal deja las variables opcionales escritas y en blanco
+ * (`GEMINI_API_KEY=`). Para el proceso eso es una cadena vacía, no una variable
+ * ausente, y cualquier validación de "si está, que valga algo" la rechazaría.
+ *
+ * Se tratan como ausentes, que es lo que la persona quiso decir al dejarlas en blanco.
+ */
+function withoutEmptyStrings(source: NodeJS.ProcessEnv): Record<string, unknown> {
+  const cleaned: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(source)) {
+    if (typeof value === 'string' && value.trim() === '') continue
+    cleaned[key] = value
+  }
+  return cleaned
+}
+
 export function serverEnv(): ServerEnv {
   if (typeof window !== 'undefined') {
     throw new Error('serverEnv() se ha llamado desde el navegador. Esto expondría secretos.')
   }
   if (serverCache) return serverCache
-  const parsed = serverSchema.safeParse(process.env)
+  const parsed = serverSchema.safeParse(withoutEmptyStrings(process.env))
   if (!parsed.success) explain(parsed.error.issues, 'servidor')
   serverCache = parsed.data
   return serverCache
