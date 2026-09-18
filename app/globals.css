@@ -1,0 +1,116 @@
+@import 'tailwindcss';
+
+/*
+ * Sistema de diseño.
+ *
+ * La aplicación debe parecer una revista de moda, no un panel de control
+ * (PLAN.md §32): pocos colores, mucho aire, tipografía con carácter.
+ *
+ * Los colores se declaran como variables semánticas (`--surface`, `--ink`) y no
+ * como tonos sueltos, para que el modo oscuro sea redefinir valores y no
+ * reescribir componentes.
+ */
+
+:root {
+  --surface: #faf8f5; /* lino */
+  --surface-raised: #ffffff;
+  --surface-sunken: #f2eee8;
+  --ink: #17161a; /* casi negro, cálido */
+  --ink-soft: #55525c;
+  --ink-faint: #8f8b96;
+  --line: #e4ded5;
+  --accent: #17161a;
+  --accent-ink: #faf8f5;
+  --danger: #a33a2a;
+  --love: #c2410c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #131215;
+    --surface-raised: #1c1b1f;
+    --surface-sunken: #0e0d10;
+    --ink: #f4f1ec;
+    --ink-soft: #a9a5ae;
+    --ink-faint: #6f6b76;
+    --line: #2b2930;
+    --accent: #f4f1ec;
+    --accent-ink: #17161a;
+    --danger: #e0715c;
+    --love: #f97316;
+  }
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-raised: var(--surface-raised);
+  --color-sunken: var(--surface-sunken);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-danger: var(--danger);
+  --color-love: var(--love);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-serif), Georgia, serif;
+
+  --radius-card: 1.25rem;
+}
+
+html {
+  background: var(--surface);
+  /* Evita el zoom automático de iOS al enfocar un input. */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+/* Deja hueco a la barra inferior y al área segura del iPhone. */
+.pb-nav {
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Título editorial. Se usa poco y grande, no en todas partes. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* El scroll horizontal de categorías no debe enseñar barra en escritorio. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
