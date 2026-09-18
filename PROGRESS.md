@@ -77,14 +77,29 @@ empezar la Fase 2.
 
 ---
 
-## Pendiente del usuario
+## Supabase: conectado y verificado (2026-09-18)
 
-1. **Crear el proyecto de Supabase** y rellenar `.env.local` a partir de
-   `.env.example`.
-2. **Ejecutar las migraciones** de `supabase/migrations/` en orden (0001 → 0004)
-   desde el editor SQL de Supabase.
-3. **Excluir `node_modules` y `.next` de la sincronización de OneDrive**
+Proyecto creado, `.env.local` configurado y esquema aplicado.
+
+`npm run verify:rls` → **31/31 comprobaciones correctas**:
+
+- Las 13 tablas existen y responden
+- Los 4 buckets existen y son privados
+- El trigger de alta crea las 4 filas satélite y el plan arranca en `free`
+- Un usuario no ve la ropa de otro, ni conociendo el id de la prenda
+- Un usuario **no** puede ascenderse a Pro, ni escribir en `ai_usage`,
+  ni tocar sus contadores de uso
+- `increment_usage` acumula correctamente
+
+El script crea dos usuarios de prueba y los borra al terminar: no deja rastro.
+
+### Pendiente del usuario
+
+1. **Rotar la clave `sb_secret_`**, que se compartió por chat durante la
+   configuración. Al hacerlo, actualizar esa línea de `.env.local`.
+2. **Excluir `node_modules` y `.next` de la sincronización de OneDrive**
    (la instalación funcionó sin problemas, pero conviene).
+3. Antes de publicar: **volver a activar "Confirm email"** en Authentication.
 
 Las claves de Gemini y OpenAI **no hacen falta todavía**: `AI_MODE=mock`.
 
@@ -109,8 +124,9 @@ Las claves de Gemini y OpenAI **no hacen falta todavía**: `AI_MODE=mock`.
   pasar a `AI_MODE=production`.
 - Falta el borrado de archivos de Storage al eliminar una cuenta (Fase 8).
 - `getUsage()` suma en memoria; con volumen habrá que pasarlo a una función SQL.
-- Falta el script de prueba de RLS con dos usuarios reales: solo se puede
-  ejecutar contra un Supabase de verdad.
+- El script de RLS no comprueba todavía el aislamiento en Storage (subir un
+  archivo a la carpeta de otro usuario). Añadirlo en la Fase 2, cuando haya
+  subidas reales.
 
 ---
 
