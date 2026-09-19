@@ -9,21 +9,21 @@
 
 ## Estado actual
 
-**Fase 5 — Motor de outfits: COMPLETADA y verificada.**
+**Fase 6 — ¿Qué me pongo?: COMPLETADA y verificada.**
 
 ```
 npm run typecheck           ✓ sin errores
-npm run test                ✓ 180 tests, 10 archivos
+npm run test                ✓ 196 tests, 11 archivos
 npm run lint                ✓ sin avisos
-npm run build               ✓ 20 rutas
+npm run build               ✓ 22 rutas
 npm run verify:rls          ✓ 31/31 contra Supabase real
-npm run verify:integration  ✓ 18/18 de extremo a extremo
+npm run verify:integration  ✓ 26/26 de extremo a extremo
 ```
 
-El motor existe y está probado, pero **todavía no tiene pantalla**: se conecta
-en la Fase 6 ("¿Qué me pongo?").
+**El MVP ya es utilizable de principio a fin**: crear cuenta → subir fotos →
+armario → perfil → pedir looks → marcarlos como puestos.
 
-**Siguiente paso:** Fase 6 (pantalla de "¿Qué me pongo?", clima y explicaciones).
+**Siguiente paso:** Fase 7 (swipe y feedback, que cierra el bucle de aprendizaje).
 
 ---
 
@@ -37,8 +37,8 @@ en la Fase 6 ("¿Qué me pongo?").
 | 3 | Armario editable | ✅ Completada |
 | 4 | Perfil de estilo | ✅ Completada |
 | 5 | Motor de outfits | ✅ Completada |
-| 6 | "¿Qué me pongo?" | ⬜ Siguiente |
-| 7 | Swipe y feedback | ⬜ No iniciada |
+| 6 | "¿Qué me pongo?" | ✅ Completada |
+| 7 | Swipe y feedback | ⬜ Siguiente |
 | 8 | Optimización, límites y observabilidad | ⬜ No iniciada |
 | 9 | Pagos (Stripe) | ⬜ Posterior al MVP |
 | 10 | Virtual try-on | ⬜ Posterior al MVP |
@@ -228,6 +228,32 @@ armario → filtros duros → candidatos → puntuación → diversidad → look
 **Diversidad**
 - Selección voraz con penalización por parecido: el segundo y el tercer look no
   son variaciones del primero
+
+## Qué existe ya (Fase 6)
+
+**Clima**
+- Open-Meteo: gratis, sin clave, sin registro
+- Caché de 15 minutos por zona: el tiempo no cambia en ese rato
+- Si la API falla, se mete la temperatura a mano y la pantalla funciona igual
+- Búsqueda de ciudad para guardar la ubicación una sola vez
+
+**Petición**
+- Ocasión, formalidad y tiempo, **todo opcional**: pulsar el botón sin decir
+  nada tiene que dar algo razonable
+- Límite diario del plan comprobado antes de gastar nada
+
+**Resultado**
+- Tres looks con las prendas grandes y la explicación pequeña
+- "Me lo pongo" alimenta `wear_history` y los contadores de cada prenda
+- Las tres propuestas comparten un `request_id` dentro de `context`: se
+  recuperan juntas sin añadir una tabla que solo agruparía tres filas
+- Historial de propuestas anteriores
+
+**IA**
+- **Una sola llamada** por petición, y solo para redactar las tres frases
+- Se le pasan los motivos que el motor ya calculó, no el outfit a pelo: así no
+  puede inventarse razones que el sistema no ha usado
+- Si falla, los looks se enseñan sin frase. El motor ya había decidido.
 
 ## Decisiones tomadas durante la Fase 1
 
