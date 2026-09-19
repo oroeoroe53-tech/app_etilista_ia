@@ -1,40 +1,30 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { startTransition, useCallback, type MouseEvent, type ReactNode } from 'react'
+import { type MouseEvent, type ReactNode } from 'react'
+import { useViewTransition } from './ViewTransitions'
 
 /**
- * Enlace con transición de vista.
- *
- * Next 16 todavía no expone la API de transiciones de React, así que se usa
- * `document.startViewTransition` directamente. Los navegadores que no la tienen
- * —Firefox hoy— navegan como siempre: la comprobación de abajo es la que hace
- * que eso sea una degradación y no un fallo.
+ * Enlace que anima la navegación.
  *
  * `sharedName` marca el elemento que debe *viajar* entre pantallas en lugar de
- * fundirse. El nombre se pone justo antes de navegar y se quita al volver: si
+ * fundirse. El nombre se pone justo antes de navegar y se quita al terminar: si
  * las sesenta miniaturas del armario lo llevaran puesto a la vez, el navegador
- * tendría que capturar sesenta capas para animar una.
+ * tendría que capturar sesenta capas para animar una sola.
+ *
+ * Sin soporte del navegador, o con "reducir movimiento" activado, navega como
+ * un enlace normal.
  */
 interface TransitionLinkProps {
   href: string
   children: ReactNode
   className?: string
-  /** Nombre compartido del elemento que viaja. Debe coincidir en la pantalla destino. */
+  /** Debe coincidir con el `view-transition-name` de la pantalla destino. */
   sharedName?: string
-  /** Selector del elemento a marcar dentro del enlace. Por defecto, la imagen. */
+  /** Qué elemento de dentro del enlace viaja. Por defecto, la imagen. */
   sharedSelector?: string
   prefetch?: boolean
   'aria-label'?: string
-}
-
-function supportsViewTransitions(): boolean {
-  return (
-    typeof document !== 'undefined' &&
-    typeof (document as Document & { startViewTransition?: unknown }).startViewTransition ===
-      'function'
-  )
 }
 
 export function TransitionLink({
@@ -46,61 +36,39 @@ export function TransitionLink({
   prefetch,
   ...rest
 }: TransitionLinkProps) {
-  const router = useRouter()
+  const transition = useViewTransition()
 
-  const onClick = useCallback(
-    (event: MouseEvent<HTMLAnchorElement>) => {
-      // Respeta abrir en pestaña nueva, descargar, etc.
-      if (
-        event.defaultPrevented ||
-        event.metaKey ||
-        event.ctrlKey ||
-        event.shiftKey ||
-        event.altKey ||
-        event.button !== 0
-      ) {
-        return
-      }
+  function onClick(event: MouseEvent<HTMLAnchorElement>) {
+    // Respeta abrir en pestaña nueva, descargar y el resto de gestos del navegador.
+    if (
+      !transition ||
+      event.defaultPrevented ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      event.button !== 0
+    ) {
+      return
+    }
 
-      if (!supportsViewTransitions()) return
+    const anchor = event.currentTarget
+    const shared = sharedName
+      ? (anchor.querySelector(sharedSelector) as HTMLElement | null)
+      : null
 
-      const prefersReducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches
-      if (prefersReducedMotion) return
+    event.preventDefault()
 
-      event.preventDefault()
-
-      const anchor = event.currentTarget
-      const shared = sharedName
-        ? (anchor.querySelector(sharedSelector) as HTMLElement | null)
-        : null
-
-      if (shared && sharedName) shared.style.viewTransitionName = sharedName
-
-      const transition = (
-        document as Document & {
-          startViewTransition: (cb: () => Promise<void> | void) => { finished: Promise<void> }
-        }
-      ).startViewTransition(
-        () =>
-          new Promise<void>((resolve) => {
-            startTransition(() => {
-              router.push(href)
-              // Dos fotogramas: el primero encola el render, el segundo confirma
-              // que ya se ha pintado. Sin esto el navegador fotografía la pantalla
-              // antigua y la animación sale en blanco.
-              requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-            })
-          }),
-      )
-
-      transition.finished.finally(() => {
+    transition.navigate(
+      href,
+      () => {
+        if (shared && sharedName) shared.style.viewTransitionName = sharedName
+      },
+      () => {
         if (shared) shared.style.viewTransitionName = ''
-      })
-    },
-    [href, router, sharedName, sharedSelector],
-  )
+      },
+    )
+  }
 
   return (
     <Link href={href} className={className} prefetch={prefetch} onClick={onClick} {...rest}>
