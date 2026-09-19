@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { after } from 'next/server'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { createClient, requireUser } from '@/lib/supabase/server'
@@ -103,7 +104,7 @@ export async function updateItem(
     return { error: 'No hemos podido guardar los cambios.' }
   }
 
-  await refreshStyle(user.id)
+  refreshStyle(user.id)
 
   revalidatePath('/armario')
   revalidatePath(`/armario/${itemId}`)
@@ -150,7 +151,7 @@ export async function createItem(
     return { error: 'No hemos podido crear la prenda.' }
   }
 
-  await refreshStyle(user.id)
+  refreshStyle(user.id)
 
   revalidatePath('/armario')
   redirect(`/armario/${(data as { id: string }).id}`)
@@ -186,7 +187,7 @@ export async function deleteItem(itemId: string) {
   const path = (data as { image_path: string | null } | null)?.image_path
   if (path) await supabase.storage.from(BUCKETS.clothing).remove([path])
 
-  await refreshStyle(user.id)
+  refreshStyle(user.id)
 
   revalidatePath('/armario')
   redirect('/armario')
@@ -195,15 +196,23 @@ export async function deleteItem(itemId: string) {
 /**
  * Recalcula el perfil de estilo tras cambiar el armario.
  *
- * Va antes de cualquier `redirect()`, que lanza por diseño y cortaría lo que
- * viniera después. Y nunca propaga su error: si el perfil no se actualiza, la
- * prenda ya se guardó y eso es lo que la persona pidió.
+ * Con `after()` se ejecuta **después de haber contestado**. Son unos 220 ms de
+ * consultas, y hacerlos antes de responder significaba que guardar una prenda
+ * tardara ese cuarto de segundo de más para actualizar algo que la persona ni
+ * está mirando en ese momento.
+ *
+ * Nunca propaga su error: si el perfil no se actualiza, la prenda ya se guardó,
+ * que es lo que se pidió. Y se corrige solo en el siguiente recálculo.
  */
-async function refreshStyle(userId: string) {
-  await rebuildStyleProfile(userId).catch((err) =>
-    console.error('[armario] no se pudo recalcular el perfil de estilo:', err),
-  )
-  revalidatePath('/estilo')
+function refreshStyle(userId: string) {
+  after(async () => {
+    try {
+      await rebuildStyleProfile(userId)
+      revalidatePath('/estilo')
+    } catch (err) {
+      console.error('[armario] no se pudo recalcular el perfil de estilo:', err)
+    }
+  })
 }
 
 /** "La tengo en la lavadora" / "ya la tengo otra vez". */

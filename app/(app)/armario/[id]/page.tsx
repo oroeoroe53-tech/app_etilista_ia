@@ -51,7 +51,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
   if (!item) notFound()
 
   const imageUrl = item.image_path
-    ? await signOne(supabase, BUCKETS.clothing, item.image_path)
+    ? await signOne(supabase, BUCKETS.clothing, item.image_path, user.id)
     : null
 
   const nombre = describeGarment(item)

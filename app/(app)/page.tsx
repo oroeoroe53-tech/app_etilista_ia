@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient, getCurrentUser } from '@/lib/supabase/server'
 import { signOne } from '@/lib/storage/signed'
 import { BUCKETS } from '@/lib/storage/paths'
-import { findNeglected, neglectMessage } from '@/lib/wardrobe/neglected'
+import { findNeglected, neglectMessage, neglectCutoffs } from '@/lib/wardrobe/neglected'
 import { describeGarment } from '@/lib/wardrobe/labels'
 
 /**
@@ -21,6 +21,7 @@ export default async function HomePage() {
   if (!user) redirect('/login')
 
   const supabase = await createClient()
+  const cutoffs = neglectCutoffs()
 
   const [{ data: profile }, { count: itemCount }, { data: photo }, { data: garment }, { data: forNeglect }] =
     await Promise.all([
@@ -48,12 +49,23 @@ export default async function HomePage() {
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle(),
+      /*
+       * Solo las candidatas a estar olvidadas, no el armario entero.
+       *
+       * Antes se traían las ochenta prendas para acabar enseñando una. Las
+       * fechas de corte salen de las mismas reglas que luego deciden, así que
+       * el filtro y la lógica no se pueden desajustar.
+       */
       supabase
         .from('clothing_items')
         .select(
           'id, category, primary_color, fit, pattern, image_path, seasons, is_available, times_worn, last_worn_at, created_at',
         )
-        .is('deleted_at', null),
+        .is('deleted_at', null)
+        .eq('is_available', true)
+        .or(`last_worn_at.lt.${cutoffs.lastWornBefore},last_worn_at.is.null`)
+        .order('last_worn_at', { ascending: true, nullsFirst: false })
+        .limit(40),
     ])
 
   const row = profile as { display_name?: string | null; onboarding_stage?: string } | null
@@ -66,9 +78,9 @@ export default async function HomePage() {
   const garmentPath = (garment as { image_path?: string } | null)?.image_path
 
   const coverUrl = photoPath
-    ? await signOne(supabase, BUCKETS.outfitPhotos, photoPath)
+    ? await signOne(supabase, BUCKETS.outfitPhotos, photoPath, user.id)
     : garmentPath
-      ? await signOne(supabase, BUCKETS.clothing, garmentPath)
+      ? await signOne(supabase, BUCKETS.clothing, garmentPath, user.id)
       : null
 
   // Una sola prenda olvidada, la que más tiempo lleve. Una lista aquí sería ruido.

@@ -90,6 +90,7 @@ export default async function SwipePage() {
     supabase,
     BUCKETS.clothing,
     [...items.values()].map((i) => i.image_path).filter((p): p is string => Boolean(p)),
+    user.id,
   )
 
   const cards: SwipeCard[] = deck.cards.map((card) => ({

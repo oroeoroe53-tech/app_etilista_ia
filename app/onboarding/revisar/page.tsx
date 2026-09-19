@@ -72,6 +72,7 @@ export default async function ReviewPage() {
     supabase,
     BUCKETS.clothing,
     [...wardrobe.values()].map((i) => i.image_path).filter((p): p is string => Boolean(p)),
+    user.id,
   )
 
   const questions: DuplicateQuestion[] = unique.map((row) => {

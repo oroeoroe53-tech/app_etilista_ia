@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { after } from 'next/server'
 import { z } from 'zod'
 import { createClient, requireUser } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -117,7 +118,9 @@ export async function recordSwipe(
 
   await consumeEntitlement(user.id, 'swipe')
 
-  await maybeRebuildProfile(user.id)
+  // Se responde ya; el perfil se recalcula después. Un deslizamiento tiene que
+  // sentirse instantáneo, y el perfil no se mira mientras se valora.
+  after(() => maybeRebuildProfile(user.id))
 
   return { ok: true, remaining: Math.max(0, permiso.remaining - 1) }
 }
@@ -141,7 +144,12 @@ async function maybeRebuildProfile(userId: string) {
   }
 }
 
-/** Fuerza el recálculo al terminar la sesión de swipe. */
+/**
+ * Fuerza el recálculo al terminar la sesión de swipe.
+ *
+ * Aquí sí se espera: quien llama va a enseñar el perfil a continuación, así que
+ * responder antes de tenerlo listo solo serviría para enseñarlo desactualizado.
+ */
 export async function finishSwipeSession() {
   const user = await requireUser()
   await rebuildStyleProfile(user.id).catch((err) =>

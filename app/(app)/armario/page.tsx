@@ -108,6 +108,7 @@ export default async function WardrobePage({
     supabase,
     BUCKETS.clothing,
     visible.map((i) => i.image_path).filter((p): p is string => Boolean(p)),
+    user.id,
   )
 
   const grouped = new Map<Layer, ItemRow[]>()

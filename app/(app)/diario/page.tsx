@@ -83,6 +83,7 @@ export default async function DiaryPage({
     supabase,
     BUCKETS.clothing,
     [...items.values()].map((i) => i.image_path).filter((p): p is string => Boolean(p)),
+    user.id,
   )
 
   // Un día puede tener varias prendas: se agrupan y se enseña la primera.

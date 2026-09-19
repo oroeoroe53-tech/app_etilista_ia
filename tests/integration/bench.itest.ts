@@ -13,6 +13,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
 let admin: SupabaseClient
 let userId = ''
+let filePaths: string[] = []
 
 const results: Array<{ what: string; ms: number; note?: string }> = []
 
@@ -84,9 +85,30 @@ describe.skipIf(!hasSupabase)('rendimiento', () => {
       image_path: `${userId}/bench-${i}.jpg`,
     }))
     await admin.from('clothing_items').insert(rows)
-  }, 120_000)
+
+    /*
+     * Archivos reales en Storage.
+     *
+     * Firmar una ruta que no existe devuelve un error por entrada, no una URL:
+     * medirlo así daba números plausibles que en realidad medían fallos, y hacía
+     * parecer que la caché no servía de nada.
+     */
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+      'base64',
+    )
+    filePaths = Array.from({ length: 30 }, (_, i) => `${userId}/bench-${i}.png`)
+    await Promise.all(
+      filePaths.map((path) =>
+        admin.storage
+          .from('clothing-images')
+          .upload(path, png, { contentType: 'image/png', upsert: true }),
+      ),
+    )
+  }, 180_000)
 
   afterAll(async () => {
+    if (filePaths.length) await admin.storage.from('clothing-images').remove(filePaths)
     if (userId) await admin.auth.admin.deleteUser(userId)
 
     const line = '─'.repeat(62)
@@ -182,15 +204,50 @@ describe.skipIf(!hasSupabase)('rendimiento', () => {
       rebuild.rebuildStyleProfile(userId),
     )
 
-    const paths = wardrobe.slice(0, 60).map((_, i) => `${userId}/bench-${i}.jpg`)
     await measure(
-      'Firmar 60 URLs de imagen',
+      'Firmar 30 URLs (sin cache)',
       5,
-      () => signed.signMany(admin, 'clothing-images', paths),
-      'una sola petición',
+      async () => {
+        signed.clearSignedUrlCache()
+        return signed.signMany(admin, 'clothing-images', filePaths)
+      },
+      'una peticion',
+    )
+
+    signed.clearSignedUrlCache()
+    await signed.signMany(admin, 'clothing-images', filePaths, userId)
+    await measure(
+      'Firmar 30 URLs (cacheadas)',
+      20,
+      () => signed.signMany(admin, 'clothing-images', filePaths, userId),
+      'sin red',
     )
 
     // --- Conjuntos de consultas por pantalla --------------------------------
+    const { neglectCutoffs } = await import('@/lib/wardrobe/neglected')
+    const cutoffs = neglectCutoffs()
+
+    await measure(
+      'Portada: solo candidatas',
+      5,
+      async () =>
+        admin
+          .from('clothing_items')
+          .select('id, category, primary_color, seasons, is_available, times_worn, last_worn_at, created_at')
+          .eq('user_id', userId)
+          .eq('is_available', true)
+          .or(`last_worn_at.lt.${cutoffs.lastWornBefore},last_worn_at.is.null`)
+          .limit(40),
+      'consulta nueva',
+    )
+
+    await measure(
+      'Portada: armario entero',
+      5,
+      async () => admin.from('clothing_items').select('*').eq('user_id', userId),
+      'consulta vieja',
+    )
+
     await measure(
       'Consultas de la portada',
       5,

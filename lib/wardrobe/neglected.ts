@@ -44,6 +44,29 @@ export const NEGLECT_RULES = {
   maxSuggestions: 3,
 } as const
 
+/**
+ * Fechas de corte para filtrar en la base de datos.
+ *
+ * La portada no debe traerse el armario entero solo para calcular esto: con
+ * ochenta prendas eran ochenta y cuatro milisegundos en la pantalla que más se
+ * abre. Con este filtro vuelven unas pocas filas.
+ *
+ * Viven aquí, junto a las reglas que usan estos mismos números, para que no se
+ * puedan desajustar: si alguien cambia `unwornDays` y el filtro se quedara con
+ * otro valor, la consulta descartaría prendas que la lógica sí habría contado.
+ */
+export function neglectCutoffs(today: Date = new Date()) {
+  const iso = (days: number) =>
+    new Date(today.getTime() - days * 86_400_000).toISOString().slice(0, 10)
+
+  return {
+    /** Puesto por última vez antes de esta fecha. */
+    lastWornBefore: iso(NEGLECT_RULES.unwornDays),
+    /** Añadido antes de esta fecha (para las que nunca se han usado). */
+    addedBefore: iso(NEGLECT_RULES.newItemGrace),
+  }
+}
+
 function daysBetween(from: string | null, to: Date): number | null {
   if (!from) return null
   const date = new Date(from)

@@ -75,6 +75,7 @@ export default async function ProposalPage({
     supabase,
     BUCKETS.clothing,
     [...items.values()].map((i) => i.image_path).filter((p): p is string => Boolean(p)),
+    user.id,
   )
 
   const byOutfit = new Map<string, string[]>()

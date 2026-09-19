@@ -243,6 +243,10 @@ export async function analyzePendingPhotos(userId: string): Promise<AnalyzeResul
 
     // Ya hay armario: se puede construir el primer retrato de estilo. Es todo
     // código, no cuesta ninguna llamada de IA.
+    //
+    // Aquí sí se espera: el análisis ya dura medio minuto y la persona está
+    // mirando una barra de progreso. Un cuarto de segundo más no se nota, y a
+    // cambio el perfil está listo en cuanto termina.
     await rebuildStyleProfile(userId).catch((err) =>
       console.error('[onboarding] no se pudo calcular el perfil de estilo:', err),
     )
