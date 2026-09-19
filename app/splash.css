@@ -1,0 +1,84 @@
+/**
+ * Pantalla de arranque.
+ *
+ * Al abrir la PWA instalada, entre que el sistema suelta la pantalla y React
+ * monta la aplicación hay un hueco en blanco. Es medio segundo, pero es el
+ * primer medio segundo, y un destello blanco en una aplicación oscura se nota
+ * más que cualquier otra cosa que hagamos después.
+ *
+ * Esto pinta la marca en ese hueco. Está en el HTML desde el primer byte, así
+ * que aparece antes de que se descargue una sola línea de JavaScript, y se
+ * desvanece sola: no depende de que nada la quite.
+ */
+
+#splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  background: var(--surface);
+  /* Se aparta sola pasado el arranque. `forwards` la deja invisible e inerte. */
+  animation: splash-out 240ms ease-out 620ms forwards;
+}
+
+#splash .mark {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 2.5rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  animation: splash-mark 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+#splash .rule {
+  width: 2.5rem;
+  height: 1px;
+  background: var(--ink-faint);
+  transform-origin: center;
+  animation: splash-rule 620ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both;
+}
+
+@keyframes splash-mark {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes splash-rule {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+}
+
+@keyframes splash-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/*
+ * Solo en la aplicación instalada. En el navegador la pestaña ya da contexto
+ * y una pantalla de marca en cada recarga sería una molestia.
+ */
+@media not all and (display-mode: standalone) {
+  #splash {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #splash,
+  #splash .mark,
+  #splash .rule {
+    animation: none;
+  }
+  #splash {
+    display: none;
+  }
+}

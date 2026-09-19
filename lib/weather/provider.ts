@@ -147,6 +147,76 @@ export async function fetchWeather(coords: Coordinates): Promise<Weather | null>
   }
 }
 
+export interface ForecastDay {
+  /** `YYYY-MM-DD`. */
+  date: string
+  maxC: number
+  minC: number
+  rain: boolean
+  code: number
+  description: string
+}
+
+interface ForecastResponse {
+  daily?: {
+    time?: string[]
+    temperature_2m_max?: number[]
+    temperature_2m_min?: number[]
+    precipitation_sum?: number[]
+    weather_code?: number[]
+  }
+}
+
+/**
+ * Previsión de los próximos días. Para la maleta.
+ *
+ * Devuelve lista vacía si falla: quien llama usa una temperatura fija y el viaje
+ * se planifica igual, solo que con menos precisión.
+ */
+export async function fetchForecast(
+  coords: Coordinates,
+  days = 7,
+): Promise<ForecastDay[]> {
+  try {
+    const url = new URL(FORECAST_URL)
+    url.searchParams.set('latitude', String(coords.lat))
+    url.searchParams.set('longitude', String(coords.lon))
+    url.searchParams.set(
+      'daily',
+      'temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code',
+    )
+    url.searchParams.set('forecast_days', String(Math.min(16, Math.max(1, days))))
+    url.searchParams.set('timezone', 'auto')
+
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(6000),
+      next: { revalidate: 3600 },
+    })
+    if (!response.ok) return []
+
+    const json = (await response.json()) as ForecastResponse
+    const daily = json.daily
+    if (!daily?.time || !daily.temperature_2m_max) return []
+
+    return daily.time.map((date, i) => {
+      const code = daily.weather_code?.[i] ?? 0
+      const max = daily.temperature_2m_max?.[i] ?? 18
+      const min = daily.temperature_2m_min?.[i] ?? max - 6
+      return {
+        date,
+        maxC: Math.round(max),
+        minC: Math.round(min),
+        rain: isRainy(code, daily.precipitation_sum?.[i] ?? 0),
+        code,
+        description: WMO[code] ?? 'Sin datos',
+      }
+    })
+  } catch (err) {
+    console.error('[clima] previsión fallida:', err)
+    return []
+  }
+}
+
 /** Construye un `Weather` a partir de lo que la persona escriba a mano. */
 export function manualWeather(temperatureC: number, rain: boolean): Weather {
   return {

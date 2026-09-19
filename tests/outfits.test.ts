@@ -454,6 +454,37 @@ describe('diversidad', () => {
     expect(selectDiverse(scored, 3)[0]?.score).toBe(0.9)
   })
 
+  it('elegir muchos looks no se dispara en tiempo', () => {
+    /*
+     * Regresión de rendimiento.
+     *
+     * La versión ingenua comparaba cada candidato contra *todos* los ya elegidos
+     * en cada vuelta y reconstruía los conjuntos en cada comparación. Con 40
+     * looks sobre 1.900 candidatos eran tres millones de comparaciones: 1,3
+     * segundos, y la baraja del swipe tardaba eso en aparecer.
+     *
+     * Como es un máximo, basta actualizarlo contra el último elegido.
+     */
+    const muchos = Array.from({ length: 1800 }, (_, i) => ({
+      items: [
+        item({ id: `t${i % 40}` }),
+        item({ id: `b${i % 45}`, category: 'jeans' as Category }),
+        item({ id: `s${i % 12}`, category: 'sneakers' as Category }),
+      ],
+      candidate: { accessories: [] },
+      score: 0.5 + (i % 100) / 400,
+      breakdown: { color: 0, style: 0, occasion: 0, weather: 0, preference: 0, novelty: 0 },
+      highlights: [],
+    }))
+
+    const started = Date.now()
+    const selected = selectDiverse(muchos, 40)
+    const elapsed = Date.now() - started
+
+    expect(selected).toHaveLength(40)
+    expect(elapsed).toBeLessThan(300)
+  })
+
   it('no devuelve más de lo que hay', () => {
     const scored = [
       scoreCandidate({ top: item(), bottom: item({ category: 'jeans' }), accessories: [] }, {

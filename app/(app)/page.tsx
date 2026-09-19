@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { createClient, getCurrentUser } from '@/lib/supabase/server'
 import { signOne } from '@/lib/storage/signed'
 import { BUCKETS } from '@/lib/storage/paths'
+import { findNeglected, neglectMessage } from '@/lib/wardrobe/neglected'
+import { describeGarment } from '@/lib/wardrobe/labels'
 
 /**
  * Portada.
@@ -20,7 +22,7 @@ export default async function HomePage() {
 
   const supabase = await createClient()
 
-  const [{ data: profile }, { count: itemCount }, { data: photo }, { data: garment }] =
+  const [{ data: profile }, { count: itemCount }, { data: photo }, { data: garment }, { data: forNeglect }] =
     await Promise.all([
       supabase
         .from('profiles')
@@ -46,6 +48,12 @@ export default async function HomePage() {
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle(),
+      supabase
+        .from('clothing_items')
+        .select(
+          'id, category, primary_color, fit, pattern, image_path, seasons, is_available, times_worn, last_worn_at, created_at',
+        )
+        .is('deleted_at', null),
     ])
 
   const row = profile as { display_name?: string | null; onboarding_stage?: string } | null
@@ -62,6 +70,10 @@ export default async function HomePage() {
     : garmentPath
       ? await signOne(supabase, BUCKETS.clothing, garmentPath)
       : null
+
+  // Una sola prenda olvidada, la que más tiempo lleve. Una lista aquí sería ruido.
+  const olvidadas = findNeglected((forNeglect ?? []) as never[], new Date(), 1)
+  const olvidada = olvidadas[0] ?? null
 
   const today = new Date()
   const fecha = today
@@ -149,6 +161,18 @@ export default async function HomePage() {
           </Link>
         ) : null}
 
+        {olvidada ? (
+          <Link
+            href={`/armario/${olvidada.id}`}
+            className="mt-6 block border-l-2 border-accent bg-sunken/60 px-4 py-3"
+          >
+            <span className="folio mb-1 block">SE TE OLVIDA</span>
+            <span className="block text-sm leading-relaxed text-ink-soft">
+              {neglectMessage(olvidada, describeGarment(olvidada))}
+            </span>
+          </Link>
+        ) : null}
+
         {/* --- Secciones ------------------------------------------------ */}
         <nav className="mt-10">
           <Section folio="I" title="Armario" href="/armario">
@@ -159,6 +183,12 @@ export default async function HomePage() {
           </Section>
           <Section folio="III" title="Estilo" href="/estilo">
             Cómo te veo
+          </Section>
+          <Section folio="IV" title="Diario" href="/diario">
+            Lo que te pusiste
+          </Section>
+          <Section folio="V" title="La maleta" href="/outfits/maleta">
+            Qué meter para un viaje
           </Section>
         </nav>
       </section>

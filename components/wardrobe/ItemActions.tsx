@@ -24,9 +24,30 @@ export function ItemActions({
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
+  /*
+   * Respuesta inmediata.
+   *
+   * Guardar una prenda es un interruptor: la persona ya sabe lo que va a pasar
+   * y esperar medio segundo a que conteste el servidor hace que la aplicación
+   * parezca lenta en algo que no lo es.
+   *
+   * Se cambia al instante y, si el servidor falla, se deshace y se avisa. Es la
+   * parte que se suele olvidar y la que convierte el truco en una mentira.
+   */
+  const [optimistic, setOptimistic] = useState<boolean | null>(null)
+  const shown = optimistic ?? available
+
   function onToggle() {
+    const next = !shown
+    setOptimistic(next)
+    setError(null)
+
     startTransition(async () => {
-      await toggleAvailability(itemId, !available)
+      const result = await toggleAvailability(itemId, next)
+      if (!result?.ok) {
+        setOptimistic(null)
+        setError('No hemos podido guardar el cambio.')
+      }
     })
   }
 
@@ -45,12 +66,12 @@ export function ItemActions({
         </Button>
       </Link>
 
-      <Button variant="secondary" fullWidth disabled={isPending} onClick={onToggle}>
-        {available ? 'Guardar por ahora' : 'Volver a tenerla disponible'}
+      <Button variant="secondary" fullWidth onClick={onToggle}>
+        {shown ? 'Guardar por ahora' : 'Volver a tenerla disponible'}
       </Button>
 
       <p className="px-2 text-xs leading-relaxed text-ink-faint">
-        {available
+        {shown
           ? 'Guardarla la deja fuera de las propuestas sin borrarla. Útil si está en la lavadora o prestada.'
           : 'Ahora mismo no la uso para proponerte looks.'}
       </p>

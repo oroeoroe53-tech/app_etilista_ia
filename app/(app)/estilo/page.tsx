@@ -5,6 +5,7 @@ import { fromStored, confidence } from '@/lib/style/profile'
 import { describeProfile, COLOR_SWATCHES } from '@/lib/style/describe'
 import { rebuildStyleProfile } from '@/lib/style/rebuild'
 import { colorLabel } from '@/lib/wardrobe/labels'
+import { findGaps } from '@/lib/wardrobe/gaps'
 import { Screen, PageTitle, EmptyState, Button } from '@/components/ui'
 import { PreferencesForm } from '@/components/style/PreferencesForm'
 
@@ -23,14 +24,23 @@ export default async function StylePage() {
 
   const supabase = await createClient()
 
-  const [{ data: stored }, { data: prefs }, { count: itemCount }] = await Promise.all([
-    supabase.from('style_profile').select('*').eq('user_id', user.id).maybeSingle(),
-    supabase.from('user_preferences').select('*').eq('user_id', user.id).maybeSingle(),
-    supabase
-      .from('clothing_items')
-      .select('id', { count: 'exact', head: true })
-      .is('deleted_at', null),
-  ])
+  const [{ data: stored }, { data: prefs }, { count: itemCount }, { data: wardrobe }] =
+    await Promise.all([
+      supabase.from('style_profile').select('*').eq('user_id', user.id).maybeSingle(),
+      supabase.from('user_preferences').select('*').eq('user_id', user.id).maybeSingle(),
+      supabase
+        .from('clothing_items')
+        .select('id', { count: 'exact', head: true })
+        .is('deleted_at', null),
+      supabase
+        .from('clothing_items')
+        .select('category, formality, warmth, seasons, is_available')
+        .is('deleted_at', null),
+    ])
+
+  // Huecos del armario: qué combinación falta para que lo que ya hay funcione.
+  // Todo sale de contar lo que existe, sin IA.
+  const gaps = findGaps((wardrobe ?? []) as never[])
 
   let profile = fromStored(stored as never)
 
@@ -109,6 +119,29 @@ export default async function StylePage() {
             <Tip href="/onboarding">Analiza más fotos de looks que ya lleves.</Tip>
             <Tip href="/armario">Corrige las prendas que no describí bien.</Tip>
             <Tip href="/outfits">Valora combinaciones y dime cuáles no van contigo.</Tip>
+          </ul>
+        </section>
+      ) : null}
+
+      {gaps.length > 0 ? (
+        <section className="mb-10">
+          <p className="eyebrow mb-3">Lo que te falta</p>
+          <p className="mb-5 text-sm leading-relaxed text-ink-soft">
+            No es una lista de la compra: son las piezas que impiden que lo que ya
+            tienes funcione del todo.
+          </p>
+          <ul className="space-y-4">
+            {gaps.slice(0, 4).map((gap) => (
+              <li
+                key={`${gap.kind}-${gap.title}`}
+                className={`border-l-2 pl-4 ${
+                  gap.severity === 'high' ? 'border-danger' : 'border-line'
+                }`}
+              >
+                <p className="text-[15px]">{gap.title}</p>
+                <p className="mt-1 text-sm leading-relaxed text-ink-soft">{gap.detail}</p>
+              </li>
+            ))}
           </ul>
         </section>
       ) : null}
