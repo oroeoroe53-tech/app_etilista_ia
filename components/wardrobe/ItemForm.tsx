@@ -1,0 +1,197 @@
+'use client'
+
+import { useActionState } from 'react'
+import { useFormStatus } from 'react-dom'
+import { Button, Field, Select, TextInput, TextArea, ChipGroup, ScaleInput, Notice } from '@/components/ui'
+import type { ItemFormState } from '@/app/(app)/armario/actions'
+import {
+  CATEGORY_LIST, COLORS, FITS, MATERIALS, PATTERNS, SEASONS, STYLES,
+} from '@/lib/wardrobe/taxonomy'
+import {
+  CATEGORY_LABELS, COLOR_LABELS, FIT_LABELS, MATERIAL_LABELS, PATTERN_LABELS,
+  SEASON_LABELS, STYLE_LABELS, FORMALITY_LABELS, WARMTH_LABELS, CONDITION_LABELS,
+  colorLabel, categoryLabel,
+} from '@/lib/wardrobe/labels'
+
+export interface ItemFormValues {
+  category: string
+  subcategory: string | null
+  primary_color: string
+  secondary_colors: string[]
+  pattern: string
+  fit: string
+  material: string
+  styles: string[]
+  seasons: string[]
+  formality: number
+  warmth: number
+  condition: string
+  is_available: boolean
+  notes: string | null
+}
+
+export const EMPTY_ITEM: ItemFormValues = {
+  category: 'tshirt',
+  subcategory: null,
+  primary_color: 'black',
+  secondary_colors: [],
+  pattern: 'solid',
+  fit: 'regular',
+  material: 'unknown',
+  styles: [],
+  seasons: ['spring', 'autumn'],
+  formality: 3,
+  warmth: 3,
+  condition: 'good',
+  is_available: true,
+  notes: null,
+}
+
+/** Las categorías se agrupan por capa: una lista plana de 33 no se navega bien en móvil. */
+const CATEGORY_OPTIONS = CATEGORY_LIST.map((c) => ({
+  value: c,
+  label: categoryLabel(c),
+})).sort((a, b) => a.label.localeCompare(b.label, 'es'))
+
+const COLOR_OPTIONS = COLORS.map((c) => ({ value: c, label: colorLabel(c) })).sort((a, b) =>
+  a.label.localeCompare(b.label, 'es'),
+)
+
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+
+const PATTERN_OPTIONS = PATTERNS.map((p) => ({
+  value: p,
+  label: p === 'other' ? 'Otro' : capitalize(PATTERN_LABELS[p].ms || p),
+}))
+
+const FIT_OPTIONS = FITS.map((f) => ({
+  value: f,
+  label:
+    f === 'regular' ? 'Normal' : f === 'unknown' ? 'Sin determinar' : capitalize(FIT_LABELS[f].ms),
+}))
+
+const MATERIAL_OPTIONS = MATERIALS.map((m) => ({ value: m, label: MATERIAL_LABELS[m] }))
+
+const SEASON_OPTIONS = SEASONS.map((s) => ({ value: s, label: SEASON_LABELS[s] }))
+const STYLE_OPTIONS = STYLES.map((s) => ({ value: s, label: STYLE_LABELS[s] }))
+
+const CONDITION_OPTIONS = ['new', 'good', 'worn', 'retired'].map((c) => ({
+  value: c,
+  label: CONDITION_LABELS[c] ?? c,
+}))
+
+interface ItemFormProps {
+  action: (prev: ItemFormState, formData: FormData) => Promise<ItemFormState>
+  values: ItemFormValues
+  submitLabel: string
+  /** Ruta de la imagen ya subida, si la hay. Viaja oculta con el formulario. */
+  imagePath?: string | null
+}
+
+/**
+ * Formulario de prenda, compartido entre crear y editar.
+ *
+ * La IA se equivoca, y el usuario tiene que poder corregirla siempre
+ * (PLAN.md §15). Guardar aquí marca la prenda como verificada: es la señal de
+ * que alguien la ha mirado.
+ */
+export function ItemForm({ action, values, submitLabel, imagePath }: ItemFormProps) {
+  const [state, formAction] = useActionState<ItemFormState, FormData>(action, {})
+  const errors = state.fieldErrors ?? {}
+
+  return (
+    <form action={formAction} className="space-y-6">
+      {imagePath ? <input type="hidden" name="image_path" value={imagePath} /> : null}
+
+      <Field label="Qué es" error={errors.category}>
+        <Select name="category" defaultValue={values.category} options={CATEGORY_OPTIONS} />
+      </Field>
+
+      <Field label="Color principal" error={errors.primary_color}>
+        <Select
+          name="primary_color"
+          defaultValue={values.primary_color}
+          options={COLOR_OPTIONS}
+        />
+      </Field>
+
+      <Field label="Estampado" error={errors.pattern}>
+        <Select name="pattern" defaultValue={values.pattern} options={PATTERN_OPTIONS} />
+      </Field>
+
+      <Field label="Corte" error={errors.fit}>
+        <Select name="fit" defaultValue={values.fit} options={FIT_OPTIONS} />
+      </Field>
+
+      <Field label="Tejido" error={errors.material}>
+        <Select name="material" defaultValue={values.material} options={MATERIAL_OPTIONS} />
+      </Field>
+
+      <Field label="Temporadas" error={errors.seasons} hint="Cuándo te la pones">
+        <ChipGroup name="seasons" options={SEASON_OPTIONS} selected={values.seasons} />
+      </Field>
+
+      <Field label="Estilo" error={errors.styles} hint="Hasta cuatro">
+        <ChipGroup name="styles" options={STYLE_OPTIONS} selected={values.styles} />
+      </Field>
+
+      <Field label="Cómo de arreglada es" error={errors.formality}>
+        <ScaleInput name="formality" value={values.formality} labels={FORMALITY_LABELS} />
+      </Field>
+
+      <Field label="Cuánto abriga" error={errors.warmth}>
+        <ScaleInput name="warmth" value={values.warmth} labels={WARMTH_LABELS} />
+      </Field>
+
+      <Field label="Estado" error={errors.condition}>
+        <Select name="condition" defaultValue={values.condition} options={CONDITION_OPTIONS} />
+      </Field>
+
+      <Field label="Detalle" hint="Opcional: marca, corte concreto, de dónde es…">
+        <TextInput
+          name="subcategory"
+          defaultValue={values.subcategory ?? ''}
+          maxLength={60}
+          placeholder="Oxford, cuello alto, de lino…"
+        />
+      </Field>
+
+      <Field label="Notas" hint="Opcional">
+        <TextArea
+          name="notes"
+          defaultValue={values.notes ?? ''}
+          maxLength={500}
+          placeholder="Con qué la sueles combinar, si aprieta, si destiñe…"
+        />
+      </Field>
+
+      <label className="flex items-center justify-between rounded-2xl border border-line bg-raised px-4 py-3">
+        <span className="text-sm">La tengo disponible</span>
+        <input
+          type="checkbox"
+          name="is_available"
+          value="true"
+          defaultChecked={values.is_available}
+          className="h-5 w-5 accent-[var(--accent)]"
+        />
+        {/* Una casilla sin marcar no se envía: este campo garantiza el "false". */}
+        <input type="hidden" name="is_available" value="false" />
+      </label>
+
+      {state.error ? <Notice tone="error">{state.error}</Notice> : null}
+
+      <Submit label={submitLabel} />
+    </form>
+  )
+}
+
+function Submit({ label }: { label: string }) {
+  const { pending } = useFormStatus()
+  return (
+    <Button type="submit" size="lg" fullWidth disabled={pending}>
+      {pending ? 'Guardando…' : label}
+    </Button>
+  )
+}
+
+export { COLOR_LABELS, CATEGORY_LABELS }

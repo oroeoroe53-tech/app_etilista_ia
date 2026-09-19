@@ -9,22 +9,19 @@
 
 ## Estado actual
 
-**Fase 2 — Onboarding: COMPLETADA y verificada.**
+**Fase 3 — Armario editable: COMPLETADA y verificada.**
 
 ```
-npm run typecheck          ✓ sin errores
-npm run test               ✓ 58 tests, 6 archivos
-npm run lint               ✓ sin avisos
-npm run build              ✓ 16 rutas
-npm run verify:rls         ✓ 31/31 contra Supabase real
-npm run verify:onboarding  ✓ 10/10 de extremo a extremo
+npm run typecheck           ✓ sin errores
+npm run test                ✓ 89 tests, 8 archivos
+npm run lint                ✓ sin avisos
+npm run build               ✓ 20 rutas
+npm run verify:rls          ✓ 31/31 contra Supabase real
+npm run verify:integration  ✓ 17/17 de extremo a extremo
 ```
 
-El circuito completo funciona: subir fotos → análisis → deduplicación →
-armario con miniaturas recortadas.
-
-**Siguiente paso:** Fase 3 (armario editable: filtros, detalle, corrección
-de atributos, alta manual).
+**Siguiente paso:** Fase 4 (perfil de estilo: señales y pesos deterministas
+a partir de fotos, prendas e historial).
 
 ---
 
@@ -35,8 +32,8 @@ de atributos, alta manual).
 | 0 | Planificación técnica | ✅ Aprobada |
 | 1 | Foundation | ✅ Completada |
 | 2 | Onboarding ("Enséñame cómo vistes") | ✅ Completada |
-| 3 | Armario editable | ⬜ Siguiente |
-| 4 | Perfil de estilo | ⬜ No iniciada |
+| 3 | Armario editable | ✅ Completada |
+| 4 | Perfil de estilo | ⬜ Siguiente |
 | 5 | Motor de outfits | ⬜ No iniciada |
 | 6 | "¿Qué me pongo?" | ⬜ No iniciada |
 | 7 | Swipe y feedback | ⬜ No iniciada |
@@ -134,6 +131,34 @@ Las claves de Gemini y OpenAI **no hacen falta todavía**: `AI_MODE=mock`.
 **Armario**
 - Prendas reales agrupadas por capa, con miniaturas por URL firmada
 - Aviso de las prendas que la IA no vio con claridad
+
+## Qué existe ya (Fase 3)
+
+**Armario**
+- Filtros por tipo, color, temporada y disponibilidad, **en la URL**: se comparte,
+  el botón de atrás funciona y se renderiza en servidor
+- Solo se ofrecen filtros que existen de verdad en ese armario
+- Las prendas guardadas no estorban en la vista general
+
+**Ficha de prenda**
+- Todos los atributos en lenguaje humano, no en claves internas
+- Aviso cuando la IA no la vio con claridad
+- "Guardar por ahora" para lo que está en la lavadora o prestado
+- Borrado en dos pasos, nombrando la prenda; lógico en base de datos, la foto sí se elimina
+
+**Edición**
+- Formulario completo con toda la taxonomía
+- Funciona sin JavaScript: `select`, `input` y `checkbox` nativos
+- Guardar marca la prenda como verificada por el usuario
+
+**Alta manual**
+- Foto opcional, y el análisis por IA es un atajo, no un peaje
+- Si el análisis falla no se descuenta cupo y el formulario sigue utilizable
+- Avisa cuando quedan pocas prendas de plan y bloquea al llegar al límite
+
+**Idioma**
+- Las etiquetas concuerdan en género y número: "Jersey negro", "Zapatillas
+  blancas", "Vaqueros azul marino". Antes salía "Jersey negra".
 
 ## Decisiones tomadas durante la Fase 1
 

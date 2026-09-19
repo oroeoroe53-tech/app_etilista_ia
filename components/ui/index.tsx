@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils/cn'
 
 export { Button } from './Button'
+export { Field, Select, TextInput, TextArea, ChipGroup, ScaleInput } from './Field'
 
 /** Contenedor de página. Ancho contenido para que en tablet no se estire feo. */
 export function Screen({

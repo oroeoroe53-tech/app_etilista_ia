@@ -12,7 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "verify:rls": "node --env-file=.env.local scripts/verify-rls.mjs",
-    "verify:onboarding": "vitest run --config vitest.integration.config.ts",
+    "verify:integration": "vitest run --config vitest.integration.config.ts",
     "db:setup-file": "node scripts/build-setup-sql.mjs"
   },
   "dependencies": {

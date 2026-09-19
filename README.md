@@ -28,9 +28,14 @@ enseña una pantalla con lo que queda por configurar.
 | `npm run dev` | Servidor de desarrollo (Turbopack) |
 | `npm run build` | Build de producción (webpack, lo necesita el service worker) |
 | `npm run typecheck` | TypeScript sin emitir |
-| `npm run test` | Tests con Vitest |
+| `npm run test` | Tests unitarios (rápidos, sin red) |
 | `npm run lint` | ESLint |
+| `npm run verify:rls` | Seguridad y aislamiento contra el Supabase real |
+| `npm run verify:integration` | Onboarding y límites de extremo a extremo |
 | `node scripts/generate-icons.mjs` | Regenera los iconos de la PWA |
+
+Los dos `verify:` necesitan `.env.local` con credenciales de verdad. Crean
+usuarios de prueba y los borran al terminar.
 
 ---
 

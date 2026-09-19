@@ -74,44 +74,5 @@ export function toClothingItem(
   }
 }
 
-/**
- * Nombre legible de una prenda, para listas y para el texto de "¿es la misma?".
- * Se calcula, no se guarda: así cambia solo cuando el usuario corrige atributos.
- */
-export function describeGarment(item: {
-  category: string
-  primary_color: string
-  fit?: string | null
-  pattern?: string | null
-}): string {
-  const CATEGORIES: Record<string, string> = {
-    tshirt: 'Camiseta', shirt: 'Camisa', polo: 'Polo', blouse: 'Blusa',
-    sweater: 'Jersey', hoodie: 'Sudadera con capucha', sweatshirt: 'Sudadera',
-    tank_top: 'Camiseta de tirantes', jeans: 'Vaqueros', trousers: 'Pantalón',
-    chinos: 'Chinos', shorts: 'Pantalón corto', skirt: 'Falda', joggers: 'Pantalón de chándal',
-    jacket: 'Chaqueta', coat: 'Abrigo', blazer: 'Americana', cardigan: 'Cárdigan',
-    vest: 'Chaleco', dress: 'Vestido', jumpsuit: 'Mono', suit: 'Traje',
-    sneakers: 'Zapatillas', shoes: 'Zapatos', boots: 'Botas', sandals: 'Sandalias',
-    bag: 'Bolso', belt: 'Cinturón', hat: 'Sombrero', scarf: 'Bufanda',
-    glasses: 'Gafas', watch: 'Reloj', jewelry: 'Joya',
-  }
-
-  const COLORS: Record<string, string> = {
-    black: 'negra', white: 'blanca', grey: 'gris', navy: 'azul marino',
-    blue: 'azul', light_blue: 'azul claro', beige: 'beis', brown: 'marrón',
-    cream: 'crema', green: 'verde', olive: 'verde oliva', red: 'roja',
-    burgundy: 'burdeos', pink: 'rosa', purple: 'morada', yellow: 'amarilla',
-    orange: 'naranja', gold: 'dorada', silver: 'plateada', multicolor: 'multicolor',
-  }
-
-  const FITS: Record<string, string> = {
-    oversized: 'oversize', skinny: 'ajustada', slim: 'entallada',
-    relaxed: 'holgada', regular: '', unknown: '',
-  }
-
-  const name = CATEGORIES[item.category] ?? item.category
-  const color = COLORS[item.primary_color] ?? item.primary_color
-  const fit = item.fit ? (FITS[item.fit] ?? '') : ''
-
-  return [name, color, fit].filter(Boolean).join(' ')
-}
+/** Los textos en español viven en `labels.ts`, que sabe concordar en género y número. */
+export { describeGarment } from './labels'
