@@ -5,6 +5,7 @@ import { ai } from '@/lib/ai/router'
 import { checkEntitlement, consumeEntitlement } from '@/lib/subscriptions/entitlements'
 import { BUCKETS, pathBelongsTo } from '@/lib/storage/paths'
 import { UPLOAD_RULES } from '@/lib/subscriptions/plans'
+import { checkRateLimit, rateLimitMessage, RATE_LIMITS } from '@/lib/security/rate-limit'
 import sharp from 'sharp'
 
 /**
@@ -25,6 +26,14 @@ export async function POST(request: Request) {
 
   if (!path || !pathBelongsTo(path, user.id)) {
     return NextResponse.json({ error: 'Imagen no válida.' }, { status: 400 })
+  }
+
+  const rate = await checkRateLimit(user.id, RATE_LIMITS.aiVision)
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: rateLimitMessage(rate) },
+      { status: 429, headers: { 'retry-after': String(rate.resetInSeconds) } },
+    )
   }
 
   const permiso = await checkEntitlement(user.id, 'analyze_outfit')

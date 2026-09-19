@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/supabase/server'
 import { analyzePendingPhotos } from '@/lib/onboarding/analyze'
+import { checkRateLimit, rateLimitMessage, RATE_LIMITS } from '@/lib/security/rate-limit'
+import { log } from '@/lib/observability/log'
 
 /**
  * Dispara el análisis de las fotos pendientes.
@@ -19,11 +21,37 @@ export async function POST() {
     return NextResponse.json({ error: 'No autenticado.' }, { status: 401 })
   }
 
+  // Control de ráfagas: el cupo mensual limita cuánto, esto limita cómo de
+  // rápido. Un doble clic o un reintento mal hecho pueden lanzar varios
+  // análisis seguidos, y cada uno cuesta dinero.
+  const rate = await checkRateLimit(user.id, RATE_LIMITS.aiVision)
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: rateLimitMessage(rate) },
+      { status: 429, headers: { 'retry-after': String(rate.resetInSeconds) } },
+    )
+  }
+
+  const started = Date.now()
   try {
     const result = await analyzePendingPhotos(user.id)
+    log.info({
+      event: 'onboarding.analyze',
+      userId: user.id,
+      durationMs: Date.now() - started,
+      photos: result.photosAnalyzed,
+      created: result.itemsCreated,
+      merged: result.itemsMerged,
+      toConfirm: result.needsConfirmation,
+    })
     return NextResponse.json(result)
-  } catch (err) {
-    console.error('[api/analyze] fallo inesperado:', err)
+  } catch (error) {
+    log.error({
+      event: 'onboarding.analyze-failed',
+      userId: user.id,
+      durationMs: Date.now() - started,
+      error,
+    })
     return NextResponse.json({ error: 'El análisis ha fallado.' }, { status: 500 })
   }
 }

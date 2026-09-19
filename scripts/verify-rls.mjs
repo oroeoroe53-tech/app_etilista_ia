@@ -132,6 +132,52 @@ async function main() {
     .insert({ user_id: bob.id, period_key: 'all', metric: 'hack', count: -999 })
   check('Bob NO puede tocar sus contadores de uso', Boolean(counterError))
 
+  console.log('\n--- Aislamiento en Storage ---')
+  // Las fotos de ropa son datos personales. El RLS de las tablas no protege los
+  // archivos: eso lo hacen las políticas de storage.objects, y hay que probarlas
+  // aparte (PLAN.md §9, riesgo 6).
+  const png = Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+    'base64',
+  )
+  const alicePath = `${alice.id}/privada.png`
+
+  const { error: uploadError } = await admin.storage
+    .from('user-outfit-photos')
+    .upload(alicePath, png, { contentType: 'image/png', upsert: true })
+  check('se puede subir una foto', !uploadError, uploadError?.message ?? '')
+
+  const { data: bobDownload } = await asBob.storage
+    .from('user-outfit-photos')
+    .download(alicePath)
+  check('Bob NO puede descargar la foto de Alice', !bobDownload)
+
+  const { data: bobSigned } = await asBob.storage
+    .from('user-outfit-photos')
+    .createSignedUrl(alicePath, 60)
+  check('Bob NO puede firmar una URL de la foto de Alice', !bobSigned?.signedUrl)
+
+  const { error: bobUploadError } = await asBob.storage
+    .from('user-outfit-photos')
+    .upload(`${alice.id}/intruso.png`, png, { contentType: 'image/png' })
+  check('Bob NO puede subir a la carpeta de Alice', Boolean(bobUploadError))
+
+  const { data: bobList } = await asBob.storage.from('user-outfit-photos').list(alice.id)
+  check('Bob NO puede listar la carpeta de Alice', (bobList?.length ?? 0) === 0,
+    bobList?.length ? `ve ${bobList.length} archivos` : '')
+
+  const { error: bobDeleteError } = await asBob.storage
+    .from('user-outfit-photos')
+    .remove([alicePath])
+  const { data: sigueAhi } = await admin.storage.from('user-outfit-photos').list(alice.id)
+  check(
+    'Bob NO puede borrar la foto de Alice',
+    (sigueAhi?.length ?? 0) > 0,
+    bobDeleteError ? '' : 'el borrado no dio error',
+  )
+
+  await admin.storage.from('user-outfit-photos').remove([alicePath])
+
   console.log('\n--- Contador atómico ---')
   const { data: c1 } = await admin.rpc('increment_usage', {
     p_user_id: alice.id, p_period_key: 'test', p_metric: 'demo', p_delta: 1,

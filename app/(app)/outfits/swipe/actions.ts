@@ -8,6 +8,7 @@ import { checkEntitlement, consumeEntitlement } from '@/lib/subscriptions/entitl
 import { rebuildStyleProfile } from '@/lib/style/rebuild'
 import { outfitSignature } from '@/lib/outfits/deck'
 import { layerOf, type Category } from '@/lib/wardrobe/taxonomy'
+import { checkRateLimit, rateLimitMessage, RATE_LIMITS } from '@/lib/security/rate-limit'
 
 /**
  * Registro del swipe.
@@ -51,6 +52,9 @@ export async function recordSwipe(
 
   const parsed = swipeSchema.safeParse({ itemIds, reaction, reason: reason ?? null })
   if (!parsed.success) return { ok: false, error: 'Valoración no válida.' }
+
+  const rate = await checkRateLimit(user.id, RATE_LIMITS.swipe)
+  if (!rate.allowed) return { ok: false, error: rateLimitMessage(rate) }
 
   const permiso = await checkEntitlement(user.id, 'swipe')
   if (!permiso.allowed) {

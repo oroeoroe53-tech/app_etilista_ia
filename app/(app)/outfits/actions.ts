@@ -14,6 +14,7 @@ import { fetchWeather, manualWeather, searchPlaces, type Weather } from '@/lib/w
 import { describeGarment } from '@/lib/wardrobe/labels'
 import { ai } from '@/lib/ai/router'
 import { OCCASIONS } from '@/lib/wardrobe/taxonomy'
+import { checkRateLimit, rateLimitMessage, RATE_LIMITS } from '@/lib/security/rate-limit'
 
 /**
  * "¿Qué me pongo?"
@@ -42,6 +43,9 @@ export async function requestOutfits(
   formData: FormData,
 ): Promise<RequestState> {
   const user = await requireUser()
+
+  const rate = await checkRateLimit(user.id, RATE_LIMITS.outfitRequest)
+  if (!rate.allowed) return { error: rateLimitMessage(rate) }
 
   const permiso = await checkEntitlement(user.id, 'request_outfits')
   if (!permiso.allowed) {

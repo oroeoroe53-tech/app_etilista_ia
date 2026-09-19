@@ -9,22 +9,25 @@
 
 ## Estado actual
 
-**Fase 7 — Swipe y feedback: COMPLETADA y verificada.**
+**Fase 8 — Límites y observabilidad: COMPLETADA y verificada.**
 
 ```
 npm run typecheck           ✓ sin errores
-npm run test                ✓ 202 tests, 12 archivos
+npm run test                ✓ 215 tests, 13 archivos
 npm run lint                ✓ sin avisos
 npm run build               ✓ 23 rutas
-npm run verify:rls          ✓ 31/31 contra Supabase real
-npm run verify:integration  ✓ 33/33 de extremo a extremo
+npm run verify:rls          ✓ 37/37 contra Supabase real
+npm run verify:integration  ✓ 43/43 de extremo a extremo
 ```
 
-**El bucle de aprendizaje está cerrado.** La aplicación mejora con el uso:
-valorar looks mueve el perfil, y el perfil cambia lo que se propone.
+**EL MVP ESTÁ COMPLETO.** Fases 0 a 8 terminadas. Lo que queda (Stripe y
+virtual try-on) el plan lo sitúa fuera del MVP.
 
-**Siguiente paso:** Fase 8 (optimización: rate limiting, observabilidad,
-borrado de cuenta con Storage, caché y repaso de límites).
+### ⚠️ Pendiente antes de nada
+
+**Aplicar `supabase/migrations/0005_usage_and_limits.sql`** en el editor SQL de
+Supabase. Sin ella, la consulta de consumo agregado devuelve ceros (no rompe
+nada, pero no informa).
 
 ### Sin comprobar visualmente
 
@@ -46,7 +49,7 @@ probado a mano**. La lógica sí está cubierta por tests.
 | 5 | Motor de outfits | ✅ Completada |
 | 6 | "¿Qué me pongo?" | ✅ Completada |
 | 7 | Swipe y feedback | ✅ Completada |
-| 8 | Optimización, límites y observabilidad | ⬜ Siguiente |
+| 8 | Optimización, límites y observabilidad | ✅ Completada |
 | 9 | Pagos (Stripe) | ⬜ Posterior al MVP |
 | 10 | Virtual try-on | ⬜ Posterior al MVP |
 
@@ -290,6 +293,42 @@ armario → filtros duros → candidatos → puntuación → diversidad → look
 - Todo aritmética: un test de integración comprueba que el bucle entero no gasta
   ni una llamada de IA
 
+## Qué existe ya (Fase 8)
+
+**Control de ráfagas** (`lib/security/rate-limit.ts`)
+- Responde a una pregunta distinta de la del plan: no "cuánto al mes" sino
+  "cuántas veces por minuto". Hacen falta las dos.
+- Cubos por ventana sobre `usage_counters`, con la misma función atómica que ya
+  existía. Un contador en memoria sería inútil: cada petición puede caer en una
+  instancia distinta.
+- Si el limitador falla, **deja pasar**. Los límites del plan siguen debajo, así
+  que el gasto sigue teniendo techo.
+
+**Borrado de cuenta** (`lib/account/delete.ts`)
+- La cascada de Postgres limpia las tablas pero **no toca Storage**. Sin esto,
+  las fotos de quien pidió irse se quedaban en el servidor.
+- Primero los archivos, después el usuario: al revés, un fallo a mitad dejaría
+  archivos sin dueño conocido.
+- Si los archivos no se pueden borrar, **no se borra la cuenta**: mejor un error
+  honesto que decir "hecho" dejando las fotos.
+- Pide escribir el correo a mano.
+
+**Observabilidad** (`lib/observability/log.ts`)
+- JSON de una línea, que es lo que sabe agrupar el visor de Vercel
+- Lista de campos prohibidos: correos, claves, rutas de fotos, respuestas de
+  modelos. Nueve tests lo comprueban.
+- De un error se registra el mensaje, nunca la traza: una traza arrastra valores
+  de variables, y entre ellos hay claves.
+
+**Consumo**
+- La suma la hace Postgres (`ai_usage_summary`), no el proceso
+- El perfil enseña el consumo real de cada límite con su barra
+
+**Deuda saldada**
+- Aislamiento de Storage probado: seis comprobaciones nuevas en `verify:rls`
+- `getUsage()` ya no suma en memoria
+- Borrado de Storage al eliminar la cuenta
+
 ## Decisiones tomadas durante la Fase 1
 
 | Tema | Decisión |
@@ -308,10 +347,11 @@ armario → filtros duros → candidatos → puntuación → diversidad → look
 - `lib/ai/pricing.ts` tiene precios **sin verificar**. Contrastarlos antes de
   pasar a `AI_MODE=production`.
 - Falta el borrado de archivos de Storage al eliminar una cuenta (Fase 8).
-- `getUsage()` suma en memoria; con volumen habrá que pasarlo a una función SQL.
-- El script de RLS no comprueba todavía el aislamiento en Storage (subir un
-  archivo a la carpeta de otro usuario). Añadirlo en la Fase 2, cuando haya
-  subidas reales.
+- **`lib/ai/pricing.ts` sigue con precios SIN VERIFICAR.** Contrastarlos con la
+  documentación de Google y OpenAI antes de pasar a `AI_MODE=production`.
+- `purge_rate_buckets()` existe pero no hay nada que la llame: conviene un cron
+  diario en Supabase, o la tabla `usage_counters` irá creciendo.
+- Los gestos del swipe no se han probado a mano (están detrás del login).
 
 ---
 

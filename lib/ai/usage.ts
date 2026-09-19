@@ -1,15 +1,19 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { log } from '@/lib/observability/log'
 import type { AiCallMeta } from './types'
 
 /**
- * Registro de uso de IA.
+ * Registro y consulta del uso de IA.
  *
  * Se escribe con service role porque el usuario no debe poder tocar su propio
  * registro de consumo (ver 0002_rls.sql).
+ */
+
+/**
+ * Anota una llamada.
  *
- * Regla importante: **nunca lanza**. Que falle el registro contable no puede
- * tumbar una funcionalidad que ya ha funcionado para el usuario. Se avisa por log
- * y se sigue.
+ * **Nunca lanza.** Que falle la contabilidad no puede tumbar una funcionalidad
+ * que ya ha funcionado para la persona: se avisa por log y se sigue.
  */
 export async function recordAiUsage(userId: string | null, meta: AiCallMeta): Promise<void> {
   try {
@@ -27,9 +31,24 @@ export async function recordAiUsage(userId: string | null, meta: AiCallMeta): Pr
       status: meta.status,
       error_code: meta.errorCode ?? null,
     })
-    if (error) console.error('[ai_usage] no se pudo registrar:', error.message)
-  } catch (err) {
-    console.error('[ai_usage] no se pudo registrar:', err)
+    if (error) log.warn({ event: 'ai.usage-record-failed', userId, reason: error.message })
+
+    log.info({
+      event: 'ai.call',
+      userId,
+      provider: meta.provider,
+      model: meta.model,
+      operation: meta.operation,
+      images: meta.imageCount,
+      inputTokens: meta.inputTokens,
+      outputTokens: meta.outputTokens,
+      costUsd: meta.estimatedCostUsd,
+      durationMs: meta.latencyMs,
+      status: meta.status,
+      errorCode: meta.errorCode,
+    })
+  } catch (error) {
+    log.warn({ event: 'ai.usage-record-failed', userId, error })
   }
 }
 
@@ -47,54 +66,51 @@ export interface UsageSummary {
 export interface UsageFilter {
   userId?: string
   operation?: string
-  /** ISO 8601 inclusive. */
+  /** ISO 8601, inclusive. */
   from?: string
-  /** ISO 8601 exclusivo. */
+  /** ISO 8601, exclusivo. */
   before?: string
 }
 
-const COLUMNS = 'estimated_cost_usd, input_tokens, output_tokens'
+const EMPTY: UsageSummary = { calls: 0, costUsd: 0, inputTokens: 0, outputTokens: 0 }
 
 /**
  * Suma el consumo que cumpla el filtro.
  *
- * Nota de escalado: esto trae las filas y suma en memoria, que es correcto con
- * los volúmenes del MVP. Cuando `ai_usage` crezca, se sustituye por una función
- * SQL con `sum()` sin cambiar esta firma.
+ * La suma la hace Postgres, no este proceso: traer diez mil filas por la red
+ * para devolver cuatro números sería absurdo, y esta tabla solo crece.
  */
 export async function getUsage(filter: UsageFilter = {}): Promise<UsageSummary> {
-  const empty: UsageSummary = { calls: 0, costUsd: 0, inputTokens: 0, outputTokens: 0 }
-
   try {
     const supabase = createAdminClient()
-    let query = supabase.from('ai_usage').select(COLUMNS)
+    const { data, error } = await supabase.rpc('ai_usage_summary', {
+      p_user_id: filter.userId ?? null,
+      p_from: filter.from ?? null,
+      p_before: filter.before ?? null,
+      p_operation: filter.operation ?? null,
+    })
 
-    if (filter.userId) query = query.eq('user_id', filter.userId)
-    if (filter.operation) query = query.eq('operation', filter.operation)
-    if (filter.from) query = query.gte('created_at', filter.from)
-    if (filter.before) query = query.lt('created_at', filter.before)
+    if (error) {
+      log.warn({ event: 'ai.usage-query-failed', reason: error.message })
+      return EMPTY
+    }
 
-    const { data, error } = await query
-    if (error || !data) return empty
+    // La función devuelve una tabla de una sola fila.
+    const row = (Array.isArray(data) ? data[0] : data) as
+      | { calls: number | string; cost_usd: number | string; input_tokens: number | string; output_tokens: number | string }
+      | undefined
 
-    const rows = data as unknown as Array<{
-      estimated_cost_usd: number | string | null
-      input_tokens: number | null
-      output_tokens: number | null
-    }>
+    if (!row) return EMPTY
 
-    return rows.reduce<UsageSummary>(
-      (acc, row) => ({
-        calls: acc.calls + 1,
-        costUsd: acc.costUsd + Number(row.estimated_cost_usd ?? 0),
-        inputTokens: acc.inputTokens + (row.input_tokens ?? 0),
-        outputTokens: acc.outputTokens + (row.output_tokens ?? 0),
-      }),
-      empty,
-    )
-  } catch (err) {
-    console.error('[ai_usage] consulta fallida:', err)
-    return empty
+    return {
+      calls: Number(row.calls ?? 0),
+      costUsd: Number(row.cost_usd ?? 0),
+      inputTokens: Number(row.input_tokens ?? 0),
+      outputTokens: Number(row.output_tokens ?? 0),
+    }
+  } catch (error) {
+    log.warn({ event: 'ai.usage-query-failed', error })
+    return EMPTY
   }
 }
 
