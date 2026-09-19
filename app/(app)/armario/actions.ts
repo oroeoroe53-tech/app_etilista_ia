@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { createClient, requireUser } from '@/lib/supabase/server'
 import { checkEntitlement } from '@/lib/subscriptions/entitlements'
 import { BUCKETS } from '@/lib/storage/paths'
+import { rebuildStyleProfile } from '@/lib/style/rebuild'
 import {
   CATEGORY_LIST, COLORS, FITS, MATERIALS, PATTERNS, SEASONS, STYLES,
 } from '@/lib/wardrobe/taxonomy'
@@ -80,7 +81,7 @@ export async function updateItem(
   _prev: ItemFormState,
   formData: FormData,
 ): Promise<ItemFormState> {
-  await requireUser()
+  const user = await requireUser()
 
   const parsed = attributesSchema.safeParse(readForm(formData))
   if (!parsed.success) return explain(parsed.error)
@@ -101,6 +102,8 @@ export async function updateItem(
     console.error('[armario] no se pudo actualizar:', error.message)
     return { error: 'No hemos podido guardar los cambios.' }
   }
+
+  await refreshStyle(user.id)
 
   revalidatePath('/armario')
   revalidatePath(`/armario/${itemId}`)
@@ -147,6 +150,8 @@ export async function createItem(
     return { error: 'No hemos podido crear la prenda.' }
   }
 
+  await refreshStyle(user.id)
+
   revalidatePath('/armario')
   redirect(`/armario/${(data as { id: string }).id}`)
 }
@@ -159,7 +164,7 @@ export async function createItem(
  * La foto sí se elimina, que es lo que ocupa.
  */
 export async function deleteItem(itemId: string) {
-  await requireUser()
+  const user = await requireUser()
   const supabase = await createClient()
 
   const { data } = await supabase
@@ -181,8 +186,24 @@ export async function deleteItem(itemId: string) {
   const path = (data as { image_path: string | null } | null)?.image_path
   if (path) await supabase.storage.from(BUCKETS.clothing).remove([path])
 
+  await refreshStyle(user.id)
+
   revalidatePath('/armario')
   redirect('/armario')
+}
+
+/**
+ * Recalcula el perfil de estilo tras cambiar el armario.
+ *
+ * Va antes de cualquier `redirect()`, que lanza por diseño y cortaría lo que
+ * viniera después. Y nunca propaga su error: si el perfil no se actualiza, la
+ * prenda ya se guardó y eso es lo que la persona pidió.
+ */
+async function refreshStyle(userId: string) {
+  await rebuildStyleProfile(userId).catch((err) =>
+    console.error('[armario] no se pudo recalcular el perfil de estilo:', err),
+  )
+  revalidatePath('/estilo')
 }
 
 /** "La tengo en la lavadora" / "ya la tengo otra vez". */

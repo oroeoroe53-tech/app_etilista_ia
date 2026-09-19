@@ -4,6 +4,7 @@ import { ai } from '@/lib/ai/router'
 import { AiError, type ImageInput } from '@/lib/ai/types'
 import type { DetectedGarment } from '@/lib/ai/schemas/vision'
 import { decideMatch, type ExistingItem } from '@/lib/wardrobe/dedup'
+import { rebuildStyleProfile } from '@/lib/style/rebuild'
 import { toClothingItem } from '@/lib/wardrobe/normalize'
 import { BUCKETS, clothingImagePath } from '@/lib/storage/paths'
 import { UPLOAD_RULES } from '@/lib/subscriptions/plans'
@@ -228,6 +229,12 @@ export async function analyzePendingPhotos(userId: string): Promise<AnalyzeResul
       .from('profiles')
       .update({ onboarding_stage: result.needsConfirmation > 0 ? 'review' : 'completed' })
       .eq('id', userId)
+
+    // Ya hay armario: se puede construir el primer retrato de estilo. Es todo
+    // código, no cuesta ninguna llamada de IA.
+    await rebuildStyleProfile(userId).catch((err) =>
+      console.error('[onboarding] no se pudo calcular el perfil de estilo:', err),
+    )
 
     return result
   } catch (err) {

@@ -165,4 +165,19 @@ describe.skipIf(!hasSupabase)('onboarding de extremo a extremo', () => {
       .single()
     expect(['review', 'completed']).toContain(data?.onboarding_stage)
   })
+
+  it('construye el perfil de estilo sin gastar una segunda llamada de IA', async () => {
+    const { data: profile } = await admin
+      .from('style_profile')
+      .select('style_weights, color_weights, fit_weights, signal_count')
+      .eq('user_id', userId)
+      .single()
+
+    expect(profile?.signal_count).toBeGreaterThan(0)
+    expect(Object.keys(profile?.color_weights ?? {}).length).toBeGreaterThan(0)
+
+    // Sigue habiendo UNA sola llamada: el perfil es aritmética, no IA.
+    const { data: usage } = await admin.from('ai_usage').select('id').eq('user_id', userId)
+    expect(usage).toHaveLength(1)
+  })
 })

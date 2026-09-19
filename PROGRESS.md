@@ -3,25 +3,25 @@
 > Archivo de continuidad. Si se retoma el proyecto en una sesión nueva de Claude Code,
 > **leer primero `PLAN.md` y después este archivo** para saber en qué punto está todo.
 
-**Última actualización:** 2026-09-18
+**Última actualización:** 2026-09-19
 
 ---
 
 ## Estado actual
 
-**Fase 3 — Armario editable: COMPLETADA y verificada.**
+**Fase 4 — Perfil de estilo: COMPLETADA y verificada.**
 
 ```
 npm run typecheck           ✓ sin errores
-npm run test                ✓ 89 tests, 8 archivos
+npm run test                ✓ 129 tests, 9 archivos
 npm run lint                ✓ sin avisos
 npm run build               ✓ 20 rutas
 npm run verify:rls          ✓ 31/31 contra Supabase real
-npm run verify:integration  ✓ 17/17 de extremo a extremo
+npm run verify:integration  ✓ 18/18 de extremo a extremo
 ```
 
-**Siguiente paso:** Fase 4 (perfil de estilo: señales y pesos deterministas
-a partir de fotos, prendas e historial).
+**Siguiente paso:** Fase 5 (motor de outfits: filtros duros, generación de
+candidatos, puntuación y diversidad).
 
 ---
 
@@ -33,8 +33,8 @@ a partir de fotos, prendas e historial).
 | 1 | Foundation | ✅ Completada |
 | 2 | Onboarding ("Enséñame cómo vistes") | ✅ Completada |
 | 3 | Armario editable | ✅ Completada |
-| 4 | Perfil de estilo | ⬜ Siguiente |
-| 5 | Motor de outfits | ⬜ No iniciada |
+| 4 | Perfil de estilo | ✅ Completada |
+| 5 | Motor de outfits | ⬜ Siguiente |
 | 6 | "¿Qué me pongo?" | ⬜ No iniciada |
 | 7 | Swipe y feedback | ⬜ No iniciada |
 | 8 | Optimización, límites y observabilidad | ⬜ No iniciada |
@@ -159,6 +159,34 @@ Las claves de Gemini y OpenAI **no hacen falta todavía**: `AI_MODE=mock`.
 **Idioma**
 - Las etiquetas concuerdan en género y número: "Jersey negro", "Zapatillas
   blancas", "Vaqueros azul marino". Antes salía "Jersey negra".
+
+## Qué existe ya (Fase 4)
+
+**Modelo**
+- En la base de datos se guardan **puntos de evidencia en bruto**, no afinidades
+  de 0 a 1. Un 0 normalizado no distingue "no sé nada de este color" de "lo
+  rechaza siempre", y esa diferencia importa para el motor.
+- La afinidad se calcula al leer, con saturación: las primeras señales mueven
+  mucho el perfil y las siguientes cada vez menos. Acotada, así que ninguna
+  racha puede dominar.
+- El perfil se **recalcula entero** en vez de ir sumando cambios: cuesta
+  milisegundos y no puede desviarse. Cambiar un peso de `weights.ts` lo aplica
+  a toda la historia en el siguiente recálculo.
+
+**Señales**
+- Tener una prenda · salir en las fotos · ponérsela · gustar · encantar · rechazar
+- El motivo del rechazo decide a qué dimensión va el castigo: decir "no me gusta
+  el color" no ensucia lo que se sabe del estilo ni del corte
+- "Demasiado formal" mueve la formalidad preferida en vez de castigar atributos
+- Los puntos se reparten entre las prendas del look: uno de cuatro piezas no
+  vale cuatro veces más que uno de dos
+
+**Pantalla**
+- Retrato en castellano, sin un solo número (hay un test que lo comprueba)
+- Muestras de los colores dominantes
+- Admite en voz alta cuando todavía no sabe lo suficiente
+- Preferencias declaradas (colores vetados, formalidad por defecto), que mandan
+  sobre lo que el sistema deduzca
 
 ## Decisiones tomadas durante la Fase 1
 
