@@ -1,57 +1,134 @@
 /**
  * Pantalla de arranque.
  *
- * Al abrir la PWA instalada, entre que el sistema suelta la pantalla y React
+ * Al abrir la PWA instalada, entre que el sistema suelta su pantalla y React
  * monta la aplicación hay un hueco en blanco. Es medio segundo, pero es el
  * primer medio segundo, y un destello blanco en una aplicación oscura se nota
  * más que cualquier otra cosa que hagamos después.
  *
- * Esto pinta la marca en ese hueco. Está en el HTML desde el primer byte, así
- * que aparece antes de que se descargue una sola línea de JavaScript, y se
+ * Dos objetos: una percha y una barra. La percha cae, rebota y engancha; solo
+ * entonces la barra se rellena. Ese orden importa — primero el gesto, después la
+ * espera. Si las dos cosas pasaran a la vez, en menos de un segundo se leería
+ * como ajetreo en lugar de como una intención.
+ *
+ * Todo es CSS. Se dibuja antes de que exista una sola línea de JavaScript, y se
  * desvanece sola: no depende de que nada la quite.
+ *
+ * Nota honesta: la barra mide tiempo, no carga. No puede medir carga real,
+ * porque para eso haría falta el JavaScript que todavía no se ha ejecutado.
  */
+
+/* --- Compás de la animación ------------------------------------------------
+ * caída      40 →  480 ms
+ * balanceo  470 → 1030 ms   (arranca justo al enganchar)
+ * relleno   560 →  980 ms
+ * salida   1040 → 1280 ms
+ * -------------------------------------------------------------------------- */
 
 #splash {
   position: fixed;
   inset: 0;
   z-index: 9999;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.25rem;
   background: var(--surface);
-  /* Se aparta sola pasado el arranque. `forwards` la deja invisible e inerte. */
-  animation: splash-out 240ms ease-out 620ms forwards;
+  animation: splash-out 240ms ease-out 1040ms forwards;
 }
 
-#splash .mark {
-  font-family: var(--font-display), Georgia, serif;
-  font-size: 2.5rem;
-  letter-spacing: -0.02em;
+#splash svg {
+  width: 170px;
+  height: auto;
   color: var(--ink);
-  animation: splash-mark 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  overflow: visible;
 }
 
-#splash .rule {
-  width: 2.5rem;
-  height: 1px;
-  background: var(--ink-faint);
-  transform-origin: center;
-  animation: splash-rule 620ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both;
+/* La barra: primero solo el contorno. */
+#splash .bar-outline {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  opacity: 0.4;
 }
 
-@keyframes splash-mark {
-  from {
+/*
+ * El relleno crece de izquierda a derecha.
+ *
+ * `fill-box` hace que el origen sea el borde del propio rectángulo y no el del
+ * lienzo: sin eso, la barra crecería desde el centro del SVG.
+ */
+#splash .bar-fill {
+  fill: currentColor;
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: bar-fill 420ms cubic-bezier(0.4, 0, 0.2, 1) 560ms forwards;
+}
+
+/* Dos grupos anidados: uno cae, el otro se balancea. Separarlos permite que el
+   balanceo gire sobre el gancho y no sobre el centro de la percha. */
+#splash .drop {
+  animation: hanger-drop 440ms cubic-bezier(0.34, 1.2, 0.64, 1) 40ms both;
+}
+
+#splash .swing {
+  transform-box: view-box;
+  transform-origin: 100px 34px; /* el punto donde el gancho toca la barra */
+  animation: hanger-swing 560ms cubic-bezier(0.37, 0, 0.63, 1) 470ms both;
+}
+
+#splash .hanger {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@keyframes hanger-drop {
+  0% {
+    transform: translateY(-92px);
     opacity: 0;
-    transform: translateY(6px);
+  }
+  18% {
+    opacity: 1;
+  }
+  /* Pasa de largo y vuelve: sin este exceso, la caída parece que se apaga. */
+  58% {
+    transform: translateY(5px);
+  }
+  76% {
+    transform: translateY(-3px);
+  }
+  90% {
+    transform: translateY(1px);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 
-@keyframes splash-rule {
-  from {
-    transform: scaleX(0);
-    opacity: 0;
+@keyframes hanger-swing {
+  0% {
+    transform: rotate(0deg);
+  }
+  28% {
+    transform: rotate(-3.4deg);
+  }
+  56% {
+    transform: rotate(2deg);
+  }
+  80% {
+    transform: rotate(-0.8deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes bar-fill {
+  to {
+    transform: scaleX(1);
   }
 }
 
@@ -63,8 +140,8 @@
 }
 
 /*
- * Solo en la aplicación instalada. En el navegador la pestaña ya da contexto
- * y una pantalla de marca en cada recarga sería una molestia.
+ * Solo en la aplicación instalada. En el navegador la pestaña ya da contexto, y
+ * una animación de marca en cada recarga sería una molestia.
  */
 @media not all and (display-mode: standalone) {
   #splash {
@@ -72,12 +149,8 @@
   }
 }
 
+/* Quien pide menos movimiento no quiere ver caer nada. */
 @media (prefers-reduced-motion: reduce) {
-  #splash,
-  #splash .mark,
-  #splash .rule {
-    animation: none;
-  }
   #splash {
     display: none;
   }
