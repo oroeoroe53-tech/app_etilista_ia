@@ -9,21 +9,28 @@
 
 ## Estado actual
 
-**Fase 6 — ¿Qué me pongo?: COMPLETADA y verificada.**
+**Fase 7 — Swipe y feedback: COMPLETADA y verificada.**
 
 ```
 npm run typecheck           ✓ sin errores
-npm run test                ✓ 196 tests, 11 archivos
+npm run test                ✓ 202 tests, 12 archivos
 npm run lint                ✓ sin avisos
-npm run build               ✓ 22 rutas
+npm run build               ✓ 23 rutas
 npm run verify:rls          ✓ 31/31 contra Supabase real
-npm run verify:integration  ✓ 26/26 de extremo a extremo
+npm run verify:integration  ✓ 33/33 de extremo a extremo
 ```
 
-**El MVP ya es utilizable de principio a fin**: crear cuenta → subir fotos →
-armario → perfil → pedir looks → marcarlos como puestos.
+**El bucle de aprendizaje está cerrado.** La aplicación mejora con el uso:
+valorar looks mueve el perfil, y el perfil cambia lo que se propone.
 
-**Siguiente paso:** Fase 7 (swipe y feedback, que cierra el bucle de aprendizaje).
+**Siguiente paso:** Fase 8 (optimización: rate limiting, observabilidad,
+borrado de cuenta con Storage, caché y repaso de límites).
+
+### Sin comprobar visualmente
+
+El swipe está detrás del login y no introduzco contraseñas en formularios, así
+que los gestos táctiles, la hoja de motivos y las animaciones **no se han
+probado a mano**. La lógica sí está cubierta por tests.
 
 ---
 
@@ -38,8 +45,8 @@ armario → perfil → pedir looks → marcarlos como puestos.
 | 4 | Perfil de estilo | ✅ Completada |
 | 5 | Motor de outfits | ✅ Completada |
 | 6 | "¿Qué me pongo?" | ✅ Completada |
-| 7 | Swipe y feedback | ⬜ Siguiente |
-| 8 | Optimización, límites y observabilidad | ⬜ No iniciada |
+| 7 | Swipe y feedback | ✅ Completada |
+| 8 | Optimización, límites y observabilidad | ⬜ Siguiente |
 | 9 | Pagos (Stripe) | ⬜ Posterior al MVP |
 | 10 | Virtual try-on | ⬜ Posterior al MVP |
 
@@ -254,6 +261,34 @@ armario → filtros duros → candidatos → puntuación → diversidad → look
 - Se le pasan los motivos que el motor ya calculó, no el outfit a pelo: así no
   puede inventarse razones que el sistema no ha usado
 - Si falla, los looks se enseñan sin frase. El motor ya había decidido.
+
+## Qué existe ya (Fase 7)
+
+**Baraja**
+- Se generan 40 candidatos y se descartan los ya valorados, comparando por una
+  firma independiente del orden de las prendas. Sin eso, el motor determinista
+  enseñaría la misma baraja cada sesión.
+- Los looks **no se guardan al generar la baraja**, solo cuando alguien reacciona
+  a uno. Escribir doce filas por cada baraja abandonada es basura en la base de datos.
+- Si ya se valoró todo, se repiten los mejores y se avisa, en vez de enseñar una
+  pantalla vacía.
+
+**Gestos**
+- Arrastrar con el dedo (izquierda, derecha, arriba), botones y flechas del
+  teclado: las tres vías hacen lo mismo
+- Sellos de "Me gusta" / "No" / "Me encanta" mientras se arrastra
+- Carta siguiente visible detrás
+
+**Motivo del rechazo**
+- Se pregunta, pero el rechazo **ya está registrado** antes de abrir la hoja: se
+  puede saltar sin perder la señal
+- El motivo decide a qué dimensión va el castigo (§17)
+
+**Aprendizaje**
+- El perfil se recalcula cada cinco valoraciones y al terminar la baraja
+- "No sé" cuenta como señal vista y vale exactamente cero
+- Todo aritmética: un test de integración comprueba que el bucle entero no gasta
+  ni una llamada de IA
 
 ## Decisiones tomadas durante la Fase 1
 

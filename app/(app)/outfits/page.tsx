@@ -45,12 +45,22 @@ export default async function OutfitsPage() {
     <Screen>
       <PageTitle eyebrow="Descubre" title="Outfits" />
 
-      <Link href="/outfits/que-me-pongo" className="mb-8 block">
+      <Link href="/outfits/que-me-pongo" className="mb-3 block">
         <Card className="bg-accent text-accent-ink">
           <p className="eyebrow mb-2 text-accent-ink/60">Ahora mismo</p>
           <span className="display block text-2xl">¿Qué me pongo?</span>
           <span className="mt-1 block text-sm opacity-70">
             Dime la ocasión y te propongo tres opciones.
+          </span>
+        </Card>
+      </Link>
+
+      <Link href="/outfits/swipe" className="mb-8 block">
+        <Card>
+          <p className="eyebrow mb-2">Sin prisa</p>
+          <span className="display block text-2xl">¿Te pondrías esto?</span>
+          <span className="mt-1 block text-sm text-ink-soft">
+            Valora combinaciones y aprendo qué va contigo.
           </span>
         </Card>
       </Link>
