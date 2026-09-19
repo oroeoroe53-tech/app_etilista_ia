@@ -88,6 +88,17 @@ async function cropGarment(
       .rotate()
       .extract({ left, top, width: cropWidth, height: cropHeight })
       .resize(512, 512, { fit: 'inside', withoutEnlargement: true })
+      /*
+       * Iguala la exposición entre fotos.
+       *
+       * Cada foto se hizo con una luz distinta —una en el baño, otra en la
+       * calle, otra de noche—, y puestas juntas en una cuadrícula esa disparidad
+       * es lo que más hace parecer amateur un armario.
+       *
+       * El recorte de percentiles evita que un reflejo o una sombra dura
+       * arrastren todo el rango: se normaliza sobre el 99 % central.
+       */
+      .normalize({ lower: 1, upper: 99 })
       .jpeg({ quality: 82 })
       .toBuffer()
   } catch (err) {

@@ -7,6 +7,7 @@ import { describeGarment, LAYER_LABELS } from '@/lib/wardrobe/labels'
 import { layerOf, type Category, type Color, type Layer, type Season } from '@/lib/wardrobe/taxonomy'
 import { parseFilters, hasAnyFilter } from '@/lib/wardrobe/filters'
 import { WardrobeFilters } from '@/components/wardrobe/WardrobeFilters'
+import { TransitionLink } from '@/components/transitions/TransitionLink'
 import { Screen, PageTitle, EmptyState, Button } from '@/components/ui'
 
 export const dynamic = 'force-dynamic'
@@ -161,7 +162,11 @@ export default async function WardrobePage({
                   const nombre = describeGarment(item)
                   return (
                     <li key={item.id}>
-                      <Link href={`/armario/${item.id}`} className="block">
+                      <TransitionLink
+                        href={`/armario/${item.id}`}
+                        sharedName="garment"
+                        className="block"
+                      >
                         <div className="relative overflow-hidden rounded-2xl border border-line bg-sunken">
                           {url ? (
                             /* eslint-disable-next-line @next/next/no-img-element */
@@ -169,7 +174,7 @@ export default async function WardrobePage({
                               src={url}
                               alt={nombre}
                               loading="lazy"
-                              className="aspect-3/4 w-full object-cover"
+                              className="garment-photo aspect-3/4 w-full object-cover"
                             />
                           ) : (
                             <div className="flex aspect-3/4 w-full items-center justify-center px-2 text-center text-[10px] leading-tight text-ink-faint">
@@ -183,7 +188,7 @@ export default async function WardrobePage({
                           ) : null}
                         </div>
                         <p className="mt-1.5 truncate text-[11px] text-ink-soft">{nombre}</p>
-                      </Link>
+                      </TransitionLink>
                     </li>
                   )
                 })}

@@ -106,11 +106,135 @@ body {
   display: none;
 }
 
+/* ---------------------------------------------------------------------------
+ * Grano de papel
+ *
+ * Una capa de ruido sutilísima sobre todo. Es el truco más viejo del diseño
+ * editorial: lo que tiene textura parece impreso, y lo impreso parece caro.
+ *
+ * Va en un pseudoelemento fijo del body para que no se mueva con el scroll —
+ * si se moviera, se notaría que es una imagen y perdería todo el efecto.
+ * ------------------------------------------------------------------------- */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) body::after {
+    /* En oscuro el grano tiene que sumar luz, no restarla, o ensucia. */
+    mix-blend-mode: screen;
+    opacity: 0.03;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Tratamiento de fotos
+ *
+ * Cada foto del armario se hizo con una luz distinta: una en el baño, otra en
+ * la calle, otra de noche. Puestas juntas, esa disparidad es lo que más hace
+ * parecer amateur un armario.
+ *
+ * Un filtro común no arregla las fotos, pero las hermana: baja un poco la
+ * saturación, calienta el tono y sube el contraste. Como una película.
+ * ------------------------------------------------------------------------- */
+.garment-photo {
+  filter: saturate(0.9) contrast(1.05) brightness(1.02) sepia(0.07);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .garment-photo {
+    filter: saturate(0.85) contrast(1.08) brightness(0.96) sepia(0.05);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Transiciones entre pantallas
+ *
+ * La foto de una prenda crece hasta convertirse en su ficha, en lugar de un
+ * cambio de página seco. Es lo que más separa "aplicación" de "página web".
+ *
+ * Los navegadores que no soportan la API simplemente navegan como siempre.
+ * ------------------------------------------------------------------------- */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+::view-transition-old(root) {
+  animation: fade-out 180ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+::view-transition-new(root) {
+  animation:
+    fade-in 260ms cubic-bezier(0, 0, 0.2, 1) both,
+    rise-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* La prenda compartida entre la cuadrícula y la ficha no se funde: se desplaza. */
+::view-transition-group(garment) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::view-transition-old(garment),
+::view-transition-new(garment) {
+  /* Sin mezcla cruzada: la imagen es la misma, solo cambia de sitio y tamaño. */
+  mix-blend-mode: normal;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------------------------------------------------------------------------
+ * Detalles editoriales
+ * ------------------------------------------------------------------------- */
+
+/* Numeración de catálogo: 01, 02, 03… */
+.folio {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+}
+
+/* Filete fino de separación, como en una revista. */
+.rule {
+  height: 1px;
+  background: var(--line);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* Quien pide menos movimiento no quiere que las páginas se deslicen. */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

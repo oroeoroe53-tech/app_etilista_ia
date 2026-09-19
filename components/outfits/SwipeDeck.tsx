@@ -278,7 +278,7 @@ function CardFace({ card, behind }: { card: SwipeCard; behind?: boolean }) {
                 src={item.imageUrl}
                 alt={item.name}
                 draggable={false}
-                className="h-full w-full object-cover"
+                className="garment-photo h-full w-full object-cover"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center px-2 text-center text-[11px] leading-tight text-ink-faint">

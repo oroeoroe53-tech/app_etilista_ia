@@ -70,7 +70,8 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
         <img
           src={imageUrl}
           alt={nombre}
-          className="mb-6 aspect-3/4 w-full rounded-[var(--radius-card)] border border-line object-cover"
+          style={{ viewTransitionName: 'garment' }}
+          className="garment-photo mb-6 aspect-3/4 w-full rounded-[var(--radius-card)] border border-line object-cover"
         />
       ) : (
         <div className="mb-6 flex aspect-3/4 w-full items-center justify-center rounded-[var(--radius-card)] border border-dashed border-line bg-sunken text-sm text-ink-faint">

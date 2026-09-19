@@ -46,7 +46,7 @@ export function OutfitCard({ outfit, index }: { outfit: OutfitView; index: numbe
                   src={item.imageUrl}
                   alt={item.name}
                   loading="lazy"
-                  className="aspect-3/4 w-full rounded-2xl border border-line object-cover"
+                  className="garment-photo aspect-3/4 w-full rounded-2xl border border-line object-cover"
                 />
               ) : (
                 <div className="flex aspect-3/4 w-full items-center justify-center rounded-2xl border border-line bg-sunken px-2 text-center text-[10px] leading-tight text-ink-faint">

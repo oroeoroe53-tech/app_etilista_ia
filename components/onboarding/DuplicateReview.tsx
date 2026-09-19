@@ -116,7 +116,7 @@ function GarmentCard({
         <img
           src={imageUrl}
           alt={label}
-          className="aspect-3/4 w-full rounded-2xl border border-line object-cover"
+          className="garment-photo aspect-3/4 w-full rounded-2xl border border-line object-cover"
         />
       ) : (
         <div className="flex aspect-3/4 w-full items-center justify-center rounded-2xl border border-line bg-sunken text-xs text-ink-faint">
