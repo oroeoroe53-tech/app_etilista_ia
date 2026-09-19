@@ -9,19 +9,21 @@
 
 ## Estado actual
 
-**Fase 4 — Perfil de estilo: COMPLETADA y verificada.**
+**Fase 5 — Motor de outfits: COMPLETADA y verificada.**
 
 ```
 npm run typecheck           ✓ sin errores
-npm run test                ✓ 129 tests, 9 archivos
+npm run test                ✓ 180 tests, 10 archivos
 npm run lint                ✓ sin avisos
 npm run build               ✓ 20 rutas
 npm run verify:rls          ✓ 31/31 contra Supabase real
 npm run verify:integration  ✓ 18/18 de extremo a extremo
 ```
 
-**Siguiente paso:** Fase 5 (motor de outfits: filtros duros, generación de
-candidatos, puntuación y diversidad).
+El motor existe y está probado, pero **todavía no tiene pantalla**: se conecta
+en la Fase 6 ("¿Qué me pongo?").
+
+**Siguiente paso:** Fase 6 (pantalla de "¿Qué me pongo?", clima y explicaciones).
 
 ---
 
@@ -34,8 +36,8 @@ candidatos, puntuación y diversidad).
 | 2 | Onboarding ("Enséñame cómo vistes") | ✅ Completada |
 | 3 | Armario editable | ✅ Completada |
 | 4 | Perfil de estilo | ✅ Completada |
-| 5 | Motor de outfits | ⬜ Siguiente |
-| 6 | "¿Qué me pongo?" | ⬜ No iniciada |
+| 5 | Motor de outfits | ✅ Completada |
+| 6 | "¿Qué me pongo?" | ⬜ Siguiente |
 | 7 | Swipe y feedback | ⬜ No iniciada |
 | 8 | Optimización, límites y observabilidad | ⬜ No iniciada |
 | 9 | Pagos (Stripe) | ⬜ Posterior al MVP |
@@ -187,6 +189,45 @@ Las claves de Gemini y OpenAI **no hacen falta todavía**: `AI_MODE=mock`.
 - Admite en voz alta cuando todavía no sabe lo suficiente
 - Preferencias declaradas (colores vetados, formalidad por defecto), que mandan
   sobre lo que el sistema deduzca
+
+## Qué existe ya (Fase 5)
+
+`lib/outfits/`, determinista y sin IA. Un test comprueba que no puede importarla.
+
+**Flujo**
+armario → filtros duros → candidatos → puntuación → diversidad → looks
+
+**Filtros duros**
+- Disponibilidad, temporada, temperatura, lluvia, formalidad, colores vetados y
+  descanso de la prenda
+- **Ningún filtro puede dejar un hueco vacío**: si no queda nada que ponerse, se
+  relajan en orden y queda constancia de cuál cedió
+- La disponibilidad no se relaja nunca: proponer algo que está en la lavadora
+  destruye más confianza que no proponer
+
+**Combinatoria**
+- Topes por hueco (8 arriba y abajo, 6 calzado, 4 abrigo) → ~1.900 combinaciones
+  en el peor caso, frente a las decenas de miles del enfoque ingenuo
+- El tope global de seguridad no debe saltar nunca en uso normal, porque corta
+  el bucle a medias; hay un test que lo vigila
+- Los accesorios se eligen **después**, sobre el look ganador
+
+**Puntuación**
+- Color 30 · estilo 25 · ocasión 20 · clima 10 · gusto 10 · novedad 5
+- El peso del gusto personal **se escala por la confianza del perfil**, y lo que
+  se le quita va a ocasión y clima. Con cuatro señales el sistema no tiene
+  derecho a opinar sobre el gusto de nadie.
+- La dispersión de formalidad penaliza aparte de la media: etiqueta + estar por
+  casa promedia 3 y es un despropósito
+
+**Color**
+- Neutros que combinan con todo, un protagonista, y como mucho un segundo que
+  armonice. Rueda de color para distinguir análogos y complementarios del
+  conflicto intermedio.
+
+**Diversidad**
+- Selección voraz con penalización por parecido: el segundo y el tercer look no
+  son variaciones del primero
 
 ## Decisiones tomadas durante la Fase 1
 
