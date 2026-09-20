@@ -15,6 +15,7 @@ import { describeGarment } from '@/lib/wardrobe/labels'
 import { ai } from '@/lib/ai/router'
 import { OCCASIONS } from '@/lib/wardrobe/taxonomy'
 import { checkRateLimit, rateLimitMessage, RATE_LIMITS } from '@/lib/security/rate-limit'
+import { track } from '@/lib/observability/funnel'
 
 /**
  * "¿Qué me pongo?"
@@ -152,6 +153,7 @@ export async function requestOutfits(
   }
 
   await consumeEntitlement(user.id, 'request_outfits')
+  track('first_proposal', user.id)
 
   revalidatePath('/outfits')
   redirect(`/outfits/propuesta/${requestId}`)

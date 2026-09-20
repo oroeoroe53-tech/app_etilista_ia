@@ -114,6 +114,16 @@ export default async function ProfilePage() {
           </span>
         </Link>
 
+        <Link
+          href="/privacidad"
+          className="flex items-center justify-between gap-4 border-t border-line py-3.5"
+        >
+          <span className="text-[12.5px] leading-[1.35] text-ink">Qué hago con tus datos</span>
+          <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+            →
+          </span>
+        </Link>
+
         <form action={signOut}>
           <button
             type="submit"

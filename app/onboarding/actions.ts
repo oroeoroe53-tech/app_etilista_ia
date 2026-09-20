@@ -8,6 +8,8 @@ import { checkEntitlement } from '@/lib/subscriptions/entitlements'
 import { ONBOARDING_PHOTOS, UPLOAD_RULES } from '@/lib/subscriptions/plans'
 import { getPlan } from '@/lib/subscriptions/entitlements'
 import { pathBelongsTo } from '@/lib/storage/paths'
+import { track } from '@/lib/observability/funnel'
+import { purgeOriginalPhotos } from '@/lib/onboarding/retention'
 
 /**
  * Acciones del onboarding.
@@ -74,6 +76,7 @@ export async function registerUploadedPhotos(paths: string[]): Promise<RegisterR
   }
 
   await supabase.from('profiles').update({ onboarding_stage: 'photos_uploaded' }).eq('id', user.id)
+  track('photos_uploaded', user.id)
 
   revalidatePath('/onboarding')
   return { ok: true, count: parsed.data.paths.length }
@@ -135,6 +138,14 @@ export async function finishOnboarding() {
   const supabase = await createClient()
 
   await supabase.from('profiles').update({ onboarding_stage: 'completed' }).eq('id', user.id)
+
+  /*
+   * Las fotos originales ya no hacen falta: el armario está montado y de cada
+   * prenda queda su recorte. Se espera a que termine —son unos milisegundos y
+   * quien acaba de pulsar "listo" no nota la diferencia— para que el borrado
+   * ocurra de verdad y no quede colgando de una promesa sin dueño.
+   */
+  await purgeOriginalPhotos(user.id).catch(() => undefined)
 
   revalidatePath('/', 'layout')
   return { ok: true }

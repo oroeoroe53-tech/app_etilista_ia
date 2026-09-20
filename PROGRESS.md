@@ -436,6 +436,51 @@ entrar, crear cuenta y Perfil.
 - Lo que se lee del navegador va con `useSyncExternalStore`, no con un efecto:
   son estados externos que pueden cambiar solos.
 
+**Demostración pública** (`/demo`, `lib/demo/wardrobe.ts`)
+
+Nadie se registra para ver funcionar algo que no ha visto funcionar. Tres
+pantallas sin cuenta —portada, armario y tres opciones— con diecisiete prendas
+de ejemplo que pasan por **el motor de verdad**, no por capturas. Un test
+(`tests/demo.test.ts`) comprueba mes a mes que sigue componiendo tres looks:
+la primera versión del armario solo daba uno en julio.
+
+**Recuperar la contraseña** (`/recuperar`)
+
+No existía. Olvidarla significaba perder el armario, las fotos y el perfil sin
+más salida que escribir a alguien. La respuesta es la misma exista el correo o
+no, para no convertir el formulario en un buscador de cuentas.
+
+⚠️ **Requiere configuración en Supabase**: añadir `<dominio>/auth/callback` a
+la lista de *Redirect URLs* (Authentication → URL Configuration). Sin eso el
+enlace del correo no valida.
+
+**Medición del embudo** (`0006_funnel.sql`, `lib/observability/funnel.ts`)
+
+Siete momentos contados: demo, instalación, registro, fotos, análisis, primera
+propuesta y "ha abierto la aplicación hoy". Sin terceros, sin cookies y por
+tanto sin banner de consentimiento. Se escribe con `after()`, así que no hace
+esperar a nadie, y nunca lanza.
+
+Para mirarlo, en el editor SQL de Supabase:
+`select * from funnel_summary;` y `select * from funnel_retention;`
+
+**Las fotos originales se borran** (`0007_photo_retention.sql`, `lib/onboarding/retention.ts`)
+
+Al cerrar el onboarding se borran de Storage los originales ya analizados. Se
+conserva la fila —que hubo análisis, cuándo y qué se dedujo— pero no la imagen.
+Menos exposición, menos RGPD que justificar, menos factura. Y una frase que se
+puede decir en el anuncio, que está escrita en `/privacidad` y en la pantalla
+donde se piden las fotos.
+
+La limpieza busca **todo lo pendiente**, no solo lo de la sesión: quien ya tenía
+fotos viejas las pierde la primera vez que complete un onboarding.
+
+**Un fallo que encontró la demostración**
+
+`describeGarment` repetía el estampado cuando la prenda ya se llamaba así:
+todos los vaqueros del mundo se llamaban "Vaqueros azul marino vaqueros". No
+era de la demo, era de cualquier armario. Arreglado y con test.
+
 **Pendiente de verificar a mano**
 - Las diez pantallas se comprobaron con una ruta de preview desechable (ya
   borrada). **Con datos reales y sesión iniciada no se han visto.**

@@ -30,9 +30,20 @@ export default function RegisterPage() {
         porque instalarla no exige tener cuenta. Discreta: la tarea del día es
         entrar, no instalar.
       */}
-      <p className="mt-5 text-center text-[10.5px] text-ink-faint">
+      {/*
+        Las dos puertas para quien todavía no es nadie aquí: ver funcionar la
+        aplicación sin dar nada, y llevársela al móvil. Discretas, porque la
+        tarea de esta pantalla es entrar.
+      */}
+      <p className="mt-5 text-center text-[10.5px] leading-[1.8] text-ink-faint">
+        <Link href="/demo" className="text-ink-soft underline underline-offset-4">
+          Ver cómo funciona sin registrarse
+        </Link>
+        <span className="mx-2" aria-hidden>
+          ·
+        </span>
         <Link href="/instalar" className="underline underline-offset-4">
-          Cómo ponerla en tu móvil
+          Ponerla en tu móvil
         </Link>
       </p>
     </>

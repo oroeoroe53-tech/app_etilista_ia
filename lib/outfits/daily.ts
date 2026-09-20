@@ -6,6 +6,7 @@ import { generateOutfits } from './engine'
 import { loadWardrobe, saveOutfits } from './persist'
 import { seasonOf } from './filters'
 import { explainFromHighlights, nameOutfit } from './name'
+import { track } from '@/lib/observability/funnel'
 
 /**
  * El look de hoy.
@@ -75,6 +76,13 @@ export async function getDailyLook(
 
   const existing = await loadExisting(supabase, today)
   if (existing) return existing
+
+  /*
+   * A partir de aquí solo se llega una vez al día: si el look de hoy ya
+   * estaba, la función ha vuelto arriba. Eso hace de este punto el contador
+   * de "ha abierto la aplicación hoy" sin necesidad de ninguna lógica extra.
+   */
+  track('opened_day', userId)
 
   const [{ data: profileRow }, { data: prefsRow }] = await Promise.all([
     supabase.from('style_profile').select('*').eq('user_id', userId).maybeSingle(),

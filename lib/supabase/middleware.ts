@@ -4,15 +4,19 @@ import { publicEnv } from '@/lib/env'
 
 /** Rutas accesibles sin sesión. */
 /*
- * `/instalar` es pública a propósito: se llega desde un anuncio, antes de tener
- * cuenta. Pedir registro para explicar cómo instalar sería pedir las dos cosas
- * difíciles a la vez.
+ * Lo público es lo que tiene que ver alguien que llega desde un anuncio y
+ * todavía no tiene cuenta: la demostración, cómo instalarla, qué se hace con
+ * sus fotos, y cómo recuperar la contraseña que ha olvidado. Pedir cuenta para
+ * cualquiera de esas cuatro cosas sería pedir las dos difíciles a la vez.
  */
 const PUBLIC_PREFIXES = [
   '/login',
   '/register',
+  '/recuperar',
   '/auth',
+  '/demo',
   '/instalar',
+  '/privacidad',
   '/manifest.webmanifest',
   '/icons',
 ]

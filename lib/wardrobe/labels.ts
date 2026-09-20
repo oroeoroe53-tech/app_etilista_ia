@@ -269,11 +269,22 @@ export function describeGarment(item: {
   const color = COLOR_LABELS[item.primary_color as Color]
   if (color) parts.push(agree(color, noun))
 
-  // El estampado solo se menciona si aporta: "lisa" no distingue nada.
+  /*
+   * El estampado solo se menciona si aporta algo.
+   *
+   * Dos casos en los que no aporta:
+   *
+   *  · "liso", que no distingue nada de nada.
+   *  · Cuando la prenda ya se llama así. Unos `jeans` son "Vaqueros" y su
+   *    estampado `denim` es "vaqueros", de modo que sin esta comprobación cada
+   *    pantalón del armario se llamaría "Vaqueros azul marino vaqueros". En
+   *    cambio una chaqueta vaquera sí lo necesita: ahí "vaquera" es lo que la
+   *    distingue de las demás chaquetas.
+   */
   const pattern = item.pattern ? PATTERN_LABELS[item.pattern as Pattern] : null
   if (pattern && item.pattern !== 'solid') {
     const word = agree(pattern, noun)
-    if (word) parts.push(word)
+    if (word && word.toLowerCase() !== noun.label.toLowerCase()) parts.push(word)
   }
 
   const fit = item.fit ? FIT_LABELS[item.fit as Fit] : null

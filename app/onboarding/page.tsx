@@ -56,9 +56,17 @@ export default async function OnboardingPage() {
         <Point>Con eso montaré tu armario inicial.</Point>
       </ul>
 
-      <p className="mt-7 text-[10.5px] leading-[1.5] text-ink-faint">
-        Tus fotos son privadas. No se comparten con nadie y puedes borrarlas cuando
-        quieras.
+      {/*
+        El momento exacto en el que alguien duda. Decirle aquí que las fotos se
+        borran solas vale más que decírselo en cualquier otra pantalla.
+      */}
+      <p className="mt-7 text-[10.5px] leading-[1.6] text-ink-faint">
+        Tus fotos son privadas y no se comparten con nadie. En cuanto termino de
+        leerlas, <span className="text-ink-soft">el original se borra solo</span>:
+        me quedo con el recorte de cada prenda, no con la foto.{' '}
+        <Link href="/privacidad" className="underline underline-offset-4">
+          Cómo funciona
+        </Link>
       </p>
 
       <Link

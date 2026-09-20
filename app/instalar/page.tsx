@@ -1,5 +1,13 @@
 import Link from 'next/link'
 import { InstallGuide } from '@/components/pwa/InstallGuide'
+import { track } from '@/lib/observability/funnel'
+
+/*
+ * Dinámica, no estática. Se renderiza en cada visita porque cada visita se
+ * cuenta: prerenderizada, `track()` se ejecutaría una vez en el build y nunca
+ * más — y además `after()` necesita una petición de verdad para existir.
+ */
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'Llévatela al móvil · Estilista',
@@ -17,6 +25,8 @@ export const metadata = {
  * que se hace una vez, el primer día, y ya no se vuelve.
  */
 export default function InstallPage() {
+  track('install_viewed')
+
   return (
     <main
       className="mx-auto w-full max-w-[30rem] pt-safe pb-16"

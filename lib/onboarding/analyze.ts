@@ -9,6 +9,8 @@ import { toClothingItem } from '@/lib/wardrobe/normalize'
 import { BUCKETS, clothingImagePath } from '@/lib/storage/paths'
 import { UPLOAD_RULES } from '@/lib/subscriptions/plans'
 import { consumeEntitlement } from '@/lib/subscriptions/entitlements'
+import { track } from '@/lib/observability/funnel'
+import { purgeOriginalPhotos } from './retention'
 import type { Category, Color, Fit, Material, Pattern } from '@/lib/wardrobe/taxonomy'
 
 /**
@@ -240,6 +242,17 @@ export async function analyzePendingPhotos(userId: string): Promise<AnalyzeResul
       .from('profiles')
       .update({ onboarding_stage: result.needsConfirmation > 0 ? 'review' : 'completed' })
       .eq('id', userId)
+
+    track('analysis_done', userId)
+
+    /*
+     * Si no hay nada que confirmar, el onboarding acaba aquí mismo y las fotos
+     * originales ya han hecho su trabajo. Cuando sí hay que revisar, la
+     * limpieza espera a que se cierre la revisión (`finishOnboarding`).
+     */
+    if (result.needsConfirmation === 0) {
+      await purgeOriginalPhotos(userId).catch(() => undefined)
+    }
 
     // Ya hay armario: se puede construir el primer retrato de estilo. Es todo
     // código, no cuesta ninguna llamada de IA.

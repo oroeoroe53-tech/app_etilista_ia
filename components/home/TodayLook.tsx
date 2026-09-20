@@ -23,7 +23,21 @@ export interface TodayLookView {
  * cinco. No es una omisión: la cuenta real va escrita arriba ("4 prendas"), y
  * una cuadrícula de cinco huecos diminutos comunica menos que tres grandes.
  */
-export function TodayLook({ look }: { look: TodayLookView }) {
+export function TodayLook({
+  look,
+  /*
+   * En la demostración no hay sesión ni diario donde apuntar nada, así que el
+   * botón principal deja de guardar y lleva a crear la cuenta. Se conserva la
+   * etiqueta: quien lo pulsa acaba de decidir que se pondría ese look, y ese
+   * es el momento exacto en el que merece la pena preguntarle si quiere el
+   * suyo. Cambiar el texto a "Registrarse" convertiría una decisión sobre ropa
+   * en un trámite.
+   */
+  href,
+}: {
+  look: TodayLookView
+  href?: string
+}) {
   const [worn, setWorn] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState(false)
@@ -89,7 +103,18 @@ export function TodayLook({ look }: { look: TodayLookView }) {
         tu diario" sin dejar llegar al diario sería contar dónde está algo y no
         abrir la puerta.
       */}
-      {worn ? (
+      {href ? (
+        <div className="mt-4 flex gap-2.5">
+          <Link href={href} className="flex-1">
+            <Button fullWidth>Me lo pongo</Button>
+          </Link>
+          <Link href={href}>
+            <Button variant="secondary" className="whitespace-nowrap">
+              Otra idea
+            </Button>
+          </Link>
+        </div>
+      ) : worn ? (
         <Link href="/diario" className="mt-4 block">
           <Button variant="secondary" fullWidth>
             Guardado en tu diario →

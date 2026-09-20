@@ -118,3 +118,28 @@ describe('cobertura de la taxonomía', () => {
     expect(colorLabel('navy')).toBe('Azul marino')
   })
 })
+
+describe('el estampado no se repite con el nombre', () => {
+  it('unos vaqueros no son "vaqueros azules vaqueros"', () => {
+    // `jeans` se llama "Vaqueros" y el estampado `denim` también es "vaquero".
+    // Sin la comprobación, cada pantalón del armario lo decía dos veces.
+    const nombre = describeGarment({
+      category: 'jeans',
+      primary_color: 'navy',
+      pattern: 'denim',
+      fit: 'regular',
+    })
+    expect(nombre).toBe('Vaqueros azul marino')
+  })
+
+  it('pero una chaqueta vaquera sí lo lleva', () => {
+    // Aquí "vaquera" es justo lo que la distingue de las demás chaquetas.
+    const nombre = describeGarment({
+      category: 'jacket',
+      primary_color: 'blue',
+      pattern: 'denim',
+      fit: 'regular',
+    })
+    expect(nombre.toLowerCase()).toContain('vaquera')
+  })
+})
