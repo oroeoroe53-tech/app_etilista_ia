@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient, getCurrentUser } from '@/lib/supabase/server'
 import { signMany } from '@/lib/storage/signed'
 import { BUCKETS } from '@/lib/storage/paths'
-import { Screen, PageTitle, EmptyState, Button, PhotoSlot } from '@/components/ui'
+import { Screen, PageTitle, EmptyState, Button, PhotoSlot, QuietRow } from '@/components/ui'
 
 export const dynamic = 'force-dynamic'
 
@@ -166,29 +166,6 @@ export default async function OutfitsPage() {
         </section>
       )}
     </Screen>
-  )
-}
-
-/** Fila discreta: existe, se encuentra, y no pide el turno. */
-function QuietRow({
-  href,
-  title,
-  children,
-}: {
-  href: string
-  title: string
-  children: React.ReactNode
-}) {
-  return (
-    <Link href={href} className="flex items-center justify-between gap-4 border-t border-line py-3.5 last:border-b">
-      <span className="min-w-0">
-        <span className="display block text-[17px]">{title}</span>
-        <span className="mt-0.5 block truncate text-[11px] text-ink-soft">{children}</span>
-      </span>
-      <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
-        →
-      </span>
-    </Link>
   )
 }
 

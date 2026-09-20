@@ -398,6 +398,19 @@ los iconos, que se regeneraron.
 | "Notificación diaria → 8:00" | No hay notificaciones. |
 | Tercera tira de filtros del armario | El diseño maqueta dos; se mantiene la de temporada y "guardadas" porque es la única puerta a las prendas archivadas. |
 
+**El diario y la maleta.** El handoff no les da sitio. En la primera versión
+quedaron colgando solo de la pantalla de Outfits, que en la práctica es lo mismo
+que haberlos quitado: lo que no se ve al abrir, no existe. Van en dos filas finas
+al pie de la portada, después de lo que sí responde a la pregunta del día. Y
+"Guardado en tu diario" es ahora un enlace al diario — decirlo sin dejar llegar
+era contar dónde está algo y no abrir la puerta.
+
+**La pantalla de arranque no se tocó.** La percha que cae y engancha en la barra
+sigue en `app/layout.tsx` + `app/splash.css`, intacta. Solo se ve en la PWA
+instalada (`display-mode: standalone`), que es como se decidió. Si la PWA ya
+estaba instalada, hay que cerrarla del todo para que el service worker sirva el
+CSS nuevo.
+
 **Pendiente de verificar a mano**
 - Las diez pantallas se comprobaron con una ruta de preview desechable (ya
   borrada). **Con datos reales y sesión iniciada no se han visto.**

@@ -69,6 +69,38 @@ export function BackLink({ href, children }: { href: string; children: React.Rea
   )
 }
 
+/**
+ * Fila discreta hacia otra pantalla.
+ *
+ * Para lo que tiene que estar y no tiene que gritar: el diario, la maleta.
+ * Existe, se encuentra buscándola, y no le quita el sitio a lo que sí es la
+ * respuesta de la pantalla.
+ */
+export function QuietRow({
+  href,
+  title,
+  children,
+}: {
+  href: string
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center justify-between gap-4 border-t border-line py-3.5 last:border-b"
+    >
+      <span className="min-w-0">
+        <span className="display block text-[17px]">{title}</span>
+        <span className="mt-0.5 block truncate text-[11px] text-ink-soft">{children}</span>
+      </span>
+      <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+        →
+      </span>
+    </Link>
+  )
+}
+
 export function Card({
   children,
   className,

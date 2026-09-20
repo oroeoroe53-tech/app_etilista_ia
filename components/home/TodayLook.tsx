@@ -78,16 +78,35 @@ export function TodayLook({ look }: { look: TodayLookView }) {
         <p className="mt-1.5 text-[11.5px] leading-[1.5] text-ink-soft">{look.explanation}</p>
       ) : null}
 
-      <div className="mt-4 flex gap-2.5">
-        <Button className="flex-1" disabled={worn || isPending} onClick={onWear}>
-          {worn ? 'Guardado en tu diario' : isPending ? 'Guardando…' : 'Me lo pongo'}
-        </Button>
-        <Link href="/outfits/que-me-pongo">
-          <Button variant="secondary" className="whitespace-nowrap">
-            Otra idea
+      {/*
+        Una vez guardado, la fila deja de ser dos botones y pasa a ser uno solo
+        a todo lo ancho.
+
+        No es capricho de maqueta: "Guardado en tu diario" no cabe en media
+        fila y parte en dos líneas. Y encaja con lo que ha pasado — ya has
+        decidido qué te pones hoy, así que lo único que queda por hacer con
+        esta tarjeta es ir a ver dónde ha quedado apuntado. Decir "guardado en
+        tu diario" sin dejar llegar al diario sería contar dónde está algo y no
+        abrir la puerta.
+      */}
+      {worn ? (
+        <Link href="/diario" className="mt-4 block">
+          <Button variant="secondary" fullWidth>
+            Guardado en tu diario →
           </Button>
         </Link>
-      </div>
+      ) : (
+        <div className="mt-4 flex gap-2.5">
+          <Button className="flex-1" disabled={isPending} onClick={onWear}>
+            {isPending ? 'Guardando…' : 'Me lo pongo'}
+          </Button>
+          <Link href="/outfits/que-me-pongo">
+            <Button variant="secondary" className="whitespace-nowrap">
+              Otra idea
+            </Button>
+          </Link>
+        </div>
+      )}
 
       {error ? (
         <p role="alert" className="mt-2.5 text-[11px] text-danger">

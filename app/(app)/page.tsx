@@ -8,7 +8,7 @@ import { getDailyLook } from '@/lib/outfits/daily'
 import { findNeglected, neglectMessage, neglectCutoffs } from '@/lib/wardrobe/neglected'
 import { describeGarment } from '@/lib/wardrobe/labels'
 import { TodayLook } from '@/components/home/TodayLook'
-import { PhotoSlot } from '@/components/ui'
+import { PhotoSlot, QuietRow } from '@/components/ui'
 
 /**
  * Portada.
@@ -248,6 +248,25 @@ export default async function HomePage() {
           </li>
         </ul>
       </section>
+
+      {/*
+        El diario y la maleta.
+
+        El rediseño no les daba sitio en la portada y se quedaron colgando solo
+        de la pantalla de Outfits, donde hay que ir a buscarlos a propósito. Eso
+        es lo mismo que haberlos quitado: lo que no se ve al abrir, no existe.
+
+        Vuelven aquí abajo, en filas finas, después de lo que sí responde a la
+        pregunta del día. Presentes sin discutirle el sitio a la tarjeta.
+      */}
+      <nav className="mt-7">
+        <QuietRow href="/diario" title="Diario">
+          Lo que te has ido poniendo
+        </QuietRow>
+        <QuietRow href="/outfits/maleta" title="La maleta">
+          Qué meter para un viaje
+        </QuietRow>
+      </nav>
     </div>
   )
 }
