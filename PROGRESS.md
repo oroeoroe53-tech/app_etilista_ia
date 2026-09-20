@@ -419,6 +419,23 @@ era contar dónde está algo y no abrir la puerta.
 Si la PWA ya estaba instalada, hay que cerrarla del todo para que el service
 worker suelte el CSS viejo.
 
+**Instalación como PWA** (`/instalar`, `components/pwa/InstallGuide.tsx`)
+
+Pública a propósito: se llega desde un anuncio, antes de tener cuenta. No está
+en la barra de navegación —se hace una vez y no se vuelve— sino enlazada desde
+entrar, crear cuenta y Perfil.
+
+- Donde el navegador avisa con `beforeinstallprompt` (Chrome, Edge) sale un
+  **botón** y nadie lee instrucciones. El evento llega antes de que React se
+  hidrate, así que se captura con un script en línea en el layout y se guarda.
+- Safari no tiene esa API, así que en iPhone van los pasos a mano. El
+  dispositivo se detecta y se puede cambiar con los chips.
+- **Detecta el navegador dentro de otra aplicación** (Instagram, TikTok…) y lo
+  dice lo primero: desde ahí no se puede instalar, y ninguna instrucción lo
+  arregla. Es justo por donde llega quien ve un anuncio.
+- Lo que se lee del navegador va con `useSyncExternalStore`, no con un efecto:
+  son estados externos que pueden cambiar solos.
+
 **Pendiente de verificar a mano**
 - Las diez pantallas se comprobaron con una ruta de preview desechable (ya
   borrada). **Con datos reales y sesión iniciada no se han visto.**

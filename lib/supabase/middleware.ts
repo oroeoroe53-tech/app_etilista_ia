@@ -3,7 +3,19 @@ import { createServerClient } from '@supabase/ssr'
 import { publicEnv } from '@/lib/env'
 
 /** Rutas accesibles sin sesión. */
-const PUBLIC_PREFIXES = ['/login', '/register', '/auth', '/manifest.webmanifest', '/icons']
+/*
+ * `/instalar` es pública a propósito: se llega desde un anuncio, antes de tener
+ * cuenta. Pedir registro para explicar cómo instalar sería pedir las dos cosas
+ * difíciles a la vez.
+ */
+const PUBLIC_PREFIXES = [
+  '/login',
+  '/register',
+  '/auth',
+  '/instalar',
+  '/manifest.webmanifest',
+  '/icons',
+]
 
 function isPublic(pathname: string) {
   return PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))

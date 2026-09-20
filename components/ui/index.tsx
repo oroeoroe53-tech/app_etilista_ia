@@ -221,7 +221,9 @@ export function Chip({
           : 'border-[color-mix(in_srgb,var(--ink)_16%,transparent)] bg-transparent text-ink-soft',
       )}
       {...props}
-    />
+    >
+      {children}
+    </button>
   )
 }
 

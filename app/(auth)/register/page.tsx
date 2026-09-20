@@ -23,6 +23,18 @@ export default function RegisterPage() {
           Entrar
         </Link>
       </p>
+      {/*
+        La puerta de la instalación.
+
+        Va aquí porque es la primera pantalla que ve quien llega desde fuera, y
+        porque instalarla no exige tener cuenta. Discreta: la tarea del día es
+        entrar, no instalar.
+      */}
+      <p className="mt-5 text-center text-[10.5px] text-ink-faint">
+        <Link href="/instalar" className="underline underline-offset-4">
+          Cómo ponerla en tu móvil
+        </Link>
+      </p>
     </>
   )
 }

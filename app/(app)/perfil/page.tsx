@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/supabase/server'
 import { Screen, Meter } from '@/components/ui'
@@ -98,6 +99,21 @@ export default async function ProfilePage() {
 
       {/* --- Ajustes -------------------------------------------------------- */}
       <div className="mt-7">
+        {/*
+          La instalación también desde aquí, no solo desde la pantalla de entrar:
+          mucha gente usa la web unos días antes de decidirse a instalarla, y
+          para entonces ya no vuelve a pasar por el login.
+        */}
+        <Link
+          href="/instalar"
+          className="flex items-center justify-between gap-4 border-t border-line py-3.5"
+        >
+          <span className="text-[12.5px] leading-[1.35] text-ink">Ponerla en tu móvil</span>
+          <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+            →
+          </span>
+        </Link>
+
         <form action={signOut}>
           <button
             type="submit"

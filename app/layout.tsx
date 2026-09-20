@@ -49,6 +49,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es" className={`${inter.variable} ${displaySerif.variable}`}>
       <body>
         {/*
+          El navegador avisa de que la aplicación se puede instalar con
+          `beforeinstallprompt`, y lo hace **antes** de que React se hidrate: si
+          se esperara a montar un componente, el aviso ya habría pasado y no
+          habría forma de ofrecer el botón de instalar.
+
+          Por eso se escucha aquí, en línea, y se guarda. `/instalar` lo recoge.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__pwaPrompt=e;window.dispatchEvent(new Event('pwa-installable'))})",
+          }}
+        />
+        {/*
           Va en el HTML desde el primer byte, antes de cualquier JavaScript, para
           cubrir el destello blanco entre que se abre la aplicación y React monta
           la interfaz.
