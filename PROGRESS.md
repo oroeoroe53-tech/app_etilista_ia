@@ -405,11 +405,19 @@ al pie de la portada, después de lo que sí responde a la pregunta del día. Y
 "Guardado en tu diario" es ahora un enlace al diario — decirlo sin dejar llegar
 era contar dónde está algo y no abrir la puerta.
 
-**La pantalla de arranque no se tocó.** La percha que cae y engancha en la barra
-sigue en `app/layout.tsx` + `app/splash.css`, intacta. Solo se ve en la PWA
-instalada (`display-mode: standalone`), que es como se decidió. Si la PWA ya
-estaba instalada, hay que cerrarla del todo para que el service worker sirva el
-CSS nuevo.
+**La pantalla de arranque.** El rediseño no la tocó (`git diff` sobre
+`app/splash.css` salió vacío). Después, a petición, dos cambios:
+
+- **Se ve también en el navegador.** Antes estaba detrás de
+  `display-mode: standalone`. El argumento original seguía siendo válido —la
+  pestaña ya da contexto— pero pesa menos que poder verla sin instalar nada.
+  Solo sale en cargas completas: navegar entre pantallas no remonta ese nodo.
+- **Un ~40 % más lenta**: de 1,28 s a 1,77 s en total. La percha llegaba a la
+  barra antes de que el ojo la hubiera encontrado, y un gesto que hay que
+  adivinar no es un gesto.
+
+Si la PWA ya estaba instalada, hay que cerrarla del todo para que el service
+worker suelte el CSS viejo.
 
 **Pendiente de verificar a mano**
 - Las diez pantallas se comprobaron con una ruta de preview desechable (ya

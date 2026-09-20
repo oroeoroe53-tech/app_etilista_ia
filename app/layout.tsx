@@ -50,17 +50,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {/*
           Va en el HTML desde el primer byte, antes de cualquier JavaScript, para
-          cubrir el destello blanco entre que el sistema suelta la pantalla de
-          arranque y React monta la aplicación. Se desvanece sola con CSS y solo
-          aparece en la PWA instalada.
-        */}
-        {/*
-          Va en el HTML desde el primer byte, antes de cualquier JavaScript, para
-          cubrir el destello blanco entre que el sistema suelta su pantalla de
-          arranque y React monta la aplicación.
+          cubrir el destello blanco entre que se abre la aplicación y React monta
+          la interfaz.
 
           Dos objetos y nada más: la percha cae, rebota, engancha en la barra, y
-          solo entonces la barra se rellena. Todo con CSS; se desvanece sola.
+          solo entonces la barra se rellena. Todo con CSS; se desvanece sola, sin
+          depender de que nada la quite.
         */}
         <div id="splash" aria-hidden>
           <svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">

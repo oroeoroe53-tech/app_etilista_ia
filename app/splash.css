@@ -1,15 +1,14 @@
 /**
  * Pantalla de arranque.
  *
- * Al abrir la PWA instalada, entre que el sistema suelta su pantalla y React
- * monta la aplicación hay un hueco en blanco. Es medio segundo, pero es el
- * primer medio segundo, y un destello blanco en una aplicación oscura se nota
- * más que cualquier otra cosa que hagamos después.
+ * Entre que se abre la aplicación y React monta la interfaz hay un hueco en
+ * blanco. Es medio segundo, pero es el primer medio segundo, y un destello
+ * blanco se nota más que cualquier otra cosa que hagamos después.
  *
  * Dos objetos: una percha y una barra. La percha cae, rebota y engancha; solo
  * entonces la barra se rellena. Ese orden importa — primero el gesto, después la
- * espera. Si las dos cosas pasaran a la vez, en menos de un segundo se leería
- * como ajetreo en lugar de como una intención.
+ * espera. Si las dos cosas pasaran a la vez se leería como ajetreo en lugar de
+ * como una intención.
  *
  * Todo es CSS. Se dibuja antes de que exista una sola línea de JavaScript, y se
  * desvanece sola: no depende de que nada la quite.
@@ -19,10 +18,16 @@
  */
 
 /* --- Compás de la animación ------------------------------------------------
- * caída      40 →  480 ms
- * balanceo  470 → 1030 ms   (arranca justo al enganchar)
- * relleno   560 →  980 ms
- * salida   1040 → 1280 ms
+ * caída       60 →  680 ms
+ * balanceo   670 → 1450 ms   (arranca justo al enganchar)
+ * relleno    760 → 1340 ms
+ * salida    1470 → 1770 ms
+ *
+ * Es un ~40 % más lenta que la primera versión. Aquella contaba bien la
+ * historia pero no dejaba verla: la percha llegaba a la barra antes de que el
+ * ojo hubiera encontrado la percha. Un gesto que hay que adivinar no es un
+ * gesto. A este ritmo caben las tres cosas —caer, enganchar, llenarse— sin que
+ * ninguna pise a la anterior.
  * -------------------------------------------------------------------------- */
 
 #splash {
@@ -33,7 +38,7 @@
   align-items: center;
   justify-content: center;
   background: var(--surface);
-  animation: splash-out 240ms ease-out 1040ms forwards;
+  animation: splash-out 300ms ease-out 1470ms forwards;
 }
 
 #splash svg {
@@ -62,19 +67,19 @@
   transform-box: fill-box;
   transform-origin: left center;
   transform: scaleX(0);
-  animation: bar-fill 420ms cubic-bezier(0.4, 0, 0.2, 1) 560ms forwards;
+  animation: bar-fill 580ms cubic-bezier(0.4, 0, 0.2, 1) 760ms forwards;
 }
 
 /* Dos grupos anidados: uno cae, el otro se balancea. Separarlos permite que el
    balanceo gire sobre el gancho y no sobre el centro de la percha. */
 #splash .drop {
-  animation: hanger-drop 440ms cubic-bezier(0.34, 1.2, 0.64, 1) 40ms both;
+  animation: hanger-drop 620ms cubic-bezier(0.34, 1.2, 0.64, 1) 60ms both;
 }
 
 #splash .swing {
   transform-box: view-box;
   transform-origin: 100px 34px; /* el punto donde el gancho toca la barra */
-  animation: hanger-swing 560ms cubic-bezier(0.37, 0, 0.63, 1) 470ms both;
+  animation: hanger-swing 780ms cubic-bezier(0.37, 0, 0.63, 1) 670ms both;
 }
 
 #splash .hanger {
@@ -140,14 +145,16 @@
 }
 
 /*
- * Solo en la aplicación instalada. En el navegador la pestaña ya da contexto, y
- * una animación de marca en cada recarga sería una molestia.
+ * También en el navegador.
+ *
+ * Antes solo aparecía en la aplicación instalada, con el argumento de que la
+ * pestaña ya da contexto y una animación de marca en cada recarga es un peaje.
+ * El argumento sigue siendo cierto, pero pesa menos que poder ver lo que se
+ * hizo sin tener que instalar nada.
+ *
+ * Solo sale en cargas completas de página. Moverse por la aplicación no vuelve
+ * a montar este nodo, así que navegar entre pantallas no la dispara.
  */
-@media not all and (display-mode: standalone) {
-  #splash {
-    display: none;
-  }
-}
 
 /* Quien pide menos movimiento no quiere ver caer nada. */
 @media (prefers-reduced-motion: reduce) {
