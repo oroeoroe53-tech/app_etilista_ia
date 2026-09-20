@@ -3,18 +3,29 @@ import { cn } from '@/lib/utils/cn'
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
 type Size = 'sm' | 'md' | 'lg'
 
+/**
+ * Botones.
+ *
+ * Todos son cápsulas y todos son pequeños de letra. El diseño usa 12–13px con
+ * un poco de tracking en lugar de la talla habitual de aplicación: leerlo
+ * cuesta lo mismo y el conjunto se parece más a una etiqueta de ropa que a un
+ * formulario.
+ *
+ * El secundario no lleva fondo propio. Sobre crema y sobre negro funciona
+ * igual, que es lo que permite reutilizarlo tal cual dentro de "Descubre".
+ */
 const VARIANTS: Record<Variant, string> = {
   primary: 'bg-accent text-accent-ink active:opacity-85',
-  secondary: 'bg-raised text-ink border border-line active:bg-sunken',
+  secondary: 'bg-transparent text-ink border border-[color-mix(in_srgb,var(--ink)_18%,transparent)] active:bg-sunken',
   ghost: 'text-ink-soft active:bg-sunken',
   danger: 'bg-transparent text-danger border border-danger/40 active:bg-danger/10',
 }
 
 const SIZES: Record<Size, string> = {
   // 44px de alto mínimo: es el objetivo táctil que recomienda Apple.
-  sm: 'h-10 px-4 text-sm',
-  md: 'h-12 px-5 text-[15px]',
-  lg: 'h-14 px-6 text-base',
+  sm: 'h-11 px-4 text-[12px]',
+  md: 'h-[46px] px-5 text-[13px]',
+  lg: 'h-[54px] px-6 text-[13px]',
 }
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -33,7 +44,7 @@ export function Button({
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-full font-medium',
+        'inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-[0.03em]',
         'transition-opacity disabled:opacity-40 disabled:pointer-events-none',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
         VARIANTS[variant],

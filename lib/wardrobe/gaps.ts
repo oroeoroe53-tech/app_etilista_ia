@@ -34,7 +34,19 @@ export interface Gap {
   detail: string
   /** `high` bloquea montar looks; `medium` los limita; `low` es una observación. */
   severity: 'high' | 'medium' | 'low'
+  /**
+   * Cuánto de cubierta está esa necesidad, de 0 a 1.
+   *
+   * Es un dato contado, no una estimación: "tres prendas de las cuatro que hacen
+   * falta para que el invierno no se repita" son 0,75. Cuando lo que falta
+   * falta del todo —no hay ni un zapato de vestir— vale cero, y la barra sale
+   * vacía. Una barra vacía dice exactamente lo que pasa.
+   */
+  coverage: number
 }
+
+/** Prendas por debajo de las cuales una temporada se queda corta. */
+const SEASON_FLOOR = 4
 
 /** Capas sin las que no se puede vestir a nadie. */
 const ESSENTIAL: Layer[] = ['top', 'bottom', 'footwear']
@@ -92,6 +104,7 @@ export function findGaps(all: readonly GapCandidate[]): Gap[] {
       title: 'Falta una pieza básica',
       detail: `No tengo ${LAYER_NAMES[layer]} disponible, así que no puedo montarte un look completo.`,
       severity: 'high',
+      coverage: 0,
     })
   }
 
@@ -117,6 +130,7 @@ export function findGaps(all: readonly GapCandidate[]): Gap[] {
         title: `Te falta calzado ${band.name}`,
         detail: `Tienes ropa ${band.name} pero ningún zapato a esa altura, así que esos looks se quedan a medias.`,
         severity: 'medium',
+        coverage: 0,
       })
     } else if (bottoms === 0) {
       gaps.push({
@@ -124,6 +138,7 @@ export function findGaps(all: readonly GapCandidate[]): Gap[] {
         title: `Te falta parte de abajo ${band.name}`,
         detail: `Tienes prendas ${band.name} arriba, pero nada abajo que las acompañe.`,
         severity: 'medium',
+        coverage: 0,
       })
     } else if (tops === 0) {
       gaps.push({
@@ -131,6 +146,7 @@ export function findGaps(all: readonly GapCandidate[]): Gap[] {
         title: `Te falta parte de arriba ${band.name}`,
         detail: `Tienes prendas ${band.name} abajo, pero nada arriba que las acompañe.`,
         severity: 'medium',
+        coverage: 0,
       })
     }
   }
@@ -146,6 +162,7 @@ export function findGaps(all: readonly GapCandidate[]): Gap[] {
       detail:
         'No tengo ninguna prenda que abrigue de verdad. Cuando bajen las temperaturas me quedaré sin opciones.',
       severity: 'medium',
+      coverage: 0,
     })
   }
 
@@ -156,12 +173,13 @@ export function findGaps(all: readonly GapCandidate[]): Gap[] {
       (item) => item.seasons.length === 0 || item.seasons.includes(season),
     ).length
 
-    if (count > 0 && count < 4) {
+    if (count > 0 && count < SEASON_FLOOR) {
       gaps.push({
         kind: 'season_thin',
         title: `Poco para ${SEASON_NAMES[season]}`,
         detail: `Solo ${count} ${count === 1 ? 'prenda sirve' : 'prendas sirven'} para ${SEASON_NAMES[season]}. Las propuestas de esa época se van a repetir.`,
         severity: 'low',
+        coverage: count / SEASON_FLOOR,
       })
     }
   }
@@ -176,6 +194,8 @@ export function findGaps(all: readonly GapCandidate[]): Gap[] {
       title: 'Muchas piezas de arriba, pocas de abajo',
       detail: `${tops} prendas arriba y ${bottoms} abajo. Con pocas piezas de abajo, todos los looks acaban pareciéndose.`,
       severity: 'low',
+      // Equilibrado sería una pieza de abajo por cada cuatro de arriba.
+      coverage: Math.min(1, bottoms / (tops / 4)),
     })
   }
 

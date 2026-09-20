@@ -42,7 +42,7 @@ export default async function EditItemPage({ params }: { params: Promise<{ id: s
 
       <header className="pb-6">
         <p className="eyebrow mb-2">Corregir</p>
-        <h1 className="display text-3xl">Cómo es de verdad</h1>
+        <h1 className="display text-[30px]">Cómo es de verdad</h1>
         <p className="mt-3 text-sm leading-relaxed text-ink-soft">
           Lo que apunté puede no ser exacto. Cámbialo y aprenderé de ello.
         </p>

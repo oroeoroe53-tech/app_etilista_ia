@@ -15,6 +15,14 @@ import type { Style, Fit } from '@/lib/wardrobe/taxonomy'
 
 export interface StylePortrait {
   headline: string
+  /**
+   * Segunda palabra del titular, la que va en cursiva.
+   *
+   * "Casual" a secas describe a media humanidad; "Casual *minimalista*" ya es
+   * alguien. Solo existe cuando hay dos estilos con peso suficiente: inventarla
+   * para que el titular quede bonito sería decir algo que no se ha medido.
+   */
+  headlineSecond: string | null
   lines: string[]
   /** Colores dominantes, para enseñarlos como muestras. */
   colors: string[]
@@ -38,7 +46,8 @@ export function describeProfile(profile: StyleProfile): StylePortrait {
 
   if (level === 'unknown') {
     return {
-      headline: 'Todavía te estoy conociendo',
+      headline: 'Todavía te estoy',
+      headlineSecond: 'conociendo',
       lines: [
         'Con unas cuantas fotos más y algún look valorado empezaré a entender cómo vistes.',
       ],
@@ -96,8 +105,14 @@ export function describeProfile(profile: StyleProfile): StylePortrait {
         ? `Sobre todo, ${lower(colorLabel(colors[0]!.value))}`
         : 'Tu estilo'
 
+  const headlineSecond =
+    styles.length > 1
+      ? lower(STYLE_LABELS[styles[1]!.value as Style] ?? styles[1]!.value)
+      : null
+
   return {
     headline,
+    headlineSecond,
     lines: lines.length > 0 ? lines : ['Aún no veo un patrón claro en lo que llevas.'],
     colors: colors.map((c) => c.value),
     caveat:
@@ -107,19 +122,25 @@ export function describeProfile(profile: StyleProfile): StylePortrait {
   }
 }
 
-/** Código hexadecimal para pintar la muestra de color. Solo presentación. */
+/**
+ * Código hexadecimal para pintar la muestra de color. Solo presentación.
+ *
+ * Los cinco primeros son los del diseño: no son los colores "reales" sino los
+ * que quedan bien juntos sobre crema, que es como se ven siempre —en fila, en
+ * la pantalla de Estilo— y nunca aislados.
+ */
 export const COLOR_SWATCHES: Record<string, string> = {
-  black: '#1a1a1a',
-  white: '#f6f4f0',
+  black: '#1b1a17',
+  white: '#f7f4ee',
   grey: '#9a9a9f',
-  navy: '#26324d',
+  navy: '#2b3a4d',
   blue: '#3b6ea8',
   light_blue: '#93b8d8',
-  beige: '#d8c7ac',
+  beige: '#cbbfa8',
   brown: '#7a5a42',
   cream: '#efe6d4',
   green: '#4a7a55',
-  olive: '#6b7148',
+  olive: '#5a6352',
   red: '#a8352c',
   burgundy: '#6d2733',
   pink: '#dba7b4',

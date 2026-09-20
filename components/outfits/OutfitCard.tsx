@@ -3,11 +3,14 @@
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { markWorn } from '@/app/(app)/outfits/actions'
-import { Button } from '@/components/ui'
+import { Button, PhotoSlot } from '@/components/ui'
 
 export interface OutfitView {
   id: string
+  title: string
   explanation: string | null
+  /** 0–100. Cero cuando no se guardó puntuación: entonces no se enseña. */
+  match: number
   items: Array<{
     id: string
     name: string
@@ -20,6 +23,10 @@ export interface OutfitView {
  *
  * Las prendas se enseñan grandes y la explicación pequeña: el producto vende la
  * ropa, no lo que el sistema tenga que decir sobre ella (PLAN.md §42).
+ *
+ * Las fotos van en una fila de alto fijo y anchos iguales, no en una tira que
+ * se desplaza. Un look es una unidad: si hay que arrastrar para ver la cuarta
+ * prenda, deja de leerse como un conjunto.
  */
 export function OutfitCard({ outfit, index }: { outfit: OutfitView; index: number }) {
   const [worn, setWorn] = useState(false)
@@ -33,43 +40,48 @@ export function OutfitCard({ outfit, index }: { outfit: OutfitView; index: numbe
   }
 
   return (
-    <article className="border-b border-line pb-8 last:border-0">
-      <p className="eyebrow mb-4">Look {index + 1}</p>
+    <article className="rounded-[24px] bg-raised p-4 shadow-card-soft">
+      <div className="mb-3 flex items-baseline justify-between gap-3">
+        <p className="eyebrow">Look {index + 1}</p>
+        {outfit.match > 0 ? (
+          <p className="text-[11px] whitespace-nowrap text-ink-faint">{outfit.match}% match</p>
+        ) : null}
+      </div>
 
-      <ul className="no-scrollbar -mx-5 mb-4 flex gap-2 overflow-x-auto px-5">
+      <div className="flex gap-[7px]">
         {outfit.items.map((item) => (
-          <li key={item.id} className="w-28 shrink-0">
-            <Link href={`/armario/${item.id}`}>
-              {item.imageUrl ? (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={item.imageUrl}
-                  alt={item.name}
-                  loading="lazy"
-                  className="garment-photo aspect-3/4 w-full rounded-2xl border border-line object-cover"
-                />
-              ) : (
-                <div className="flex aspect-3/4 w-full items-center justify-center rounded-2xl border border-line bg-sunken px-2 text-center text-[10px] leading-tight text-ink-faint">
-                  {item.name}
-                </div>
-              )}
-              <p className="mt-1.5 truncate text-[11px] text-ink-soft">{item.name}</p>
-            </Link>
-          </li>
+          <Link key={item.id} href={`/armario/${item.id}`} className="min-w-0 flex-1">
+            <PhotoSlot
+              src={item.imageUrl}
+              label={item.name}
+              className="h-24 w-full rounded-[13px]"
+            />
+          </Link>
         ))}
-      </ul>
+      </div>
+
+      <h2 className="display mt-3.5 text-[19px] leading-[1.2]">{outfit.title}</h2>
 
       {outfit.explanation ? (
-        <p className="mb-4 text-[15px] leading-relaxed text-ink-soft">{outfit.explanation}</p>
+        <p className="mt-1.5 text-[11.5px] leading-[1.5] text-ink-soft">{outfit.explanation}</p>
       ) : null}
 
-      {worn ? (
-        <p className="text-sm text-ink-faint">Apuntado. Lo tendré en cuenta.</p>
-      ) : (
-        <Button variant="secondary" size="sm" disabled={isPending} onClick={onWear}>
-          {isPending ? 'Apuntando…' : 'Me lo pongo'}
+      <div className="mt-4 flex gap-2.5">
+        <Button className="flex-1" disabled={worn || isPending} onClick={onWear}>
+          {worn ? 'Guardado' : isPending ? 'Guardando…' : 'Me lo pongo'}
         </Button>
-      )}
+        {/*
+          El diseño pone aquí "Cambiar pieza". Esa función no existe todavía —no
+          hay forma de sustituir una prenda de un look ya propuesto— y un botón
+          que no lleva a ninguna parte es peor que no tenerlo. Va en su lugar lo
+          más cercano que sí sabe hacer la aplicación.
+        */}
+        <Link href="/outfits/que-me-pongo">
+          <Button variant="secondary" className="whitespace-nowrap">
+            Otra idea
+          </Button>
+        </Link>
+      </div>
     </article>
   )
 }

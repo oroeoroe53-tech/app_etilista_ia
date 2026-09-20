@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { buildQuery, toggleFilter, hasAnyFilter, type WardrobeFilters } from '@/lib/wardrobe/filters'
 import { LAYER_LABELS, SEASON_LABELS, colorLabel } from '@/lib/wardrobe/labels'
+import { COLOR_SWATCHES } from '@/lib/style/describe'
 import { cn } from '@/lib/utils/cn'
 import type { Color, Layer, Season } from '@/lib/wardrobe/taxonomy'
 
@@ -16,6 +17,9 @@ import type { Color, Layer, Season } from '@/lib/wardrobe/taxonomy'
  *
  * Solo se ofrecen los valores que el armario tiene de verdad: filtrar por un
  * color del que no hay ninguna prenda solo sirve para llegar a una lista vacía.
+ *
+ * Las tiras se sangran a pantalla completa pero arrancan alineadas con el
+ * título. Cortarlas en el margen haría pensar que ahí se acaban.
  */
 interface Props {
   filters: WardrobeFilters
@@ -35,9 +39,14 @@ export function WardrobeFilters({
   const pathname = usePathname()
   const href = (next: WardrobeFilters) => `${pathname}${buildQuery(next)}`
 
+  const extras = availableSeasons.length > 0 || storedCount > 0
+
   return (
-    <div className="mb-6 space-y-2">
+    <div className="mb-5 space-y-[7px]">
       <Row label="Tipo">
+        <Chip href={pathname} active={!filters.layer}>
+          Todo
+        </Chip>
         {availableLayers.map((layer) => (
           <Chip
             key={layer}
@@ -55,36 +64,44 @@ export function WardrobeFilters({
             key={color}
             href={href(toggleFilter(filters, 'color', color))}
             active={filters.color === color}
+            dot={COLOR_SWATCHES[color]}
           >
             {colorLabel(color)}
           </Chip>
         ))}
       </Row>
 
-      <Row label="Temporada">
-        {availableSeasons.map((season) => (
-          <Chip
-            key={season}
-            href={href(toggleFilter(filters, 'season', season))}
-            active={filters.season === season}
-          >
-            {SEASON_LABELS[season] ?? season}
-          </Chip>
-        ))}
-        {storedCount > 0 ? (
-          <Chip
-            href={href(toggleFilter(filters, 'available', false))}
-            active={filters.available === false}
-          >
-            Guardadas ({storedCount})
-          </Chip>
-        ) : null}
-      </Row>
+      {/*
+        Tercera tira. El diseño solo maqueta dos, pero temporada y "guardadas"
+        ya existían y son la única forma de llegar a una prenda archivada: si se
+        quitaran, esas prendas dejarían de tener puerta.
+      */}
+      {extras ? (
+        <Row label="Temporada">
+          {availableSeasons.map((season) => (
+            <Chip
+              key={season}
+              href={href(toggleFilter(filters, 'season', season))}
+              active={filters.season === season}
+            >
+              {SEASON_LABELS[season] ?? season}
+            </Chip>
+          ))}
+          {storedCount > 0 ? (
+            <Chip
+              href={href(toggleFilter(filters, 'available', false))}
+              active={filters.available === false}
+            >
+              Guardadas · {storedCount}
+            </Chip>
+          ) : null}
+        </Row>
+      ) : null}
 
       {hasAnyFilter(filters) ? (
         <Link
           href={pathname}
-          className="inline-block pt-1 text-xs text-ink-soft underline underline-offset-4"
+          className="inline-block pt-1 text-[10.5px] text-ink-faint underline underline-offset-4"
         >
           Quitar filtros
         </Link>
@@ -95,9 +112,9 @@ export function WardrobeFilters({
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2">
+    <div>
       <span className="sr-only">{label}</span>
-      <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 py-1">{children}</div>
+      <div className="no-scrollbar bleed-row flex gap-[6px] overflow-x-auto py-1">{children}</div>
     </div>
   )
 }
@@ -105,10 +122,12 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 function Chip({
   href,
   active,
+  dot,
   children,
 }: {
   href: string
   active: boolean
+  dot?: string
   children: React.ReactNode
 }) {
   return (
@@ -117,12 +136,20 @@ function Chip({
       scroll={false}
       aria-current={active ? 'true' : undefined}
       className={cn(
-        'shrink-0 rounded-full border px-4 py-1.5 text-sm whitespace-nowrap transition-colors',
+        'inline-flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-[9px]',
+        'text-[11.5px] font-medium whitespace-nowrap transition-colors',
         active
           ? 'border-accent bg-accent text-accent-ink'
-          : 'border-line bg-raised text-ink-soft',
+          : 'border-[color-mix(in_srgb,var(--ink)_16%,transparent)] text-ink-soft',
       )}
     >
+      {dot ? (
+        <span
+          aria-hidden
+          className="h-[9px] w-[9px] shrink-0 rounded-full border border-line"
+          style={{ backgroundColor: dot }}
+        />
+      ) : null}
       {children}
     </Link>
   )

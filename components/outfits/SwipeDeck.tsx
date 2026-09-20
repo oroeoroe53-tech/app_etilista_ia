@@ -3,12 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { recordSwipe, finishSwipeSession } from '@/app/(app)/outfits/swipe/actions'
-import { Button, Notice } from '@/components/ui'
+import { Button, Notice, PhotoSlot } from '@/components/ui'
 import { cn } from '@/lib/utils/cn'
 
 export interface SwipeCard {
   key: string
   itemIds: string[]
+  title: string
   items: Array<{ id: string; name: string; imageUrl: string | null }>
 }
 
@@ -46,7 +47,7 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
   const [leaving, setLeaving] = useState<Reaction | null>(null)
   const [askingReason, setAskingReason] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [counts, setCounts] = useState({ rated: 0 })
+  const [counts, setCounts] = useState({ rated: 0, saved: 0 })
 
   const startRef = useRef({ x: 0, y: 0 })
   const pendingRef = useRef<SwipeCard | null>(null)
@@ -70,7 +71,11 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
         return
       }
       setError(null)
-      setCounts((c) => ({ rated: c.rated + 1 }))
+      // "Guardados" son los que te pondrías, no los que has contestado.
+      setCounts((c) => ({
+        rated: c.rated + 1,
+        saved: c.saved + (reaction === 'like' || reaction === 'love' ? 1 : 0),
+      }))
     },
     [],
   )
@@ -195,7 +200,12 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
 
   return (
     <div className="select-none">
-      <div className="relative mb-6 h-[26rem]">
+      {/*
+        La carta de atrás, girada dos grados.
+        Es el único adorno de la pantalla y hace un trabajo concreto: dice que
+        hay más detrás sin tener que escribirlo.
+      */}
+      <div className="relative h-[330px]">
         {next ? <CardFace card={next} behind /> : null}
 
         <div
@@ -208,43 +218,59 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
           style={{
             transform,
             opacity,
-            transition: drag.active ? 'none' : 'transform 220ms ease-out, opacity 220ms ease-out',
+            transition: drag.active ? 'none' : 'transform 280ms ease-out, opacity 280ms ease-out',
             touchAction: 'none',
           }}
           className="absolute inset-0 cursor-grab active:cursor-grabbing"
         >
           <CardFace card={card} />
 
-          <Stamp show={drag.x > 40} tone="like" label="Me gusta" />
+          <Stamp show={drag.x > 40} tone="like" label="Sí" />
           <Stamp show={drag.x < -40} tone="dislike" label="No" />
           <Stamp show={drag.y < -40 && Math.abs(drag.x) < 60} tone="love" label="Me encanta" />
         </div>
       </div>
 
+      <h2 className="display mt-3.5 text-[18px]">{card.title}</h2>
+
       {error ? (
-        <div className="mb-4">
+        <div className="mt-4">
           <Notice tone="error">{error}</Notice>
         </div>
       ) : null}
 
-      <div className="flex items-center justify-center gap-3">
+      {/*
+        El orden es el del diseño y también el de la intensidad: no, ni fu ni
+        fa, sí, me encanta. Leído de izquierda a derecha es una escala, y eso
+        ahorra tener que explicar qué hace cada botón.
+      */}
+      <div className="mt-5 flex items-center justify-center gap-2.5">
         <ActionButton label="No me gusta" onClick={() => react('dislike')}>
           <IconCross />
         </ActionButton>
-        <ActionButton label="No sé" small onClick={() => react('skip')}>
+        <ActionButton label="Ni fu ni fa" onClick={() => react('skip')}>
           <IconSkip />
         </ActionButton>
-        <ActionButton label="Me encanta" tone="love" onClick={() => react('love')}>
-          <IconFlame />
+        <ActionButton label="Me gusta" tone="yes" onClick={() => react('like')}>
+          <span className="text-[13px] font-medium">sí</span>
         </ActionButton>
-        <ActionButton label="Me gusta" tone="like" onClick={() => react('like')}>
+        <ActionButton label="Me encanta" tone="love" onClick={() => react('love')}>
           <IconHeart />
         </ActionButton>
       </div>
 
-      <p className="mt-6 text-center text-xs text-ink-faint">
-        {index + 1} de {initial.length} · desliza o usa las flechas
+      <p className="mt-4 text-center text-[11px] text-ink-faint">
+        {index + 1} de {initial.length} · {counts.saved}{' '}
+        {counts.saved === 1 ? 'guardado' : 'guardados'}
       </p>
+
+      <div className="mt-5 rounded-[18px] border border-line px-4 py-3.5">
+        <p className="text-[11.5px] leading-[1.5] text-ink-soft">
+          {counts.saved >= 2
+            ? 'Ya voy viendo por dónde vas. Lo que guardes pesa en lo que te proponga mañana.'
+            : 'Cuanto más valores, menos te propongo cosas que no te pondrías.'}
+        </p>
+      </div>
 
       {askingReason ? <ReasonSheet onPick={onReason} /> : null}
     </div>
@@ -259,33 +285,24 @@ function CardFace({ card, behind }: { card: SwipeCard; behind?: boolean }) {
   return (
     <div
       className={cn(
-        'h-full w-full overflow-hidden rounded-[var(--radius-card)] border border-line bg-raised',
-        behind && 'absolute inset-0 scale-95 opacity-50',
+        'h-full w-full rounded-[22px] bg-raised p-2.5',
+        behind && 'absolute inset-0 rotate-2 scale-[0.98] opacity-70',
       )}
       aria-hidden={behind}
     >
       <div
         className={cn(
-          'grid h-full w-full gap-0.5',
+          'grid h-full w-full gap-2',
           items.length <= 2 ? 'grid-cols-2' : 'grid-cols-2 grid-rows-2',
         )}
       >
         {items.map((item) => (
-          <div key={item.id} className="relative overflow-hidden bg-sunken">
-            {item.imageUrl ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
-                src={item.imageUrl}
-                alt={item.name}
-                draggable={false}
-                className="garment-photo h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center px-2 text-center text-[11px] leading-tight text-ink-faint">
-                {item.name}
-              </div>
-            )}
-          </div>
+          <PhotoSlot
+            key={item.id}
+            src={item.imageUrl}
+            label={item.name}
+            className="h-full w-full rounded-[14px]"
+          />
         ))}
       </div>
     </div>
@@ -322,13 +339,11 @@ function ActionButton({
   onClick,
   children,
   tone,
-  small,
 }: {
   label: string
   onClick: () => void
   children: React.ReactNode
-  tone?: 'like' | 'love'
-  small?: boolean
+  tone?: 'yes' | 'love'
 }) {
   return (
     <button
@@ -337,11 +352,10 @@ function ActionButton({
       aria-label={label}
       title={label}
       className={cn(
-        'flex items-center justify-center rounded-full border transition-transform active:scale-90',
-        small ? 'h-11 w-11' : 'h-14 w-14',
-        tone === 'like' && 'border-ink bg-accent text-accent-ink',
-        tone === 'love' && 'border-love text-love',
-        !tone && 'border-line text-ink-soft',
+        'flex h-[52px] w-[52px] items-center justify-center rounded-full border transition-transform active:scale-90',
+        tone === 'yes' && 'border-clay bg-clay/20 text-clay-soft',
+        tone === 'love' && 'border-transparent bg-[#f7f4ee] text-[#15140f]',
+        !tone && 'border-[rgba(247,244,238,0.22)] text-ink-soft',
       )}
     >
       {children}
@@ -412,17 +426,10 @@ function IconCross() {
 }
 
 function IconHeart() {
+  // Relleno, no de línea: es el único botón sólido y tiene que leerse como tal.
   return (
-    <svg {...strokeProps}>
+    <svg {...strokeProps} fill="currentColor" stroke="none" width={18} height={18}>
       <path d="M12 20s-7-4.6-7-9.3A4.1 4.1 0 0 1 12 8a4.1 4.1 0 0 1 7 2.7C19 15.4 12 20 12 20z" />
-    </svg>
-  )
-}
-
-function IconFlame() {
-  return (
-    <svg {...strokeProps}>
-      <path d="M12 3s5 4.2 5 8.6A5 5 0 0 1 7 12c0-1.7 1-3.2 1-3.2s.6 1.4 1.6 1.7C9.3 7.8 12 3 12 3z" />
     </svg>
   )
 }

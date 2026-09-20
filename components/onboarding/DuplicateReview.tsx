@@ -61,7 +61,7 @@ export function DuplicateReview({ questions }: { questions: DuplicateQuestion[] 
         <p className="eyebrow mb-3">
           {remaining} {remaining === 1 ? 'duda' : 'dudas'}
         </p>
-        <h1 className="display text-3xl leading-tight">¿Es la misma prenda?</h1>
+        <h1 className="display text-[30px] leading-[1.05]">¿Es la misma prenda?</h1>
         <p className="mt-3 text-sm leading-relaxed text-ink-soft">
           La he visto en varias fotos y no estoy seguro de si es una sola prenda o dos
           parecidas.

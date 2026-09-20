@@ -1,6 +1,7 @@
 import { layerOf } from '@/lib/wardrobe/taxonomy'
 import { createAdminClient } from '@/lib/supabase/admin'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { nameOutfit } from './name'
 import type { OutfitContext, ScoredOutfit, WardrobeItem } from './types'
 
 /**
@@ -76,6 +77,8 @@ export async function saveOutfits(
   outfits: readonly ScoredOutfit[],
   context: OutfitContext,
   explanations: readonly string[] = [],
+  /** Campos extra que se guardan junto al contexto (p. ej. la marca del día). */
+  extraContext: Record<string, unknown> = {},
 ): Promise<string[]> {
   const supabase = createAdminClient()
 
@@ -91,6 +94,14 @@ export async function saveOutfits(
       rain: context.rain ?? false,
       season: context.season ?? null,
       highlights: outfit.highlights,
+      /*
+       * El titular se calcula y se guarda aquí, una sola vez, para todos los
+       * looks vengan de donde vengan. Si cada pantalla lo dedujera por su
+       * cuenta, el mismo look podría llamarse de dos maneras distintas según
+       * desde dónde se mire.
+       */
+      title: nameOutfit(outfit.items),
+      ...extraContext,
     },
     score: outfit.score,
     score_breakdown: outfit.breakdown,

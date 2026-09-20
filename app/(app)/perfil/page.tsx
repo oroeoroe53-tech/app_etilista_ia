@@ -1,10 +1,11 @@
 import { redirect } from 'next/navigation'
-import { createClient, getCurrentUser } from '@/lib/supabase/server'
-import { Screen, PageTitle, Card, Button } from '@/components/ui'
+import { getCurrentUser } from '@/lib/supabase/server'
+import { Screen, Meter } from '@/components/ui'
 import { checkEntitlement } from '@/lib/subscriptions/entitlements'
-import { PLAN_LABELS, type Feature } from '@/lib/subscriptions/plans'
+import { PLAN_LABELS, formatPrice, type Feature } from '@/lib/subscriptions/plans'
 import { signOut } from '@/app/(auth)/actions'
 import { DeleteAccount } from '@/components/account/DeleteAccount'
+import { UpgradeCta } from '@/components/account/UpgradeCta'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,32 +20,48 @@ export default async function ProfilePage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login')
 
-  const supabase = await createClient()
+  /*
+   * Ya no hace falta leer `profiles`: la cabecera enseña el logotipo y el
+   * correo, que vienen de la sesión. Una consulta menos en cada visita.
+   */
+  const checks = await Promise.all(
+    TRACKED.map((entry) => checkEntitlement(user.id, entry.feature)),
+  )
 
-  const [{ data: profileRow }, ...checks] = await Promise.all([
-    supabase.from('profiles').select('display_name').eq('id', user.id).maybeSingle(),
-    ...TRACKED.map((entry) => checkEntitlement(user.id, entry.feature)),
-  ])
-
-  const displayName = (profileRow as { display_name?: string } | null)?.display_name
   const plan = checks[0]?.plan ?? 'free'
+
+  // "desde marzo": la fecha de alta, sin año. El año sobra cuando la cuenta es
+  // de hace meses y estorba cuando es de hace semanas.
+  const desde = user.created_at
+    ? new Date(user.created_at).toLocaleDateString('es-ES', { month: 'long' })
+    : null
 
   return (
     <Screen>
-      <PageTitle eyebrow="Tu cuenta" title={displayName ?? 'Perfil'} />
+      <header className="pt-5 pb-5">
+        <p className="eyebrow mb-2.5">Tu cuenta</p>
+        <div className="flex items-start justify-between gap-4">
+          {/*
+            El logotipo, que aquí es la única vez que la aplicación dice su
+            propio nombre. En el resto de pantallas no hace falta: quien la
+            abre ya sabe dónde está.
+          */}
+          <h1 className="display text-[40px] leading-none">Estilista</h1>
+          <p className="shrink-0 pt-1 text-right text-[11px] leading-[1.5] text-ink-soft">
+            {user.email}
+            {desde ? <span className="block">desde {desde}</span> : null}
+          </p>
+        </div>
+      </header>
 
-      <Card className="mb-4">
-        <p className="eyebrow mb-2">Sesión</p>
-        <p className="text-sm text-ink-soft">{user.email}</p>
-      </Card>
-
-      <Card className="mb-4">
-        <div className="mb-5 flex items-baseline justify-between">
+      {/* --- Plan ---------------------------------------------------------- */}
+      <div className="rounded-[24px] bg-raised p-4 shadow-card">
+        <div className="mb-4 flex items-baseline justify-between">
           <p className="eyebrow">Plan</p>
-          <span className="display text-xl">{PLAN_LABELS[plan]}</span>
+          <span className="display text-[22px]">{PLAN_LABELS[plan]}</span>
         </div>
 
-        <ul className="space-y-4">
+        <ul className="space-y-3.5">
           {TRACKED.map((entry, index) => {
             const check = checks[index]
             if (!check) return null
@@ -52,47 +69,51 @@ export default async function ProfilePage() {
 
             return (
               <li key={entry.feature}>
-                <div className="mb-1.5 flex items-baseline justify-between gap-4 text-sm">
-                  <span className="text-ink-soft">
-                    {entry.label}{' '}
-                    <span className="text-ink-faint">{entry.period}</span>
+                <div className="mb-1.5 flex items-baseline justify-between gap-4">
+                  <span className="min-w-0 text-[12px] leading-[1.35] text-ink">
+                    {entry.label} <span className="text-ink-faint">{entry.period}</span>
                   </span>
-                  <span className="tabular-nums">
+                  <span className="shrink-0 text-[12px] tabular-nums whitespace-nowrap text-ink">
                     {check.used}
                     <span className="text-ink-faint"> / {check.limit}</span>
                   </span>
                 </div>
-                <div
-                  className="h-1 w-full overflow-hidden rounded-full bg-sunken"
-                  role="progressbar"
-                  aria-valuenow={Math.round(pct)}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label={entry.label}
-                >
-                  <div
-                    className="h-full rounded-full bg-accent transition-[width]"
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
+                <Meter value={pct} label={entry.label} />
               </li>
             )
           })}
         </ul>
-      </Card>
 
-      <p className="mb-8 px-1 text-xs leading-relaxed text-ink-faint">
-        Los límites existen para que el coste no se dispare. Los contadores diarios
-        se reinician a medianoche.
-      </p>
+        <p className="mt-4 text-[10.5px] leading-[1.4] text-ink-faint">
+          Los contadores diarios se reinician a medianoche.
+        </p>
+      </div>
 
-      <form action={signOut} className="mb-10">
-        <Button type="submit" variant="secondary" fullWidth>
-          Cerrar sesión
-        </Button>
-      </form>
+      {/* --- Pasar al plan completo ---------------------------------------- */}
+      {plan === 'free' ? (
+        <div className="mt-4">
+          <UpgradeCta label={`Pasar a Estilista completo · ${formatPrice('pro')}/mes`} />
+        </div>
+      ) : null}
 
-      <DeleteAccount email={user.email ?? ''} />
+      {/* --- Ajustes -------------------------------------------------------- */}
+      <div className="mt-7">
+        <form action={signOut}>
+          <button
+            type="submit"
+            className="flex w-full items-center justify-between gap-4 border-t border-line py-3.5 text-left last:border-b"
+          >
+            <span className="text-[12.5px] leading-[1.35] text-ink">Cerrar sesión</span>
+            <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+              →
+            </span>
+          </button>
+        </form>
+      </div>
+
+      <div className="mt-8">
+        <DeleteAccount email={user.email ?? ''} />
+      </div>
     </Screen>
   )
 }

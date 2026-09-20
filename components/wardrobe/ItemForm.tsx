@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
-import { Button, Field, Select, TextInput, TextArea, ChipGroup, ScaleInput, Notice } from '@/components/ui'
+import { Button, Select, TextInput, TextArea, ChipGroup, ScaleInput, Notice } from '@/components/ui'
 import type { ItemFormState } from '@/app/(app)/armario/actions'
 import {
   CATEGORY_LIST, COLORS, FITS, MATERIALS, PATTERNS, SEASONS, STYLES,
@@ -100,73 +100,86 @@ export function ItemForm({ action, values, submitLabel, imagePath }: ItemFormPro
   const errors = state.fieldErrors ?? {}
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form action={formAction} className="space-y-5">
       {imagePath ? <input type="hidden" name="image_path" value={imagePath} /> : null}
 
-      <Field label="Qué es" error={errors.category}>
-        <Select name="category" defaultValue={values.category} options={CATEGORY_OPTIONS} />
-      </Field>
+      {/*
+        "Lo que he deducido".
+        Cada línea es una afirmación que se puede tocar para corregir, no un
+        campo vacío que hay que rellenar. La diferencia importa: la primera
+        versión dice "esto es lo que he visto, dime si me equivoco"; la segunda
+        te pone a trabajar.
+      */}
+      <div className="rounded-[22px] bg-raised p-4 shadow-card-soft">
+        <p className="eyebrow mb-1">Lo que he deducido</p>
 
-      <Field label="Color principal" error={errors.primary_color}>
-        <Select
-          name="primary_color"
-          defaultValue={values.primary_color}
-          options={COLOR_OPTIONS}
-        />
-      </Field>
+        <Row label="Categoría" error={errors.category}>
+          <Select bare name="category" defaultValue={values.category} options={CATEGORY_OPTIONS} />
+        </Row>
 
-      <Field label="Estampado" error={errors.pattern}>
-        <Select name="pattern" defaultValue={values.pattern} options={PATTERN_OPTIONS} />
-      </Field>
+        <Row label="Color" error={errors.primary_color}>
+          <Select bare name="primary_color" defaultValue={values.primary_color} options={COLOR_OPTIONS} />
+        </Row>
 
-      <Field label="Corte" error={errors.fit}>
-        <Select name="fit" defaultValue={values.fit} options={FIT_OPTIONS} />
-      </Field>
+        <Row label="Estampado" error={errors.pattern}>
+          <Select bare name="pattern" defaultValue={values.pattern} options={PATTERN_OPTIONS} />
+        </Row>
 
-      <Field label="Tejido" error={errors.material}>
-        <Select name="material" defaultValue={values.material} options={MATERIAL_OPTIONS} />
-      </Field>
+        <Row label="Corte" error={errors.fit}>
+          <Select bare name="fit" defaultValue={values.fit} options={FIT_OPTIONS} />
+        </Row>
 
-      <Field label="Temporadas" error={errors.seasons} hint="Cuándo te la pones">
+        <Row label="Tejido" error={errors.material}>
+          <Select bare name="material" defaultValue={values.material} options={MATERIAL_OPTIONS} />
+        </Row>
+
+        <Row label="Estado" error={errors.condition}>
+          <Select bare name="condition" defaultValue={values.condition} options={CONDITION_OPTIONS} />
+        </Row>
+
+        <Row label="Detalle">
+          <TextInput
+            bare
+            name="subcategory"
+            defaultValue={values.subcategory ?? ''}
+            maxLength={60}
+            placeholder="Oxford, de lino…"
+          />
+        </Row>
+
+        <p className="pt-3.5 text-[10.5px] leading-[1.4] text-ink-faint">
+          Toca cualquier línea para corregirme. Aprendo de las correcciones.
+        </p>
+      </div>
+
+      {/* Lo que admite varios valores no cabe en una línea: va suelto debajo. */}
+      <Block label="Temporadas" hint="Cuándo te la pones" error={errors.seasons}>
         <ChipGroup name="seasons" options={SEASON_OPTIONS} selected={values.seasons} />
-      </Field>
+      </Block>
 
-      <Field label="Estilo" error={errors.styles} hint="Hasta cuatro">
+      <Block label="Estilo" hint="Hasta cuatro" error={errors.styles}>
         <ChipGroup name="styles" options={STYLE_OPTIONS} selected={values.styles} />
-      </Field>
+      </Block>
 
-      <Field label="Cómo de arreglada es" error={errors.formality}>
+      <Block label="Cómo de arreglada es" error={errors.formality}>
         <ScaleInput name="formality" value={values.formality} labels={FORMALITY_LABELS} />
-      </Field>
+      </Block>
 
-      <Field label="Cuánto abriga" error={errors.warmth}>
+      <Block label="Cuánto abriga" error={errors.warmth}>
         <ScaleInput name="warmth" value={values.warmth} labels={WARMTH_LABELS} />
-      </Field>
+      </Block>
 
-      <Field label="Estado" error={errors.condition}>
-        <Select name="condition" defaultValue={values.condition} options={CONDITION_OPTIONS} />
-      </Field>
-
-      <Field label="Detalle" hint="Opcional: marca, corte concreto, de dónde es…">
-        <TextInput
-          name="subcategory"
-          defaultValue={values.subcategory ?? ''}
-          maxLength={60}
-          placeholder="Oxford, cuello alto, de lino…"
-        />
-      </Field>
-
-      <Field label="Notas" hint="Opcional">
+      <Block label="Notas" hint="Opcional">
         <TextArea
           name="notes"
           defaultValue={values.notes ?? ''}
           maxLength={500}
           placeholder="Con qué la sueles combinar, si aprieta, si destiñe…"
         />
-      </Field>
+      </Block>
 
-      <label className="flex items-center justify-between rounded-2xl border border-line bg-raised px-4 py-3">
-        <span className="text-sm">La tengo disponible</span>
+      <label className="flex items-center justify-between rounded-[18px] border border-line px-4 py-3">
+        <span className="text-[12px] text-ink-soft">La tengo disponible</span>
         <input
           type="checkbox"
           name="is_available"
@@ -182,6 +195,59 @@ export function ItemForm({ action, values, submitLabel, imagePath }: ItemFormPro
 
       <Submit label={submitLabel} />
     </form>
+  )
+}
+
+/** Una línea de la tarjeta: etiqueta a la izquierda, valor a la derecha. */
+function Row({
+  label,
+  error,
+  children,
+}: {
+  label: string
+  error?: string
+  children: React.ReactNode
+}) {
+  return (
+    <label className="block border-b border-line py-3 last-of-type:border-b-0">
+      <span className="flex items-center justify-between gap-4">
+        <span className="shrink-0 text-[12px] text-ink-soft">{label}</span>
+        <span className="min-w-0 flex-1">{children}</span>
+      </span>
+      {error ? (
+        <span role="alert" className="mt-1 block text-right text-[10.5px] text-danger">
+          {error}
+        </span>
+      ) : null}
+    </label>
+  )
+}
+
+/** Campo de varios valores: la etiqueta va arriba porque el control ocupa ancho. */
+function Block({
+  label,
+  hint,
+  error,
+  children,
+}: {
+  label: string
+  hint?: string
+  error?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div>
+      <p className="eyebrow mb-2.5">{label}</p>
+      {children}
+      {hint && !error ? (
+        <p className="mt-2 text-[10.5px] text-ink-faint">{hint}</p>
+      ) : null}
+      {error ? (
+        <p role="alert" className="mt-2 text-[10.5px] text-danger">
+          {error}
+        </p>
+      ) : null}
+    </div>
   )
 }
 

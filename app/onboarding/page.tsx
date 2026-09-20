@@ -32,15 +32,17 @@ export default async function OnboardingPage() {
   const { min, max } = ONBOARDING_PHOTOS[plan]
 
   return (
-    <main className="mx-auto w-full max-w-sm px-6 pt-safe pb-12">
-      <header className="pt-12 pb-8">
-        <p className="eyebrow mb-4">Primer paso</p>
-        <h1 className="display mb-5 text-4xl leading-tight">
+    <main
+      className="mx-auto w-full max-w-[30rem] pt-safe pb-12"
+      style={{ paddingInline: 'var(--screen-gutter)' }}
+    >
+      <header className="pt-12 pb-7">
+        <p className="eyebrow mb-3">Primer paso</p>
+        <h1 className="display mb-4 text-[33px] leading-[1.05]">
           Enséñame
-          <br />
-          cómo vistes
+          <span className="display-italic block">cómo vistes</span>
         </h1>
-        <p className="text-sm leading-relaxed text-ink-soft">
+        <p className="text-[11.5px] leading-[1.5] text-ink-soft">
           Sube entre {min} y {max} fotos de looks que ya hayas llevado. Valen las del
           espejo, las de un viaje o las de hace dos años. No tienen que ser buenas fotos.
         </p>
@@ -48,20 +50,20 @@ export default async function OnboardingPage() {
 
       <PhotoUploader min={min} max={max} />
 
-      <ul className="mt-10 space-y-3 text-sm text-ink-soft">
+      <ul className="mt-9 space-y-2.5 text-[11.5px] leading-[1.5] text-ink-soft">
         <Point>Identificaré las prendas que aparecen.</Point>
         <Point>Agruparé las que se repitan entre fotos.</Point>
         <Point>Con eso montaré tu armario inicial.</Point>
       </ul>
 
-      <p className="mt-8 text-xs leading-relaxed text-ink-faint">
+      <p className="mt-7 text-[10.5px] leading-[1.5] text-ink-faint">
         Tus fotos son privadas. No se comparten con nadie y puedes borrarlas cuando
         quieras.
       </p>
 
       <Link
         href="/"
-        className="mt-8 block text-center text-sm text-ink-soft underline underline-offset-4"
+        className="mt-7 block text-center text-[11.5px] text-ink-soft underline underline-offset-4"
       >
         Ahora no
       </Link>

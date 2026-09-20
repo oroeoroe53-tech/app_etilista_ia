@@ -16,7 +16,16 @@ import { Button, Notice } from '@/components/ui'
  * formulario sigue ahí con los valores por defecto (PLAN.md §35).
  */
 export function NewItemFlow() {
-  const inputRef = useRef<HTMLInputElement>(null)
+  /*
+   * Dos entradas de archivo, no una.
+   *
+   * `capture` le dice al teléfono que abra la cámara directamente en vez del
+   * selector. Es la diferencia entre "hacer foto" y "elegir foto", y en una
+   * aplicación de armario se usan las dos: una para la prenda que tienes en la
+   * mano, otra para la que ya fotografiaste.
+   */
+  const cameraRef = useRef<HTMLInputElement>(null)
+  const galleryRef = useRef<HTMLInputElement>(null)
 
   const [preview, setPreview] = useState<string | null>(null)
   const [imagePath, setImagePath] = useState<string | null>(null)
@@ -114,7 +123,19 @@ export function NewItemFlow() {
   return (
     <div className="space-y-6">
       <input
-        ref={inputRef}
+        ref={cameraRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+        capture="environment"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          if (file) onPick(file)
+          e.target.value = ''
+        }}
+      />
+      <input
+        ref={galleryRef}
         type="file"
         accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
         className="hidden"
@@ -131,25 +152,19 @@ export function NewItemFlow() {
           <img
             src={preview}
             alt=""
-            className="aspect-3/4 w-full rounded-[var(--radius-card)] border border-line object-cover"
+            className="garment-photo h-[230px] w-full rounded-[24px] object-cover"
           />
-          <div className="flex gap-2">
+          <div className="flex gap-2.5">
             <Button
               variant="secondary"
-              size="sm"
               className="flex-1"
               disabled={busy !== null}
-              onClick={() => inputRef.current?.click()}
+              onClick={() => galleryRef.current?.click()}
             >
               Cambiar foto
             </Button>
             {!analyzed ? (
-              <Button
-                size="sm"
-                className="flex-1"
-                disabled={busy !== null}
-                onClick={analyze}
-              >
+              <Button className="flex-1" disabled={busy !== null} onClick={analyze}>
                 {busy === 'analyze' ? 'Mirando…' : 'Rellenar por mí'}
               </Button>
             ) : null}
@@ -159,18 +174,26 @@ export function NewItemFlow() {
           ) : null}
         </div>
       ) : (
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          disabled={busy !== null}
-          className="flex h-40 w-full flex-col items-center justify-center gap-2
-                     rounded-[var(--radius-card)] border border-dashed border-line
-                     text-sm text-ink-soft"
-        >
-          <span className="text-2xl text-ink-faint">+</span>
-          {busy === 'upload' ? 'Subiendo…' : 'Hacer o elegir una foto'}
-          <span className="text-xs text-ink-faint">Opcional</span>
-        </button>
+        <div className="photo-slot relative flex h-[230px] w-full flex-col items-center justify-center gap-3 rounded-[24px]">
+          <span className="mono absolute bottom-3 left-3.5 text-ink-faint">
+            foto de la prenda
+          </span>
+
+          <div className="flex gap-2.5">
+            <Button disabled={busy !== null} onClick={() => cameraRef.current?.click()}>
+              {busy === 'upload' ? 'Subiendo…' : 'Hacer foto'}
+            </Button>
+            <Button
+              variant="secondary"
+              className="bg-[rgba(255,253,248,0.75)]"
+              disabled={busy !== null}
+              onClick={() => galleryRef.current?.click()}
+            >
+              Galería
+            </Button>
+          </div>
+          <span className="text-[10.5px] text-ink-faint">Opcional</span>
+        </div>
       )}
 
       {error ? <Notice tone="error">{error}</Notice> : null}

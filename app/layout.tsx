@@ -33,10 +33,15 @@ export const viewport: Viewport = {
   initialScale: 1,
   // Sin zoom máximo: bloquearlo es un problema de accesibilidad real.
   viewportFit: 'cover',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#faf8f5' },
-    { media: '(prefers-color-scheme: dark)', color: '#131215' },
-  ],
+  /*
+   * Un solo color, no un par claro/oscuro.
+   *
+   * La identidad de la aplicación es el crema: la única pantalla negra es
+   * "Descubre", y lo es como excepción deliberada. Si el sistema pudiera
+   * cambiar el fondo entero según la preferencia del teléfono, esa excepción
+   * dejaría de decir nada.
+   */
+  themeColor: '#f4f1ea',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

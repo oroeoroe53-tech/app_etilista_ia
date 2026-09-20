@@ -3,42 +3,71 @@
 /*
  * Sistema de diseño.
  *
- * La aplicación debe parecer una revista de moda, no un panel de control
- * (PLAN.md §32): pocos colores, mucho aire, tipografía con carácter.
+ * Los valores de este archivo vienen del handoff de diseño (`pep — app de
+ * outfits diarios`): crema, negro cálido y una serif de display. La regla de
+ * fondo no ha cambiado desde PLAN.md §32 —esto debe parecer una revista de
+ * moda, no un panel de control— pero ahora los números son los del diseño y no
+ * una aproximación.
  *
  * Los colores se declaran como variables semánticas (`--surface`, `--ink`) y no
- * como tonos sueltos, para que el modo oscuro sea redefinir valores y no
- * reescribir componentes.
+ * como tonos sueltos. Eso es lo que permite que "Descubre" sea una pantalla
+ * negra sin duplicar un solo componente: basta redefinir las mismas variables
+ * en un subárbol (ver `.on-dark` más abajo).
  */
 
 :root {
-  --surface: #faf8f5; /* lino */
-  --surface-raised: #ffffff;
-  --surface-sunken: #f2eee8;
-  --ink: #17161a; /* casi negro, cálido */
-  --ink-soft: #55525c;
-  --ink-faint: #8f8b96;
-  --line: #e4ded5;
-  --accent: #17161a;
-  --accent-ink: #faf8f5;
-  --danger: #a33a2a;
-  --love: #c2410c;
+  --surface: #f4f1ea; /* crema: el fondo de la aplicación */
+  --surface-raised: #fffdf8; /* tarjetas */
+  --surface-sunken: #e8e4da; /* huecos de foto, pistas de barra */
+
+  --ink: #15140f; /* negro cálido: texto, botón primario */
+  --ink-soft: rgba(21, 20, 15, 0.55);
+  --ink-faint: rgba(21, 20, 15, 0.42);
+  --line: rgba(21, 20, 15, 0.11);
+
+  /* El botón primario es tinta sobre crema; sobre tinta, crema. */
+  --accent: #15140f;
+  --accent-ink: #f7f4ee;
+
+  /*
+   * Arcilla. El único color con temperatura de toda la paleta, y por eso se usa
+   * con cuentagotas: las barras de diagnóstico de Estilo y el botón "sí" de
+   * Descubre. Si apareciera en más sitios dejaría de significar nada.
+   */
+  --clay: #8a6a4f;
+  --clay-soft: #d8b48f;
+
+  --danger: #a4483a;
+  --love: #8a6a4f;
+
+  /* Margen lateral de pantalla. Una sola fuente para que las tiras que se
+     sangran a pantalla completa vuelvan exactamente a la misma alineación. */
+  --screen-gutter: 1.625rem; /* 26px */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --surface: #131215;
-    --surface-raised: #1c1b1f;
-    --surface-sunken: #0e0d10;
-    --ink: #f4f1ec;
-    --ink-soft: #a9a5ae;
-    --ink-faint: #6f6b76;
-    --line: #2b2930;
-    --accent: #f4f1ec;
-    --accent-ink: #17161a;
-    --danger: #e0715c;
-    --love: #f97316;
-  }
+/*
+ * Subárbol oscuro.
+ *
+ * "Descubre" es la única pantalla negra de la aplicación, y lo es a propósito:
+ * marca que ahí no se decide qué ponerse, se mira sin prisa. Redefinir las
+ * variables basta para que Button, Card, Chip y todo lo demás se inviertan
+ * solos, sin una sola variante nueva.
+ */
+.on-dark {
+  --surface: #15140f;
+  --surface-raised: #1d1b18;
+  --surface-sunken: #221f1b;
+
+  --ink: #f7f4ee;
+  --ink-soft: rgba(247, 244, 238, 0.55);
+  --ink-faint: rgba(247, 244, 238, 0.42);
+  --line: rgba(247, 244, 238, 0.14);
+
+  --accent: #f7f4ee;
+  --accent-ink: #15140f;
+
+  color: var(--ink);
+  background: var(--surface);
 }
 
 @theme inline {
@@ -51,13 +80,22 @@
   --color-line: var(--line);
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
+  --color-clay: var(--clay);
+  --color-clay-soft: var(--clay-soft);
   --color-danger: var(--danger);
   --color-love: var(--love);
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /*
+   * Helvetica Neue es la que pide el diseño y la que hay en iOS, que es donde
+   * se va a usar esto. Fuera de Apple no existe, así que detrás va Inter: un
+   * grotesco neutro del mismo registro. Roboto queda descartada a propósito
+   * (nota de tipografía del handoff): rompe el conjunto.
+   */
+  --font-sans: 'Helvetica Neue', Helvetica, var(--font-inter), Arial, sans-serif;
   --font-display: var(--font-display-serif), Georgia, serif;
+  --font-mono: ui-monospace, Menlo, Monaco, 'Courier New', monospace;
 
-  --radius-card: 1.25rem;
+  --radius-card: 1.625rem; /* 26px: la tarjeta grande */
 }
 
 html {
@@ -83,19 +121,51 @@ body {
   padding-top: env(safe-area-inset-top);
 }
 
+/* ---------------------------------------------------------------------------
+ * Tipografía
+ * ------------------------------------------------------------------------- */
+
 /* Título editorial. Se usa poco y grande, no en todas partes. */
 .display {
   font-family: var(--font-display);
   font-weight: 400;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
+  letter-spacing: -0.01em;
+  line-height: 1.02;
 }
 
+/*
+ * La segunda línea de un titular, en cursiva.
+ *
+ * Es el gesto que más identidad da a la portada: un titular que continúa en
+ * cursiva se lee como una revista y no como una cabecera de aplicación.
+ */
+.display-italic {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/*
+ * Volanta. Monoespaciada, diminuta y muy espaciada.
+ *
+ * El tamaño (9.5px) está por debajo de lo que normalmente se consideraría
+ * legible, y es correcto: nunca lleva información que haga falta para usar la
+ * pantalla, solo la etiqueta de la sección.
+ */
 .eyebrow {
-  font-size: 0.6875rem;
-  letter-spacing: 0.18em;
+  font-family: var(--font-mono);
+  font-size: 0.594rem; /* 9.5px */
+  letter-spacing: 0.21em;
   text-transform: uppercase;
   color: var(--ink-faint);
+}
+
+/* Contadores y etiquetas dentro de los huecos de foto. */
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.531rem; /* 8.5px */
+  line-height: 1.25;
+  letter-spacing: 0.02em;
 }
 
 /* El scroll horizontal de categorías no debe enseñar barra en escritorio. */
@@ -104,6 +174,18 @@ body {
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/*
+ * Tira que se sangra a pantalla completa pero arranca alineada con el texto.
+ *
+ * Una fila horizontal que se corta en el margen parece un error de maqueta; una
+ * que se va por el borde dice "aquí hay más". El padding inicial es el mismo
+ * margen de pantalla para que el primer elemento quede en su sitio.
+ */
+.bleed-row {
+  margin-inline: calc(var(--screen-gutter) * -1);
+  padding-inline: var(--screen-gutter);
 }
 
 /* ---------------------------------------------------------------------------
@@ -126,14 +208,6 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) body::after {
-    /* En oscuro el grano tiene que sumar luz, no restarla, o ensucia. */
-    mix-blend-mode: screen;
-    opacity: 0.03;
-  }
-}
-
 /* ---------------------------------------------------------------------------
  * Tratamiento de fotos
  *
@@ -148,10 +222,47 @@ body::after {
   filter: saturate(0.9) contrast(1.05) brightness(1.02) sepia(0.07);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .garment-photo {
-    filter: saturate(0.85) contrast(1.08) brightness(0.96) sepia(0.05);
-  }
+/*
+ * Hueco de foto.
+ *
+ * Mientras no hay imagen —o mientras carga— el sitio no se queda en blanco: se
+ * llena con la misma textura diagonal del diseño. Es lo que evita que un
+ * armario a medio analizar parezca roto.
+ */
+.photo-slot {
+  background-color: var(--surface-sunken);
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.05) 0 5px,
+    rgba(0, 0, 0, 0.014) 5px 10px
+  );
+}
+
+.on-dark .photo-slot {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.07) 0 5px,
+    rgba(255, 255, 255, 0.02) 5px 10px
+  );
+}
+
+/* ---------------------------------------------------------------------------
+ * Sombras
+ *
+ * Dos, y muy bajas. Una tarjeta que flota demasiado deja de parecer papel.
+ * ------------------------------------------------------------------------- */
+.shadow-card {
+  box-shadow: 0 2px 18px rgba(20, 18, 12, 0.07);
+}
+
+.shadow-card-soft {
+  box-shadow: 0 2px 14px rgba(20, 18, 12, 0.055);
+}
+
+.on-dark .shadow-card,
+.on-dark .shadow-card-soft {
+  /* Sobre negro una sombra no se ve; lo que da relieve es el borde. */
+  box-shadow: none;
 }
 
 /* ---------------------------------------------------------------------------
@@ -211,9 +322,10 @@ body::after {
 
 /* Numeración de catálogo: 01, 02, 03… */
 .folio {
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.625rem;
-  letter-spacing: 0.14em;
+  font-size: 0.594rem;
+  letter-spacing: 0.21em;
   color: var(--ink-faint);
 }
 

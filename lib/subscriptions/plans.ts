@@ -77,7 +77,24 @@ export const UPLOAD_RULES = {
 
 export const PLAN_LABELS: Record<PlanId, string> = {
   free: 'Gratis',
-  pro: 'Pro',
+  pro: 'Completo',
+}
+
+/**
+ * Precio mensual, en euros.
+ *
+ * Vive aquí por la misma razón que los límites: el precio es parte de la
+ * definición del plan, y escribirlo suelto en la pantalla de Perfil es la
+ * manera segura de que algún día diga una cosa distinta de la que se cobra.
+ */
+export const PLAN_PRICES: Record<PlanId, number> = {
+  free: 0,
+  pro: 3.99,
+}
+
+/** Formato español: 3,99 €. */
+export function formatPrice(plan: PlanId): string {
+  return PLAN_PRICES[plan].toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })
 }
 
 export function limitFor(plan: PlanId, feature: Feature): number {

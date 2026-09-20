@@ -115,7 +115,7 @@ export default async function TripResultPage({
           {destino ? destino.toUpperCase() : 'TU VIAJE'} · {ordered.length}{' '}
           {ordered.length === 1 ? 'DÍA' : 'DÍAS'}
         </p>
-        <h1 className="display text-4xl">La maleta</h1>
+        <h1 className="display text-[2rem]">La maleta</h1>
         <p className="mt-3 text-sm leading-relaxed text-ink-soft">
           {packed.length} prendas para {ordered.length}{' '}
           {ordered.length === 1 ? 'día' : 'días'}. Las que se repiten hacen el trabajo

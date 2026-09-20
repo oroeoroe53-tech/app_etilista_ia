@@ -1,20 +1,24 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient, getCurrentUser } from '@/lib/supabase/server'
-import { signOne } from '@/lib/storage/signed'
+import { signMany } from '@/lib/storage/signed'
 import { BUCKETS } from '@/lib/storage/paths'
+import { fetchWeather } from '@/lib/weather/provider'
+import { getDailyLook } from '@/lib/outfits/daily'
 import { findNeglected, neglectMessage, neglectCutoffs } from '@/lib/wardrobe/neglected'
 import { describeGarment } from '@/lib/wardrobe/labels'
+import { TodayLook } from '@/components/home/TodayLook'
+import { PhotoSlot } from '@/components/ui'
 
 /**
  * Portada.
  *
- * La pantalla de inicio no es un menú: es la portada de una revista. Cabecera
- * grande, fecha, y una fotografía a sangre ocupando todo. Las acciones siguen
- * estando donde estaban, pero lo primero que se ve al abrir es una imagen.
+ * No es un menú: es lo que te pones hoy. La pantalla responde a la única
+ * pregunta por la que alguien abre esta aplicación por la mañana, y todo lo
+ * demás —el armario, Descubre— queda como acceso, no como destino.
  *
- * La foto es **del propio usuario** —uno de sus looks o una prenda suya—, no
- * una imagen de archivo. Es la diferencia entre una portada y un cartel.
+ * El look no se pide: ya está hecho cuando llegas. Cómo se compone sin gastar
+ * cupo ni llamar a ningún modelo está explicado en `lib/outfits/daily.ts`.
  */
 export default async function HomePage() {
   const user = await getCurrentUser()
@@ -23,7 +27,7 @@ export default async function HomePage() {
   const supabase = await createClient()
   const cutoffs = neglectCutoffs()
 
-  const [{ data: profile }, { count: itemCount }, { data: photo }, { data: garment }, { data: forNeglect }] =
+  const [{ data: profile }, { count: itemCount }, { data: prefsRow }, { data: strip }, { data: forNeglect }] =
     await Promise.all([
       supabase
         .from('profiles')
@@ -34,27 +38,20 @@ export default async function HomePage() {
         .from('clothing_items')
         .select('id', { count: 'exact', head: true })
         .is('deleted_at', null),
-      supabase
-        .from('outfit_photos')
-        .select('storage_path')
-        .eq('analysis_status', 'done')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle(),
+      supabase.from('user_preferences').select('city, lat, lon').eq('user_id', user.id).maybeSingle(),
+      // La tira del armario: cinco prendas, las últimas en entrar.
       supabase
         .from('clothing_items')
-        .select('image_path')
+        .select('id, category, primary_color, fit, pattern, image_path')
         .is('deleted_at', null)
-        .not('image_path', 'is', null)
+        .eq('is_available', true)
         .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle(),
+        .limit(5),
       /*
        * Solo las candidatas a estar olvidadas, no el armario entero.
        *
-       * Antes se traían las ochenta prendas para acabar enseñando una. Las
-       * fechas de corte salen de las mismas reglas que luego deciden, así que
-       * el filtro y la lógica no se pueden desajustar.
+       * Las fechas de corte salen de las mismas reglas que luego deciden, así
+       * que el filtro y la lógica no se pueden desajustar.
        */
       supabase
         .from('clothing_items')
@@ -69,172 +66,210 @@ export default async function HomePage() {
     ])
 
   const row = profile as { display_name?: string | null; onboarding_stage?: string } | null
-  const name = row?.display_name ?? null
   const onboardingDone = row?.onboarding_stage === 'completed'
   const prendas = itemCount ?? 0
 
-  // Se prefiere una foto de look completo; si no hay, el recorte de una prenda.
-  const photoPath = (photo as { storage_path?: string } | null)?.storage_path
-  const garmentPath = (garment as { image_path?: string } | null)?.image_path
+  const prefs = (prefsRow ?? {}) as { city?: string | null; lat?: number | null; lon?: number | null }
 
-  const coverUrl = photoPath
-    ? await signOne(supabase, BUCKETS.outfitPhotos, photoPath, user.id)
-    : garmentPath
-      ? await signOne(supabase, BUCKETS.clothing, garmentPath, user.id)
+  // Si la API del tiempo falla, la pantalla funciona igual: el dato desaparece
+  // de la esquina y el motor compone sin temperatura (PLAN.md §35).
+  const weather =
+    prefs.lat != null && prefs.lon != null
+      ? await fetchWeather({ lat: prefs.lat, lon: prefs.lon })
       : null
 
+  const look = prendas > 0 ? await getDailyLook(supabase, user.id, weather) : null
+
   // Una sola prenda olvidada, la que más tiempo lleve. Una lista aquí sería ruido.
-  const olvidadas = findNeglected((forNeglect ?? []) as never[], new Date(), 1)
-  const olvidada = olvidadas[0] ?? null
+  const olvidada = findNeglected((forNeglect ?? []) as never[], new Date(), 1)[0] ?? null
+
+  const stripItems = (strip ?? []) as Array<{
+    id: string
+    category: string
+    primary_color: string
+    fit: string | null
+    pattern: string | null
+    image_path: string | null
+  }>
+
+  // Una sola firma para las fotos del look y las de la tira.
+  const signed = await signMany(
+    supabase,
+    BUCKETS.clothing,
+    [
+      ...(look?.items.map((i) => i.imagePath) ?? []),
+      ...stripItems.map((i) => i.image_path),
+    ].filter((p): p is string => Boolean(p)),
+    user.id,
+  )
 
   const today = new Date()
-  const fecha = today
-    .toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })
-    .toUpperCase()
+  const fecha = `${today.toLocaleDateString('es-ES', { weekday: 'long' })} ${today.getDate()}`
+  const lugar = prefs.city ? ` · ${prefs.city}` : ''
+
+  const headline = titleFor({ prendas, look })
 
   return (
-    <div className="pb-nav">
-      {/* --- Portada --------------------------------------------------- */}
-      <section className="relative h-[78dvh] min-h-[30rem] w-full overflow-hidden">
-        {coverUrl ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={coverUrl}
-              alt=""
-              className="garment-photo absolute inset-0 h-full w-full object-cover"
-            />
-            {/* Degradado para que el texto se lea sobre cualquier foto. */}
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/10 to-black/75"
-            />
-          </>
-        ) : (
-          <div aria-hidden className="absolute inset-0 bg-sunken" />
-        )}
-
-        <div
-          className={`relative flex h-full flex-col justify-between px-5 pt-safe pb-8 ${
-            coverUrl ? 'text-white' : 'text-ink'
-          }`}
-        >
-          <header className="pt-8">
-            <p
-              className="text-[0.625rem] tracking-[0.24em]"
-              style={{ opacity: coverUrl ? 0.75 : 0.5 }}
-            >
-              {fecha}
-            </p>
-            <h1 className="display mt-3 text-[3.25rem] leading-[0.92] tracking-tight">
-              {name ?? 'Tu armario'}
-            </h1>
-          </header>
-
-          <div>
-            <div
-              className="mb-5 h-px w-full"
-              style={{ background: coverUrl ? 'rgba(255,255,255,0.35)' : 'var(--line)' }}
-            />
-            <p
-              className="max-w-[18rem] text-sm leading-relaxed"
-              style={{ opacity: coverUrl ? 0.85 : 0.6 }}
-            >
-              {prendas === 0
-                ? 'Enséñame cómo vistes y empiezo a conocerte.'
-                : `${prendas} ${prendas === 1 ? 'prenda' : 'prendas'} · todo lo que tienes, en un sitio`}
-            </p>
-          </div>
+    <div
+      className="mx-auto w-full max-w-[30rem] pt-safe pb-nav"
+      style={{ paddingInline: 'var(--screen-gutter)' }}
+    >
+      {/* --- Cabecera ---------------------------------------------------- */}
+      <header className="flex items-start justify-between gap-4 pt-5">
+        <div className="min-w-0">
+          <p className="eyebrow">
+            {fecha}
+            {lugar}
+          </p>
+          <h1 className="display mt-2.5 text-[33px] leading-[1.05]">
+            {headline.first}
+            <span className="display-italic mt-0.5 block">{headline.second}</span>
+          </h1>
         </div>
-      </section>
 
-      {/* --- Acción principal ------------------------------------------ */}
-      <section className="mx-auto w-full max-w-lg px-5">
+        {weather ? (
+          <p className="shrink-0 pt-1 text-right text-[11px] leading-[1.5] text-ink-soft">
+            {Math.round(weather.temperatureC)}°
+            <span className="block">{weather.description.toLowerCase()}</span>
+          </p>
+        ) : null}
+      </header>
+
+      {/* --- El look de hoy ---------------------------------------------- */}
+      {look ? (
+        <TodayLook
+          look={{
+            outfitId: look.outfitId,
+            title: look.title,
+            explanation: look.explanation,
+            match: look.match,
+            items: look.items.map((item) => ({
+              id: item.id,
+              name: item.name,
+              imageUrl: item.imagePath ? (signed.get(item.imagePath) ?? null) : null,
+            })),
+          }}
+        />
+      ) : (
         <Link
-          href="/outfits/que-me-pongo"
-          className="-mt-8 relative block bg-accent px-6 py-7 text-accent-ink shadow-[0_-12px_32px_rgba(0,0,0,0.18)]"
+          href={prendas === 0 ? '/onboarding' : '/outfits/que-me-pongo'}
+          className="mt-5 block rounded-[var(--radius-card)] bg-accent p-5 text-accent-ink"
         >
-          <span className="folio mb-2 block" style={{ color: 'inherit', opacity: 0.55 }}>
-            AHORA MISMO
+          <span className="eyebrow block text-accent-ink/55">
+            {prendas === 0 ? 'Primer paso' : 'Ahora mismo'}
           </span>
-          <span className="display block text-[2.5rem] leading-none">¿Qué me pongo?</span>
-          <span className="mt-3 block text-sm opacity-70">
-            Dime la ocasión y el tiempo. Yo pongo el resto.
+          <span className="display mt-2 block text-[26px]">
+            {prendas === 0 ? 'Enséñame cómo vistes' : '¿Qué me pongo?'}
+          </span>
+          <span className="mt-2 block text-[11.5px] leading-[1.5] opacity-70">
+            {prendas === 0
+              ? 'Cinco o seis fotos de looks que ya lleves. Valen las del espejo.'
+              : 'Con lo que hay disponible no consigo montar nada solo. Dime la ocasión y lo intento contigo.'}
           </span>
         </Link>
+      )}
 
-        {!onboardingDone ? (
-          <Link href="/onboarding" className="mt-6 block border border-line bg-raised p-5">
-            <span className="folio mb-2 block">01 — PRIMER PASO</span>
-            <span className="display block text-2xl">Enséñame cómo vistes</span>
-            <span className="mt-2 block text-sm leading-relaxed text-ink-soft">
-              Cinco o seis fotos de looks que ya lleves. Valen las del espejo.
-            </span>
+      {/* --- Sin prisa ---------------------------------------------------- */}
+      <Link
+        href="/outfits/swipe"
+        className="mt-3.5 flex items-center justify-between gap-4 rounded-[18px] border border-line px-4 py-[15px]"
+      >
+        <span className="min-w-0">
+          <span className="eyebrow block">Sin prisa</span>
+          <span className="display mt-1 block text-[18px]">¿Te pondrías esto?</span>
+        </span>
+        <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+          →
+        </span>
+      </Link>
+
+      {/* --- Lo que se te olvida ------------------------------------------
+          No está en el diseño, y se queda igualmente: es una de las cosas que
+          hace la aplicación y no tiene otro sitio donde asomar. Va en una línea
+          fina para que no compita con la tarjeta de arriba. */}
+      {olvidada ? (
+        <Link
+          href={`/armario/${olvidada.id}`}
+          className="mt-3.5 block border-l-2 border-clay py-1.5 pl-3.5"
+        >
+          <span className="eyebrow block">Se te olvida</span>
+          <span className="mt-1 block text-[11.5px] leading-[1.5] text-ink-soft">
+            {neglectMessage(olvidada, describeGarment(olvidada))}
+          </span>
+        </Link>
+      ) : null}
+
+      {!onboardingDone && prendas > 0 ? (
+        <Link
+          href="/onboarding"
+          className="mt-3.5 block border-l-2 border-line py-1.5 pl-3.5"
+        >
+          <span className="eyebrow block">Sin terminar</span>
+          <span className="mt-1 block text-[11.5px] leading-[1.5] text-ink-soft">
+            Quedaron fotos por analizar. Cuantas más vea, mejor te entiendo.
+          </span>
+        </Link>
+      ) : null}
+
+      {/* --- Tu armario --------------------------------------------------- */}
+      <section className="mt-6">
+        <div className="mb-3 flex items-baseline justify-between gap-4">
+          <h2 className="display text-[15px]">Tu armario · {prendas}</h2>
+          <Link href="/armario" className="text-[10.5px] whitespace-nowrap text-ink-faint">
+            ver todo
           </Link>
-        ) : null}
+        </div>
 
-        {olvidada ? (
-          <Link
-            href={`/armario/${olvidada.id}`}
-            className="mt-6 block border-l-2 border-accent bg-sunken/60 px-4 py-3"
-          >
-            <span className="folio mb-1 block">SE TE OLVIDA</span>
-            <span className="block text-sm leading-relaxed text-ink-soft">
-              {neglectMessage(olvidada, describeGarment(olvidada))}
-            </span>
-          </Link>
-        ) : null}
+        <ul className="no-scrollbar bleed-row flex gap-[7px] overflow-x-auto pb-1">
+          {stripItems.map((item) => {
+            const nombre = describeGarment(item)
+            return (
+              <li key={item.id} className="shrink-0">
+                <Link href={`/armario/${item.id}`} className="block">
+                  <PhotoSlot
+                    src={item.image_path ? (signed.get(item.image_path) ?? null) : null}
+                    label={nombre}
+                    showLabel={false}
+                    className="h-[70px] w-14 rounded-xl"
+                  />
+                </Link>
+              </li>
+            )
+          })}
 
-        {/* --- Secciones ------------------------------------------------ */}
-        <nav className="mt-10">
-          <Section folio="I" title="Armario" href="/armario">
-            {prendas === 0 ? 'Todavía vacío' : `${prendas} prendas`}
-          </Section>
-          <Section folio="II" title="Descubre" href="/outfits/swipe">
-            Dime qué te pondrías y qué no
-          </Section>
-          <Section folio="III" title="Estilo" href="/estilo">
-            Cómo te veo
-          </Section>
-          <Section folio="IV" title="Diario" href="/diario">
-            Lo que te pusiste
-          </Section>
-          <Section folio="V" title="La maleta" href="/outfits/maleta">
-            Qué meter para un viaje
-          </Section>
-        </nav>
+          <li className="shrink-0">
+            <Link
+              href="/armario/nueva"
+              aria-label="Añadir una prenda"
+              className="flex h-[70px] w-14 items-center justify-center rounded-xl border border-dashed border-line text-lg text-ink-faint"
+            >
+              +
+            </Link>
+          </li>
+        </ul>
       </section>
     </div>
   )
 }
 
 /**
- * Entrada de sección, maquetada como el sumario de una revista:
- * número romano, título grande, línea fina debajo.
+ * El titular de la portada.
+ *
+ * Dos líneas, la segunda en cursiva. La cursiva no es decoración: es la que
+ * lleva lo que cambia cada día, y por eso la primera línea puede quedarse
+ * quieta sin que la pantalla parezca la misma de ayer.
  */
-function Section({
-  folio,
-  title,
-  href,
-  children,
+function titleFor({
+  prendas,
+  look,
 }: {
-  folio: string
-  title: string
-  href: string
-  children: React.ReactNode
-}) {
-  return (
-    <Link href={href} className="block border-t border-line py-5 last:border-b">
-      <div className="flex items-baseline gap-4">
-        <span className="folio w-6 shrink-0">{folio}</span>
-        <div className="min-w-0 flex-1">
-          <span className="display block text-2xl">{title}</span>
-          <span className="mt-0.5 block truncate text-sm text-ink-soft">{children}</span>
-        </div>
-        <span aria-hidden className="text-ink-faint">
-          →
-        </span>
-      </div>
-    </Link>
-  )
+  prendas: number
+  look: { title: string } | null
+}): { first: string; second: string } {
+  if (prendas === 0) return { first: 'Enséñame', second: 'cómo vistes' }
+  if (!look) return { first: 'Hoy te veo', second: 'como tú quieras' }
+
+  // "Neutros y una chaqueta" → "en neutros y una chaqueta".
+  const lowered = look.title.charAt(0).toLowerCase() + look.title.slice(1)
+  return { first: 'Hoy te veo', second: `en ${lowered}` }
 }

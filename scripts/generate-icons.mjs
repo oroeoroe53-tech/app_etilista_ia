@@ -29,8 +29,8 @@ const MASKABLE = (bg, fg) => `
   </g>
 </svg>`
 
-const BG = '#17161a'
-const FG = '#faf8f5'
+const BG = '#15140f'
+const FG = '#f7f4ee'
 
 await mkdir('public/icons', { recursive: true })
 

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { StyleProfile } from '@/lib/style/profile'
+import { nameOutfit } from './name'
 import { generateOutfits } from './engine'
 import { loadWardrobe } from './persist'
 import { seasonOf } from './filters'
@@ -28,6 +29,8 @@ export interface DeckCard {
   /** Identificador de la carta dentro de esta baraja. No existe en la base de datos. */
   key: string
   itemIds: string[]
+  /** Titular corto del look. Se calcula aquí, donde todavía hay prendas enteras. */
+  title: string
   highlights: string[]
   score: number
 }
@@ -89,6 +92,7 @@ function toCard(outfit: ScoredOutfit): DeckCard {
   return {
     key: outfitSignature(itemIds),
     itemIds,
+    title: nameOutfit(outfit.items),
     highlights: outfit.highlights,
     score: outfit.score,
   }

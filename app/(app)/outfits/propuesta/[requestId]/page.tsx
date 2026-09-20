@@ -5,7 +5,7 @@ import { signMany } from '@/lib/storage/signed'
 import { BUCKETS } from '@/lib/storage/paths'
 import { describeGarment } from '@/lib/wardrobe/labels'
 import { OutfitCard, type OutfitView } from '@/components/outfits/OutfitCard'
-import { Screen, Button } from '@/components/ui'
+import { Screen, Button, BackLink } from '@/components/ui'
 
 export const metadata = { title: 'Tus looks · Estilista' }
 export const dynamic = 'force-dynamic'
@@ -13,8 +13,10 @@ export const dynamic = 'force-dynamic'
 interface OutfitRow {
   id: string
   explanation: string | null
+  score: number | null
   context: {
     position?: number
+    title?: string
     occasion?: string | null
     temperature_c?: number | null
     rain?: boolean
@@ -44,7 +46,7 @@ export default async function ProposalPage({
 
   const { data: outfitRows } = await supabase
     .from('outfits')
-    .select('id, explanation, context')
+    .select('id, explanation, score, context')
     .eq('context->>request_id', requestId)
     .order('created_at', { ascending: true })
 
@@ -90,6 +92,8 @@ export default async function ProposalPage({
     .sort((a, b) => (a.context?.position ?? 0) - (b.context?.position ?? 0))
     .map((outfit) => ({
       id: outfit.id,
+      title: outfit.context?.title ?? 'Un look',
+      match: Math.round((outfit.score ?? 0) * 100),
       explanation: outfit.explanation,
       items: (byOutfit.get(outfit.id) ?? [])
         .map((id) => items.get(id))
@@ -112,18 +116,22 @@ export default async function ProposalPage({
 
   return (
     <Screen>
-      <header className="pt-8 pb-8">
-        <p className="eyebrow mb-2">{contextLine || 'Para hoy'}</p>
-        <h1 className="display text-4xl">Tres opciones</h1>
+      <BackLink href="/outfits/que-me-pongo">cambiar la ocasión</BackLink>
+
+      <header className="pt-4 pb-1">
+        <p className="eyebrow mb-2.5">{contextLine || 'Para hoy'}</p>
+        <h1 className="display text-[2rem]">
+          {views.length === 3 ? 'Tres opciones' : views.length === 1 ? 'Una opción' : 'Dos opciones'}
+        </h1>
       </header>
 
-      <div className="space-y-8">
+      <div className="space-y-3.5 pt-3.5">
         {views.map((outfit, index) => (
           <OutfitCard key={outfit.id} outfit={outfit} index={index} />
         ))}
       </div>
 
-      <div className="mt-10 space-y-3">
+      <div className="mt-8">
         <Link href="/outfits/que-me-pongo" className="block">
           <Button variant="secondary" fullWidth>
             Enséñame otras

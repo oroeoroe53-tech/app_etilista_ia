@@ -3,7 +3,7 @@
 import { useActionState, useState } from 'react'
 import { useFormStatus } from 'react-dom'
 import { requestOutfits, saveLocation, type RequestState } from '@/app/(app)/outfits/actions'
-import { Button, Notice, Field, TextInput } from '@/components/ui'
+import { Button, Notice, Chip } from '@/components/ui'
 import { OCCASION_LABELS, FORMALITY_LABELS } from '@/lib/wardrobe/labels'
 import { OCCASIONS } from '@/lib/wardrobe/taxonomy'
 import { cn } from '@/lib/utils/cn'
@@ -37,7 +37,7 @@ export function RequestForm({ weather, hasLocation }: RequestFormProps) {
   const useAuto = Boolean(weather) && !editingWeather
 
   return (
-    <form action={formAction} className="space-y-8">
+    <form action={formAction} className="space-y-7">
       <input type="hidden" name="occasion" value={occasion} />
       <input type="hidden" name="formality" value={formality ?? ''} />
       <input type="hidden" name="useAutoWeather" value={String(useAuto)} />
@@ -48,49 +48,51 @@ export function RequestForm({ weather, hasLocation }: RequestFormProps) {
         </>
       ) : null}
 
+      {/* --- Para qué ---------------------------------------------------- */}
       <section>
         <p className="eyebrow mb-3">Para qué</p>
-        <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
+        <div className="flex flex-wrap gap-[6px]">
           {OCCASIONS.map((value) => (
-            <Pill
+            <Chip
               key={value}
-              active={occasion === value}
+              selected={occasion === value}
               onClick={() => setOccasion(occasion === value ? '' : value)}
             >
               {OCCASION_LABELS[value]}
-            </Pill>
+            </Chip>
           ))}
         </div>
       </section>
 
+      {/* --- El tiempo ---------------------------------------------------- */}
       <section>
         <p className="eyebrow mb-3">El tiempo</p>
 
         {useAuto && weather ? (
-          <div className="flex items-center justify-between rounded-[var(--radius-card)] border border-line bg-raised px-5 py-4">
+          <div className="flex items-center justify-between rounded-[22px] bg-raised p-4 shadow-card-soft">
             <div>
-              <p className="display text-2xl">{weather.temperatureC}°</p>
-              <p className="text-sm text-ink-soft">
-                {weather.description}
+              <p className="display text-[20px]">{Math.round(weather.temperatureC)}°</p>
+              <p className="mt-0.5 text-[11.5px] text-ink-soft">
+                {weather.description.toLowerCase()}
                 {weather.city ? ` · ${weather.city}` : ''}
               </p>
             </div>
             <button
               type="button"
               onClick={() => setEditingWeather(true)}
-              className="text-sm text-ink-soft underline underline-offset-4"
+              className="text-[11.5px] text-ink-soft underline underline-offset-4"
             >
               Cambiar
             </button>
           </div>
         ) : (
-          <div className="space-y-4 rounded-[var(--radius-card)] border border-line bg-raised p-5">
+          <div className="space-y-4 rounded-[22px] bg-raised p-4 shadow-card-soft">
             {!hasLocation ? <LocationSetup /> : null}
 
             <div>
-              <div className="mb-2 flex items-baseline justify-between">
-                <span className="text-sm text-ink-soft">Temperatura</span>
-                <span className="display text-2xl">{manualTemp}°</span>
+              <div className="mb-1.5 flex items-baseline justify-between">
+                <span className="text-[12px] text-ink-soft">Temperatura</span>
+                <span className="display text-[20px]">{manualTemp}°</span>
               </div>
               <input
                 type="range"
@@ -103,29 +105,29 @@ export function RequestForm({ weather, hasLocation }: RequestFormProps) {
               />
             </div>
 
-            <label className="flex items-center justify-between">
-              <span className="text-sm text-ink-soft">Está lloviendo</span>
-              <input
-                type="checkbox"
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] text-ink-soft">Está lloviendo</span>
+              <Toggle
                 checked={manualRain}
-                onChange={(e) => setManualRain(e.target.checked)}
-                className="h-5 w-5 accent-[var(--accent)]"
+                onChange={setManualRain}
+                label="Está lloviendo"
               />
-            </label>
+            </div>
 
             {weather ? (
               <button
                 type="button"
                 onClick={() => setEditingWeather(false)}
-                className="text-sm text-ink-soft underline underline-offset-4"
+                className="text-[11.5px] text-ink-soft underline underline-offset-4"
               >
-                Usar el tiempo real ({weather.temperatureC}°)
+                Usar el tiempo real ({Math.round(weather.temperatureC)}°)
               </button>
             ) : null}
           </div>
         )}
       </section>
 
+      {/* --- Cómo de arreglada -------------------------------------------- */}
       <section>
         <p className="eyebrow mb-3">Cómo de arreglada</p>
         <div className="flex gap-2">
@@ -135,18 +137,19 @@ export function RequestForm({ weather, hasLocation }: RequestFormProps) {
               type="button"
               onClick={() => setFormality(formality === n ? null : n)}
               aria-pressed={formality === n}
+              aria-label={FORMALITY_LABELS[n]}
               className={cn(
-                'flex-1 rounded-xl border py-2.5 text-sm transition-colors',
+                'display flex-1 rounded-[14px] border py-2.5 text-[17px] transition-colors',
                 formality === n
                   ? 'border-accent bg-accent text-accent-ink'
-                  : 'border-line bg-raised text-ink-soft',
+                  : 'border-line text-ink-soft',
               )}
             >
               {n}
             </button>
           ))}
         </div>
-        <div className="mt-1.5 flex justify-between text-xs text-ink-faint">
+        <div className="mt-2 flex justify-between text-[10.5px] text-ink-faint">
           <span>{FORMALITY_LABELS[1]}</span>
           <span>{FORMALITY_LABELS[5]}</span>
         </div>
@@ -155,10 +158,6 @@ export function RequestForm({ weather, hasLocation }: RequestFormProps) {
       {state.error ? <Notice tone="error">{state.error}</Notice> : null}
 
       <Submit />
-
-      <p className="text-center text-xs text-ink-faint">
-        Todo es opcional. Si no me dices nada, me apaño.
-      </p>
     </form>
   )
 }
@@ -172,26 +171,42 @@ function Submit() {
   )
 }
 
-function Pill({
-  active,
-  children,
-  onClick,
+/**
+ * Interruptor.
+ *
+ * Es un `button` con `role="switch"` y no una casilla disfrazada: aquí no hay
+ * formulario que enviar sin JavaScript —el valor viaja en un campo oculto— y
+ * un botón con el rol correcto lo anuncia bien el lector de pantalla sin tener
+ * que esconder nada.
+ */
+function Toggle({
+  checked,
+  onChange,
+  label,
 }: {
-  active: boolean
-  children: React.ReactNode
-  onClick: () => void
+  checked: boolean
+  onChange: (next: boolean) => void
+  label: string
 }) {
   return (
     <button
       type="button"
-      onClick={onClick}
-      aria-pressed={active}
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      onClick={() => onChange(!checked)}
       className={cn(
-        'shrink-0 rounded-full border px-4 py-2 text-sm whitespace-nowrap transition-colors',
-        active ? 'border-accent bg-accent text-accent-ink' : 'border-line bg-raised text-ink-soft',
+        'relative h-[26px] w-11 shrink-0 rounded-full border transition-colors',
+        checked ? 'border-accent bg-accent' : 'border-line bg-transparent',
       )}
     >
-      {children}
+      <span
+        aria-hidden
+        className={cn(
+          'absolute top-[2px] h-5 w-5 rounded-full transition-[left] duration-[180ms] ease-out',
+          checked ? 'left-[20px] bg-accent-ink' : 'left-[2px] bg-ink-faint',
+        )}
+      />
     </button>
   )
 }
@@ -213,20 +228,21 @@ function LocationSetup() {
 
   return (
     <div className="border-b border-line pb-4">
-      <Field label="Tu ciudad" hint="Para no tener que preguntarte el tiempo cada vez">
-        <div className="flex gap-2">
-          <TextInput
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Madrid, Valencia…"
-            className="flex-1"
-          />
-          <Button type="button" variant="secondary" size="md" disabled={busy} onClick={save}>
-            {busy ? '…' : 'Guardar'}
-          </Button>
-        </div>
-      </Field>
-      {status ? <p className="mt-2 text-xs text-ink-soft">{status}</p> : null}
+      <div className="flex gap-2">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Madrid, Valencia…"
+          aria-label="Tu ciudad"
+          className="h-10 min-w-0 flex-1 rounded-full border border-line bg-transparent px-4 text-[13px] text-ink outline-none placeholder:text-ink-faint focus:border-ink-soft"
+        />
+        <Button type="button" variant="secondary" size="sm" disabled={busy} onClick={save}>
+          {busy ? '…' : 'Guardar'}
+        </Button>
+      </div>
+      <p className="mt-2 text-[10.5px] text-ink-faint">
+        {status ?? 'Para no tener que preguntarte el tiempo cada vez.'}
+      </p>
     </div>
   )
 }

@@ -1,9 +1,19 @@
+import Link from 'next/link'
 import { cn } from '@/lib/utils/cn'
 
 export { Button } from './Button'
 export { Field, Select, TextInput, TextArea, ChipGroup, ScaleInput } from './Field'
 
-/** Contenedor de página. Ancho contenido para que en tablet no se estire feo. */
+/**
+ * Contenedor de página.
+ *
+ * El margen lateral (26px) sale de `--screen-gutter` y no de una clase suelta,
+ * porque las tiras horizontales que se sangran a pantalla completa tienen que
+ * volver a alinearse exactamente con él.
+ *
+ * El ancho máximo es el de un móvil grande: esto se diseñó a 390px y estirarlo
+ * en una tablet no lo mejora, solo lo desparrama.
+ */
 export function Screen({
   children,
   className,
@@ -12,34 +22,153 @@ export function Screen({
   className?: string
 }) {
   return (
-    <div className={cn('mx-auto w-full max-w-lg px-5 pt-safe pb-nav', className)}>{children}</div>
+    <div
+      className={cn('mx-auto w-full max-w-[30rem] pt-safe pb-nav', className)}
+      style={{ paddingInline: 'var(--screen-gutter)' }}
+    >
+      {children}
+    </div>
   )
 }
 
-export function PageTitle({ eyebrow, title }: { eyebrow?: string; title: string }) {
+/**
+ * Cabecera de pantalla: volanta monoespaciada y título en serif.
+ *
+ * `action` es para el caso del Armario, donde el botón de añadir va en la misma
+ * línea que el título y no debajo. Se alinea al final de la línea base del
+ * título para que no flote.
+ */
+export function PageTitle({
+  eyebrow,
+  title,
+  action,
+}: {
+  eyebrow?: string
+  title: React.ReactNode
+  action?: React.ReactNode
+}) {
   return (
-    <header className="pt-8 pb-6">
-      {eyebrow ? <p className="eyebrow mb-2">{eyebrow}</p> : null}
-      <h1 className="display text-4xl">{title}</h1>
+    <header className="pt-5 pb-5">
+      {eyebrow ? <p className="eyebrow mb-2.5">{eyebrow}</p> : null}
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="display text-[2rem]">{title}</h1>
+        {action ? <div className="shrink-0">{action}</div> : null}
+      </div>
     </header>
+  )
+}
+
+/** "← armario". Textual y arriba a la izquierda, como en las subpantallas. */
+export function BackLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <div className="pt-5 pb-1">
+      <Link href={href} className="inline-block py-1 text-[12px] text-ink-soft">
+        ← {children}
+      </Link>
+    </div>
   )
 }
 
 export function Card({
   children,
   className,
+  tone = 'raised',
 }: {
   children: React.ReactNode
   className?: string
+  /** `ink` es la tarjeta negra: invierte el texto sin tocar los hijos. */
+  tone?: 'raised' | 'outline' | 'ink'
 }) {
   return (
     <div
       className={cn(
-        'rounded-[var(--radius-card)] border border-line bg-raised p-5',
+        'rounded-[var(--radius-card)] p-4',
+        tone === 'raised' && 'bg-raised shadow-card',
+        tone === 'outline' && 'border border-line',
+        tone === 'ink' && 'bg-accent text-accent-ink',
         className,
       )}
     >
       {children}
+    </div>
+  )
+}
+
+/**
+ * Hueco de foto.
+ *
+ * Cuando no hay imagen no se deja un rectángulo vacío: va la textura diagonal
+ * del diseño con el nombre de la prenda en monoespaciada abajo a la izquierda.
+ * Un armario a medio analizar tiene que seguir pareciendo un armario.
+ */
+export function PhotoSlot({
+  src,
+  label,
+  className,
+  showLabel = true,
+  ...rest
+}: {
+  src?: string | null
+  label: string
+  className?: string
+  showLabel?: boolean
+} & Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>) {
+  return (
+    <div
+      className={cn('relative overflow-hidden', !src && 'photo-slot', className)}
+      {...rest}
+    >
+      {src ? (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={src}
+          alt={label}
+          loading="lazy"
+          draggable={false}
+          className="garment-photo h-full w-full object-cover"
+        />
+      ) : showLabel ? (
+        <span className="mono absolute bottom-2 left-2.5 max-w-[85%] text-ink-faint">
+          {label.toLowerCase()}
+        </span>
+      ) : null}
+    </div>
+  )
+}
+
+/**
+ * Barra de progreso fina.
+ *
+ * Se usa para dos cosas distintas —lo consumido del plan y lo cubierto de una
+ * carencia del armario— y por eso el color es un parámetro: la tinta mide algo
+ * tuyo, la arcilla señala algo que falta.
+ */
+export function Meter({
+  value,
+  label,
+  tone = 'ink',
+  className,
+}: {
+  /** 0–100. */
+  value: number
+  label: string
+  tone?: 'ink' | 'clay'
+  className?: string
+}) {
+  const pct = Math.max(0, Math.min(100, value))
+  return (
+    <div
+      role="progressbar"
+      aria-valuenow={Math.round(pct)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={label}
+      className={cn('w-full overflow-hidden rounded-full bg-sunken', className ?? 'h-[3px]')}
+    >
+      <div
+        className={cn('h-full rounded-full', tone === 'ink' ? 'bg-accent' : 'bg-clay')}
+        style={{ width: `${pct}%` }}
+      />
     </div>
   )
 }
@@ -54,15 +183,13 @@ export function Chip({
       type="button"
       aria-pressed={selected}
       className={cn(
-        'shrink-0 rounded-full border px-4 h-9 text-sm transition-colors',
+        'shrink-0 rounded-full border px-3.5 py-[9px] text-[11.5px] font-medium whitespace-nowrap transition-colors',
         selected
           ? 'border-accent bg-accent text-accent-ink'
-          : 'border-line bg-raised text-ink-soft',
+          : 'border-[color-mix(in_srgb,var(--ink)_16%,transparent)] bg-transparent text-ink-soft',
       )}
       {...props}
-    >
-      {children}
-    </button>
+    />
   )
 }
 
@@ -82,8 +209,8 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center gap-3 py-16 text-center">
       <h2 className="display text-2xl">{title}</h2>
-      <p className="max-w-xs text-sm leading-relaxed text-ink-soft">{body}</p>
-      {action ? <div className="pt-3">{action}</div> : null}
+      <p className="max-w-xs text-[11.5px] leading-[1.5] text-ink-soft">{body}</p>
+      {action ? <div className="w-full pt-4">{action}</div> : null}
     </div>
   )
 }
@@ -100,10 +227,8 @@ export function Notice({
     <p
       role={tone === 'error' ? 'alert' : undefined}
       className={cn(
-        'rounded-2xl px-4 py-3 text-sm leading-relaxed',
-        tone === 'error'
-          ? 'bg-danger/10 text-danger'
-          : 'bg-sunken text-ink-soft',
+        'rounded-[18px] px-4 py-3 text-[11.5px] leading-[1.5]',
+        tone === 'error' ? 'bg-danger/10 text-danger' : 'border border-line text-ink-soft',
       )}
     >
       {children}

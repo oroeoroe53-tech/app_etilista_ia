@@ -8,10 +8,30 @@ import { signMany } from '@/lib/storage/signed'
 import { BUCKETS } from '@/lib/storage/paths'
 import { describeGarment } from '@/lib/wardrobe/labels'
 import { SwipeDeck, type SwipeCard } from '@/components/outfits/SwipeDeck'
-import { Screen, EmptyState, Button, Notice } from '@/components/ui'
+import { Screen, EmptyState, Button, Notice, BackLink } from '@/components/ui'
 
 export const metadata = { title: 'Descubre · Estilista' }
 export const dynamic = 'force-dynamic'
+
+/*
+ * La única pantalla negra.
+ *
+ * El color de la barra del sistema se declara por ruta para que el teléfono se
+ * oscurezca con ella; si no, quedaría una franja crema arriba delatando que el
+ * negro es solo un div.
+ */
+export const viewport = { themeColor: '#15140f' }
+
+/**
+ * Envoltorio oscuro.
+ *
+ * `on-dark` redefine las variables de color para todo el subárbol: ni un solo
+ * componente de dentro sabe que está sobre negro. `min-h-dvh` es lo que evita
+ * que el fondo se corte si la baraja es corta.
+ */
+function Dark({ children }: { children: React.ReactNode }) {
+  return <div className="on-dark min-h-dvh">{children}</div>
+}
 
 interface ItemRow {
   id: string
@@ -35,22 +55,25 @@ export default async function SwipePage() {
 
   if (!permiso.allowed) {
     return (
-      <Screen>
-        <header className="pt-8 pb-6">
-          <p className="eyebrow mb-2">Descubre</p>
-          <h1 className="display text-4xl">Por hoy ya está</h1>
-        </header>
-        <Notice>
-          Has valorado {permiso.used} looks hoy. Mañana volvemos a empezar.
-        </Notice>
-        <div className="mt-6">
-          <Link href="/estilo">
-            <Button variant="secondary" fullWidth>
-              Ver cómo te veo ahora
-            </Button>
-          </Link>
-        </div>
-      </Screen>
+      <Dark>
+        <Screen>
+          <BackLink href="/outfits">outfits</BackLink>
+          <header className="pt-4 pb-6">
+            <p className="eyebrow mb-2.5">Descubre</p>
+            <h1 className="display text-[30px]">Por hoy ya está</h1>
+          </header>
+          <Notice>
+            Has valorado {permiso.used} looks hoy. Mañana volvemos a empezar.
+          </Notice>
+          <div className="mt-6">
+            <Link href="/estilo" className="block">
+              <Button variant="secondary" fullWidth>
+                Ver cómo te veo ahora
+              </Button>
+            </Link>
+          </div>
+        </Screen>
+      </Dark>
     )
   }
 
@@ -58,21 +81,24 @@ export default async function SwipePage() {
 
   if (deck.cards.length === 0) {
     return (
-      <Screen>
-        <header className="pt-8 pb-6">
-          <p className="eyebrow mb-2">Descubre</p>
-          <h1 className="display text-4xl">Aún no</h1>
-        </header>
-        <EmptyState
-          title="Me falta armario"
-          body="Con unas pocas prendas más podré montar combinaciones que merezca la pena enseñarte."
-          action={
-            <Link href="/armario/nueva">
-              <Button>Añadir prendas</Button>
-            </Link>
-          }
-        />
-      </Screen>
+      <Dark>
+        <Screen>
+          <BackLink href="/outfits">outfits</BackLink>
+          <header className="pt-4 pb-6">
+            <p className="eyebrow mb-2.5">Descubre</p>
+            <h1 className="display text-[30px]">Aún no</h1>
+          </header>
+          <EmptyState
+            title="Me falta armario"
+            body="Con unas pocas prendas más podré montar combinaciones que merezca la pena enseñarte."
+            action={
+              <Link href="/armario/nueva" className="block">
+                <Button fullWidth>Añadir prendas</Button>
+              </Link>
+            }
+          />
+        </Screen>
+      </Dark>
     )
   }
 
@@ -96,6 +122,7 @@ export default async function SwipePage() {
   const cards: SwipeCard[] = deck.cards.map((card) => ({
     key: card.key,
     itemIds: card.itemIds,
+    title: card.title,
     items: card.itemIds
       .map((id) => items.get(id))
       .filter((item): item is ItemRow => Boolean(item))
@@ -107,25 +134,29 @@ export default async function SwipePage() {
   }))
 
   return (
-    <Screen>
-      <header className="pt-8 pb-6">
-        <p className="eyebrow mb-2">Descubre</p>
-        <h1 className="display text-4xl">¿Te pondrías esto?</h1>
-        <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-          No busco acertar: busco entenderte. Un “no” me enseña tanto como un “sí”.
-        </p>
-      </header>
+    <Dark>
+      <Screen>
+        <BackLink href="/outfits">outfits</BackLink>
 
-      {deck.exhausted ? (
-        <div className="mb-6">
-          <Notice>
-            Ya has valorado casi todo lo que puedo montar con tu armario. Te repito
-            algunos: si cambias de opinión, sustituyo lo anterior.
-          </Notice>
-        </div>
-      ) : null}
+        <header className="pt-4 pb-5">
+          <p className="eyebrow mb-2.5">Descubre</p>
+          <h1 className="display text-[30px]">¿Te pondrías esto?</h1>
+          <p className="mt-2.5 text-[11.5px] leading-[1.5] text-ink-soft">
+            No busco acertar: busco entenderte. Un “no” me enseña tanto como un “sí”.
+          </p>
+        </header>
 
-      <SwipeDeck cards={cards} />
-    </Screen>
+        {deck.exhausted ? (
+          <div className="mb-5">
+            <Notice>
+              Ya has valorado casi todo lo que puedo montar con tu armario. Te repito
+              algunos: si cambias de opinión, sustituyo lo anterior.
+            </Notice>
+          </div>
+        ) : null}
+
+        <SwipeDeck cards={cards} />
+      </Screen>
+    </Dark>
   )
 }

@@ -142,6 +142,50 @@ describe('huecos del armario', () => {
     expect(findGaps([garment(), garment()])).toEqual([])
   })
 
+  it('lo que falta del todo sale con la barra a cero', () => {
+    /*
+     * La pantalla de Estilo pinta `coverage` como una barra. Tiene que ser un
+     * número contado, no una estimación: si no hay ni un zapato, la barra está
+     * vacía y eso es exactamente lo que pasa.
+     */
+    const items = [
+      garment(), garment(), garment(),
+      garment({ category: 'jeans' }), garment({ category: 'chinos' }),
+    ]
+    const gap = findGaps(items).find((g) => g.kind === 'missing_layer')
+    expect(gap?.coverage).toBe(0)
+  })
+
+  it('una temporada floja mide lo que le falta, no lo que le sobra', () => {
+    const items = [
+      garment({ seasons: ['summer'] }),
+      garment({ category: 'jeans', seasons: ['summer'] }),
+      garment({ category: 'sneakers', seasons: ['summer'] }),
+      garment({ category: 'shirt', seasons: ['summer'] }),
+      garment({ category: 'shorts', seasons: ['summer'] }),
+      // Dos prendas de invierno de las cuatro que harían falta: medio cubierto.
+      garment({ category: 'coat', seasons: ['winter'], warmth: 5 }),
+      garment({ category: 'sweater', seasons: ['winter'], warmth: 4 }),
+    ]
+    const gap = findGaps(items).find((g) => g.kind === 'season_thin')
+    expect(gap?.coverage).toBeCloseTo(0.5, 5)
+  })
+
+  it('todas las coberturas caen entre 0 y 1', () => {
+    // La barra se pinta con `width: X%`: un valor fuera de rango se desborda.
+    const items = [
+      garment(), garment(), garment(), garment(), garment(), garment(),
+      garment({ category: 'jeans' }),
+      garment({ category: 'trousers', formality: 5 }),
+      garment({ category: 'sneakers', formality: 2 }),
+      garment({ category: 'shirt', formality: 5, seasons: ['winter'] }),
+    ]
+    for (const gap of findGaps(items)) {
+      expect(gap.coverage).toBeGreaterThanOrEqual(0)
+      expect(gap.coverage).toBeLessThanOrEqual(1)
+    }
+  })
+
   it('avisa si no hay calzado', () => {
     const items = [
       garment(), garment(), garment(),

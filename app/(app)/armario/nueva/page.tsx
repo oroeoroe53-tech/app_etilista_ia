@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/supabase/server'
 import { checkEntitlement } from '@/lib/subscriptions/entitlements'
 import { NewItemFlow } from '@/components/wardrobe/NewItemFlow'
-import { Screen, Notice, Button } from '@/components/ui'
+import { Screen, Notice, Button, BackLink } from '@/components/ui'
 
 export const metadata = { title: 'Añadir prenda · Estilista' }
 export const dynamic = 'force-dynamic'
@@ -16,16 +16,15 @@ export default async function NewItemPage() {
 
   return (
     <Screen>
-      <div className="pt-6 pb-4">
-        <Link href="/armario" className="text-sm text-ink-soft">
-          ← Armario
-        </Link>
-      </div>
+      <BackLink href="/armario">atrás</BackLink>
 
-      <header className="pb-6">
-        <p className="eyebrow mb-2">Añadir</p>
-        <h1 className="display text-3xl">Una prenda más</h1>
-        <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+      <header className="pt-4 pb-6">
+        <p className="eyebrow mb-2.5">Nueva prenda</p>
+        <h1 className="display text-[30px]">
+          Súbela y yo
+          <span className="display-italic block">la describo</span>
+        </h1>
+        <p className="mt-3 text-[11.5px] leading-[1.5] text-ink-soft">
           Lo que no salga en tus fotos puedes añadirlo aquí. La foto es opcional.
         </p>
       </header>
@@ -35,10 +34,10 @@ export default async function NewItemPage() {
           <Notice tone="error">
             Tu armario ha llegado al límite del plan: {permiso.used} de {permiso.limit} prendas.
           </Notice>
-          <p className="text-sm leading-relaxed text-ink-soft">
+          <p className="text-[11.5px] leading-[1.5] text-ink-soft">
             Puedes borrar prendas que ya no uses para hacer hueco.
           </p>
-          <Link href="/armario">
+          <Link href="/armario" className="block">
             <Button variant="secondary" fullWidth>
               Volver al armario
             </Button>

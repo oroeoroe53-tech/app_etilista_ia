@@ -5,9 +5,12 @@ export default function Loading() {
   return (
     <Screen>
       <PageTitleSkeleton />
-      <Shimmer className="mb-3 h-32 w-full rounded-[var(--radius-card)]" />
-      <Shimmer className="mb-8 h-28 w-full rounded-[var(--radius-card)]" />
-      <Shimmer className="h-2.5 w-24 rounded" />
+      <Shimmer className="h-[132px] w-full rounded-[24px]" />
+      <Shimmer className="mt-3.5 h-[132px] w-full rounded-[24px]" />
+      <div className="mt-6 space-y-3.5">
+        <Shimmer className="h-12 w-full rounded" />
+        <Shimmer className="h-12 w-full rounded" />
+      </div>
     </Screen>
   )
 }

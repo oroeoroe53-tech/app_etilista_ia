@@ -222,8 +222,24 @@ describe('lectura del perfil', () => {
 describe('retrato en castellano', () => {
   it('con un perfil vacío lo admite en vez de inventarse un estilo', () => {
     const portrait = describeProfile(emptyProfile())
-    expect(portrait.headline).toContain('conociendo')
+    // El titular va partido en dos líneas (la segunda en cursiva), así que lo
+    // que tiene que admitir la ignorancia es la frase entera, no la primera.
+    const titular = [portrait.headline, portrait.headlineSecond].filter(Boolean).join(' ')
+    expect(titular).toContain('conociendo')
     expect(portrait.colors).toEqual([])
+  })
+
+  it('el titular se parte en dos cuando hay dos estilos con peso', () => {
+    // Es lo que hace que la portada de Estilo diga "Casual *minimalista*" y no
+    // solo "Casual", que describiría a cualquiera.
+    const profile = buildProfile([
+      ...Array.from({ length: 10 }, () =>
+        ownershipSignal(garment({ styles: ['casual', 'minimal'] })),
+      ),
+    ])
+    const portrait = describeProfile(profile)
+    expect(portrait.headlineSecond).toBeTruthy()
+    expect(portrait.headlineSecond).toBe(portrait.headlineSecond?.toLowerCase())
   })
 
   it('describe un armario con patrón claro', () => {

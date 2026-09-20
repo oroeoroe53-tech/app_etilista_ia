@@ -6,7 +6,7 @@ import { describeProfile, COLOR_SWATCHES } from '@/lib/style/describe'
 import { rebuildStyleProfile } from '@/lib/style/rebuild'
 import { colorLabel } from '@/lib/wardrobe/labels'
 import { findGaps } from '@/lib/wardrobe/gaps'
-import { Screen, PageTitle, EmptyState, Button } from '@/components/ui'
+import { Screen, PageTitle, EmptyState, Button, Meter } from '@/components/ui'
 import { PreferencesForm } from '@/components/style/PreferencesForm'
 
 export const dynamic = 'force-dynamic'
@@ -17,6 +17,10 @@ export const dynamic = 'force-dynamic'
  * La pantalla más delicada del producto en cuanto a tono. Lo que se enseña es un
  * retrato en castellano, no un panel de métricas: si la persona lee números,
  * piensa "me están midiendo" en vez de "esto me ha entendido" (PLAN.md §42).
+ *
+ * Las únicas cifras de la pantalla son las barras de "lo que te falta", y esas
+ * sí son números contados —tres prendas de invierno de las cuatro que harían
+ * falta— no una puntuación sobre la persona.
  */
 export default async function StylePage() {
   const user = await getCurrentUser()
@@ -61,13 +65,13 @@ export default async function StylePage() {
   if ((itemCount ?? 0) === 0) {
     return (
       <Screen>
-        <PageTitle eyebrow="Cómo vistes" title="Estilo" />
+        <PageTitle eyebrow="Cómo te veo" title="Estilo" />
         <EmptyState
           title="Todavía no te conozco"
           body="Enséñame unas fotos de looks que lleves y empezaré a entender cómo vistes."
           action={
-            <Link href="/onboarding">
-              <Button>Enséñame cómo vistes</Button>
+            <Link href="/onboarding" className="block">
+              <Button fullWidth>Enséñame cómo vistes</Button>
             </Link>
           }
         />
@@ -77,13 +81,20 @@ export default async function StylePage() {
 
   return (
     <Screen>
-      <PageTitle eyebrow="Cómo vistes" title="Estilo" />
+      <header className="pt-5 pb-5">
+        <p className="eyebrow mb-2.5">Cómo te veo</p>
+        <h1 className="display text-[2rem]">
+          {portrait.headline}
+          {portrait.headlineSecond ? (
+            <span className="display-italic block text-ink-faint">{portrait.headlineSecond}</span>
+          ) : null}
+        </h1>
+      </header>
 
-      <section className="mb-10">
-        <h2 className="display mb-4 text-3xl">{portrait.headline}</h2>
-
+      {/* --- El retrato ---------------------------------------------------- */}
+      <section className="mb-9">
         {portrait.colors.length > 0 ? (
-          <ul className="mb-5 flex gap-2" aria-label="Tus colores habituales">
+          <ul className="mb-5 flex gap-4" aria-label="Tus colores habituales">
             {portrait.colors.map((color) => (
               <li key={color} className="flex flex-col items-center gap-1.5">
                 <span
@@ -97,58 +108,67 @@ export default async function StylePage() {
           </ul>
         ) : null}
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           {portrait.lines.map((line) => (
-            <p key={line} className="text-[15px] leading-relaxed text-ink-soft">
+            <p key={line} className="text-[13px] leading-[1.7] text-ink-soft">
               {line}
             </p>
           ))}
         </div>
 
         {portrait.caveat ? (
-          <p className="mt-5 rounded-2xl bg-sunken px-4 py-3 text-sm leading-relaxed text-ink-soft">
+          <p className="mt-5 border-l-2 border-line pl-3.5 text-[11.5px] leading-[1.5] text-ink-soft">
             {portrait.caveat}
           </p>
         ) : null}
       </section>
 
       {level !== 'established' ? (
-        <section className="mb-10">
+        <section className="mb-9">
           <p className="eyebrow mb-3">Cómo afinarlo</p>
-          <ul className="space-y-3 text-sm text-ink-soft">
+          <ul className="space-y-2.5 text-[11.5px] leading-[1.5] text-ink-soft">
             <Tip href="/onboarding">Analiza más fotos de looks que ya lleves.</Tip>
             <Tip href="/armario">Corrige las prendas que no describí bien.</Tip>
-            <Tip href="/outfits">Valora combinaciones y dime cuáles no van contigo.</Tip>
+            <Tip href="/outfits/swipe">Valora combinaciones y dime cuáles no van contigo.</Tip>
           </ul>
         </section>
       ) : null}
 
+      {/* --- Lo que te falta ----------------------------------------------- */}
       {gaps.length > 0 ? (
-        <section className="mb-10">
+        <section className="mb-9">
           <p className="eyebrow mb-3">Lo que te falta</p>
-          <p className="mb-5 text-sm leading-relaxed text-ink-soft">
+          <p className="mb-4 text-[11.5px] leading-[1.5] text-ink-soft">
             No es una lista de la compra: son las piezas que impiden que lo que ya
             tienes funcione del todo.
           </p>
-          <ul className="space-y-4">
+
+          <ul className="space-y-2.5">
             {gaps.slice(0, 4).map((gap) => (
               <li
                 key={`${gap.kind}-${gap.title}`}
-                className={`border-l-2 pl-4 ${
-                  gap.severity === 'high' ? 'border-danger' : 'border-line'
-                }`}
+                className="rounded-[20px] border border-line p-4"
               >
-                <p className="text-[15px]">{gap.title}</p>
-                <p className="mt-1 text-sm leading-relaxed text-ink-soft">{gap.detail}</p>
+                <p className="display text-[17px]">{gap.title}</p>
+                <p className="mt-1.5 mb-3 text-[11.5px] leading-[1.5] text-ink-soft">
+                  {gap.detail}
+                </p>
+                <Meter
+                  value={gap.coverage * 100}
+                  label={`Cubierto: ${gap.title}`}
+                  tone="clay"
+                  className="h-1"
+                />
               </li>
             ))}
           </ul>
         </section>
       ) : null}
 
+      {/* --- Colores que no me pongo ---------------------------------------- */}
       <section>
-        <p className="eyebrow mb-3">Lo que no quieres</p>
-        <p className="mb-5 text-sm leading-relaxed text-ink-soft">
+        <p className="eyebrow mb-3">Colores que no me pongo</p>
+        <p className="mb-4 text-[11.5px] leading-[1.5] text-ink-soft">
           Esto manda sobre lo que yo deduzca. Si marcas un color aquí, no te lo propondré
           aunque lo tengas en el armario.
         </p>

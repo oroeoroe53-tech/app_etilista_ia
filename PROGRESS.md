@@ -355,6 +355,56 @@ armario → filtros duros → candidatos → puntuación → diversidad → look
 
 ---
 
+## Rediseño "pep" (handoff de Claude Design) — 2026-09-20
+
+Se implementó el paquete `design_handoff_pep_app`: 10 pantallas, sistema visual
+editorial (crema + negro cálido + Instrument Serif) y las interacciones que
+describe. **La maleta queda fuera por decisión del propio handoff.**
+
+**Sistema visual** (`app/globals.css`)
+- Los tokens son los del handoff, no una aproximación: `#f4f1ea` de fondo,
+  `#fffdf8` de tarjeta, `#15140f` de tinta, arcilla `#8a6a4f` para lo único que
+  lleva color.
+- `.on-dark` redefine las mismas variables en un subárbol. Es lo que permite que
+  "Descubre" sea negra **sin una sola variante de componente**.
+- `.photo-slot` es la textura diagonal del handoff. Un hueco sin foto deja de
+  parecer un error.
+- Volanta y contadores en monoespaciada de 9,5 px, según la escala del handoff.
+
+**Se quitó el modo oscuro automático.** La identidad es el crema, y "Descubre"
+es la excepción. Si el teléfono pudiera invertir la aplicación entera, esa
+excepción dejaría de significar nada. Afecta a `themeColor`, al manifiesto y a
+los iconos, que se regeneraron.
+
+**Piezas nuevas que el diseño necesitaba y no existían**
+- `lib/outfits/daily.ts` — el look de la portada. **No gasta cupo ni llama a
+  ningún modelo**: se compone con el motor una vez al día y se guarda. Abrir la
+  aplicación diez veces no puede consumir las diez propuestas del plan.
+- `lib/outfits/name.ts` — titular determinista de un look ("Neutros y una
+  chaqueta"), calculado desde la paleta y las capas. Se guarda en `context.title`
+  al persistir, para que el mismo look no se llame de dos maneras.
+- `lib/wardrobe/pairs.ts` — "combina bien con" de la ficha de prenda. Comparación
+  por parejas, no el motor en pequeño: es otra pregunta y cuesta mil veces menos.
+- `Gap.coverage` — las barras de "lo que te falta" son un número **contado**
+  (tres prendas de las cuatro que harían falta), no una estimación.
+- `StylePortrait.headlineSecond` — la segunda línea en cursiva del titular.
+
+**Lo que NO se implementó del handoff, y por qué**
+| Elemento | Motivo |
+|---|---|
+| Nombre "pep" | La aplicación se llama Estilista en manifiesto, splash, metadatos y correos. Renombrar el producto no es una decisión de maquetación. |
+| "Cambiar pieza" en Tres opciones | No existe la función de sustituir una prenda de un look ya propuesto. En su lugar va "Otra idea". |
+| "14 looks posibles con ella" | Exigiría montar todas las combinaciones al abrir cada prenda, y contaría conjuntos, no conjuntos buenos. |
+| "Notificación diaria → 8:00" | No hay notificaciones. |
+| Tercera tira de filtros del armario | El diseño maqueta dos; se mantiene la de temporada y "guardadas" porque es la única puerta a las prendas archivadas. |
+
+**Pendiente de verificar a mano**
+- Las diez pantallas se comprobaron con una ruta de preview desechable (ya
+  borrada). **Con datos reales y sesión iniciada no se han visto.**
+- El cobro del plan completo no existe: `UpgradeCta` lo dice al pulsarlo.
+
+---
+
 ## Registro de decisiones previas
 
 | Fecha | Decisión |

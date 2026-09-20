@@ -7,14 +7,17 @@ export const metadata = { title: 'Entrar · Estilista' }
 export default function LoginPage() {
   return (
     <>
-      <header className="mb-10">
+      <header className="mb-9">
         <p className="eyebrow mb-3">Estilista</p>
-        <h1 className="display text-4xl">Hola otra vez</h1>
+        <h1 className="display text-[33px] leading-[1.05]">
+          Hola
+          <span className="display-italic block">otra vez</span>
+        </h1>
       </header>
 
       <AuthForm action={signIn} submitLabel="Entrar" />
 
-      <p className="mt-8 text-center text-sm text-ink-soft">
+      <p className="mt-7 text-center text-[11.5px] text-ink-soft">
         ¿Aún no tienes cuenta?{' '}
         <Link href="/register" className="text-ink underline underline-offset-4">
           Crear una

@@ -37,15 +37,31 @@ export function Field({
 const CONTROL =
   'h-12 w-full rounded-2xl border border-line bg-raised px-4 text-base text-ink outline-none focus:border-ink-soft'
 
+/**
+ * Control "desnudo": sin caja, alineado a la derecha y en serif.
+ *
+ * Es el que usa la tarjeta de "lo que he deducido", donde cada línea se lee
+ * como una afirmación ("Categoría — *Arriba*") y no como un campo que hay que
+ * rellenar. Sigue siendo un `select` de verdad: se toca y se abre el selector
+ * nativo del teléfono.
+ */
+const BARE =
+  'w-full cursor-pointer appearance-none bg-transparent text-right text-[16px] text-ink outline-none focus-visible:underline focus-visible:underline-offset-4 [font-family:var(--font-display)]'
+
 export function Select({
   options,
   className,
+  bare,
   ...props
 }: React.SelectHTMLAttributes<HTMLSelectElement> & {
   options: ReadonlyArray<{ value: string; label: string }>
+  bare?: boolean
 }) {
   return (
-    <select className={cn(CONTROL, 'appearance-none pr-10', className)} {...props}>
+    <select
+      className={cn(bare ? BARE : cn(CONTROL, 'appearance-none pr-10'), className)}
+      {...props}
+    >
       {options.map((option) => (
         <option key={option.value} value={option.value}>
           {option.label}
@@ -57,9 +73,15 @@ export function Select({
 
 export function TextInput({
   className,
+  bare,
   ...props
-}: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={cn(CONTROL, className)} {...props} />
+}: React.InputHTMLAttributes<HTMLInputElement> & { bare?: boolean }) {
+  return (
+    <input
+      className={cn(bare ? cn(BARE, 'placeholder:text-ink-faint') : CONTROL, className)}
+      {...props}
+    />
+  )
 }
 
 export function TextArea({
