@@ -1,14 +1,15 @@
 import { BackLink } from '@/components/ui'
-import { PollComposer } from '@/components/polls/PollComposer'
+import { LookPollForm } from '@/components/polls/LookPollForm'
 
 export const metadata = { title: '¿Cuál me pongo? · Estilista' }
 
 /**
- * Montar una votación.
+ * Pedir opinión.
  *
- * Esta pantalla se abre con prisa, siempre. Por eso no hay explicación previa,
- * ni ejemplo, ni tarjeta de bienvenida: se entra y la primera cosa que se ve es
- * el sitio donde va la primera foto.
+ * Se abre con prisa, siempre, así que no hay explicación previa ni ejemplo: dos
+ * filas de opciones y un botón. Lo que había antes —hacer fotos de cada
+ * alternativa— sigue existiendo un toque más abajo, porque hay un caso en el
+ * que sigue siendo lo correcto.
  */
 export default function NewPollPage() {
   return (
@@ -16,21 +17,21 @@ export default function NewPollPage() {
       className="mx-auto w-full max-w-[30rem] pt-safe pb-nav"
       style={{ paddingInline: 'var(--screen-gutter)' }}
     >
-      <BackLink href="/">portada</BackLink>
+      <BackLink href="/social">social</BackLink>
 
-      <header className="pt-2 pb-6">
-        <p className="eyebrow mb-2.5">Pregunta a las tuyas</p>
-        <h1 className="display text-[31px] leading-[1.06]">
+      <header className="pt-2 pb-7">
+        <p className="eyebrow mb-2.5">Lo monta tu estilista</p>
+        <h1 className="display text-[32px] leading-[1.02]">
           ¿Cuál
           <span className="display-italic"> me pongo?</span>
         </h1>
-        <p className="mt-3 text-[11.5px] leading-[1.5] text-ink-soft">
-          Haz una foto de cada opción y manda el enlace al grupo. Quien lo abra
-          vota en dos toques.
+        <p className="mt-3 text-[12px] leading-[1.5] text-ink-soft">
+          Tres looks con tu ropa de verdad, para el tiempo que hace hoy. Tú solo
+          eliges para qué es y cuánto tiempo tienes.
         </p>
       </header>
 
-      <PollComposer />
+      <LookPollForm />
     </div>
   )
 }

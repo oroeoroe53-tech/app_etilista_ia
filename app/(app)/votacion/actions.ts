@@ -8,6 +8,9 @@ import { createClient, requireUser } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { newLinkToken, looksLikeToken } from '@/lib/security/link-token'
 import { purgeExpiredPolls } from '@/lib/polls/purge'
+import { composePollLooks } from '@/lib/polls/compose'
+import { markWorn } from '@/app/(app)/outfits/actions'
+import { OCCASIONS } from '@/lib/wardrobe/taxonomy'
 import { track } from '@/lib/observability/funnel'
 import { log } from '@/lib/observability/log'
 
@@ -225,4 +228,120 @@ export async function closePoll(formData: FormData): Promise<void> {
     .eq('owner_id', user.id)
 
   revalidatePath(`/v/${token}`)
+}
+
+const looksSchema = z.object({
+  occasion: z.enum(['', ...OCCASIONS] as unknown as [string, ...string[]]).optional(),
+  minutes: z.coerce.number().int().min(MIN_MINUTES).max(MAX_MINUTES),
+})
+
+/**
+ * Crear una votación con looks montados por el motor.
+ *
+ * Es la forma por defecto desde el rediseño, y la buena: sin fotos, sin
+ * vestirse dos veces y sin que ninguna foto tuya salga a un grupo. Lo que ven
+ * quienes votan son tres conjuntos con tu ropa, no tu armario.
+ *
+ * No consume cupo ni llama a ningún modelo — ver `lib/polls/compose.ts`.
+ */
+export async function createPollFromLooks(
+  _prev: PollFormState,
+  formData: FormData,
+): Promise<PollFormState> {
+  const user = await requireUser()
+
+  const parsed = looksSchema.safeParse({
+    occasion: formData.get('occasion') ?? '',
+    minutes: formData.get('minutes'),
+  })
+  if (!parsed.success) return { error: 'Revisa la ocasión y el tiempo.' }
+
+  const supabase = await createClient()
+
+  const composed = await composePollLooks(supabase, user.id, {
+    occasion: (parsed.data.occasion || undefined) as never,
+  })
+
+  if ('error' in composed) return { error: composed.error }
+
+  const now = Date.now()
+
+  const { data: poll, error } = await supabase
+    .from('polls')
+    .insert({
+      owner_id: user.id,
+      question: occasionQuestion(parsed.data.occasion),
+      token: newLinkToken(),
+      closes_at: new Date(now + parsed.data.minutes * 60_000).toISOString(),
+      expires_at: new Date(now + 24 * 3600_000).toISOString(),
+    })
+    .select('id, token')
+    .single()
+
+  if (error || !poll) {
+    log.warn({ event: 'polls.create_failed', reason: error?.message })
+    return { error: 'No hemos podido crear la votación. Inténtalo otra vez.' }
+  }
+
+  const { error: optionsError } = await supabase.from('poll_options').insert(
+    composed.outfitIds.map((outfitId, index) => ({
+      poll_id: poll.id,
+      outfit_id: outfitId,
+      position: index + 1,
+    })),
+  )
+
+  if (optionsError) {
+    await supabase.from('polls').delete().eq('id', poll.id)
+    log.warn({ event: 'polls.options_failed', reason: optionsError.message })
+    return { error: 'No hemos podido guardar los looks. Inténtalo otra vez.' }
+  }
+
+  track('poll_created', user.id)
+
+  after(async () => {
+    await purgeExpiredPolls()
+  })
+
+  redirect(`/v/${poll.token}`)
+}
+
+/**
+ * La pregunta, deducida de la ocasión.
+ *
+ * Se escribe sola porque con prisa nadie escribe, y una votación sin contexto
+ * se contesta peor: «¿cuál me pongo?» a secas no dice si es para la oficina o
+ * para una cena.
+ */
+function occasionQuestion(occasion: string | undefined): string | null {
+  const map: Record<string, string> = {
+    work: 'Para trabajar',
+    casual: 'Para el día a día',
+    date: 'Para una cita',
+    sport: 'Para hacer deporte',
+    party: 'Para salir de fiesta',
+    formal_event: 'Para un evento formal',
+    travel: 'Para viajar',
+    home: 'Para estar en casa',
+  }
+  return occasion ? (map[occasion] ?? null) : null
+}
+
+/**
+ * «Me pongo este»: marcar como puesto el look que ganó.
+ *
+ * Existe como envoltura propia y no llamando a `markWorn` directamente porque
+ * un `action` de formulario tiene que devolver `void`, y `markWorn` devuelve el
+ * resultado para quien lo llama desde un componente de cliente. Envolverlo aquí
+ * evita tener que convertir esta pantalla entera en cliente solo por un botón.
+ */
+export async function wearPollWinner(formData: FormData): Promise<void> {
+  await requireUser()
+  const parsed = z.string().uuid().safeParse(formData.get('outfitId'))
+  if (!parsed.success) return
+
+  // `markOutfitWorn` ya comprueba que el look sea de quien lo marca.
+  await markWorn(parsed.data)
+  revalidatePath('/diario')
+  revalidatePath('/social')
 }

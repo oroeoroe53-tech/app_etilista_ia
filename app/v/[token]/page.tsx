@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/supabase/server'
 import { loadPollByToken } from '@/lib/polls/queries'
 import { requestOrigin } from '@/lib/utils/origin'
 import { track } from '@/lib/observability/funnel'
-import { closePoll } from '@/app/(app)/votacion/actions'
+import { closePoll, wearPollWinner } from '@/app/(app)/votacion/actions'
 import { Countdown } from '@/components/polls/Countdown'
 import { VoteBoard } from '@/components/polls/VoteBoard'
 import { ShareBar } from '@/components/polls/ShareBar'
@@ -52,6 +52,7 @@ export default async function PollPage({ params }: { params: Promise<{ token: st
 
   track('poll_opened', user?.id ?? null)
 
+  const winner = poll.options.find((option) => option.id === poll.leadingOptionId) ?? null
   const url = `${await requestOrigin()}/v/${poll.token}`
   const minutesLeft = Math.max(
     0,
@@ -100,6 +101,30 @@ export default async function PollPage({ params }: { params: Promise<{ token: st
         signedIn={Boolean(user)}
         loginHref={`/register?next=${encodeURIComponent(`/v/${poll.token}`)}`}
       />
+
+      {/*
+        «Me pongo este».
+
+        Solo cuando quien preguntó mira un look del motor que va ganando: ahí la
+        votación ya ha hecho su trabajo y lo único que queda es ponérselo. Marca
+        el look como puesto, que es lo que alimenta el diario y la racha — la
+        votación deja de ser un juego aparte y entra en el historial como
+        cualquier otro día.
+      */}
+      {poll.isOwner && winner?.outfitId ? (
+        <form action={wearPollWinner} className="mt-7">
+          <input type="hidden" name="outfitId" value={winner.outfitId} />
+          <button
+            type="submit"
+            className="h-[54px] w-full rounded-full bg-accent text-[13px] font-medium tracking-[0.03em] text-accent-ink"
+          >
+            Me pongo este
+          </button>
+          <p className="mt-2.5 text-center text-[10.5px] text-ink-faint">
+            Entra en tu diario y cuenta para la racha.
+          </p>
+        </form>
+      ) : null}
 
       {/* --- Lo que solo ve quien preguntó ---------------------------------- */}
       {poll.isOwner ? (

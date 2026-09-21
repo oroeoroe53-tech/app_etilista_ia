@@ -667,6 +667,44 @@ ha hecho una persona a mano, pensando en ti.
 Con esto están las cuatro funciones sociales. Tipos, lint, 311 tests y build,
 sí. De punta a punta, con dos cuentas, ninguna.
 
+## Rediseño social, primera mitad — 21 de septiembre de 2026
+
+Implementando `Social.dc.html` (18 pantallas, export de Claude Design que ya
+conocía este repo).
+
+**Pestaña Social** (`f42a34d`). Ocupa el sitio de Estilo, que pasa a Perfil.
+Portada con racha, votaciones pendientes, rescate del día y todo lo social
+reunido. La racha sale de `wear_history`, no de una tabla nueva.
+
+**Las votaciones las monta el motor** (`0013_votacion_looks.sql`). Es la idea
+del diseño y mejora lo que había: antes, para preguntar «¿cuál me pongo?» había
+que ponerse las dos opciones y fotografiarlas —vestirse dos veces para decidir
+cómo vestirse—. Ahora el motor compone tres looks con la ropa del armario y solo
+hay que decir para qué es y cuánto tiempo queda.
+
+ · **No gasta IA ni cupo**: el motor es cálculo puro y el porqué de cada look
+   sale de `explainFromHighlights`, no de un modelo. Una votación no puede
+   costar dinero cada vez que alguien tiene prisa por la mañana.
+ · **Y quita el problema de las fotos**: quien vota ve tres conjuntos, no una
+   foto tuya circulando por un grupo.
+ · Las fotos siguen existiendo en `/votacion/fotos`, que es lo correcto cuando
+   lo que dudas lo tienes en la mano: dos vestidos en el probador, o algo que el
+   armario no sabe que existe. `poll_options` admite exactamente una de las dos
+   cosas, por CHECK.
+ · **«Me pongo este»** marca el look ganador como puesto: entra en el diario y
+   cuenta para la racha. La votación deja de ser un juego aparte.
+
+**Quién ve una votación cambió**: antes solo quien recibía el enlace, ahora
+también tu círculo. Dicho en el compositor y en `/privacidad`.
+
+⚠️ **Requiere ejecutar `0013_votacion_looks.sql` en Supabase.**
+
+**Pendiente del diseño**: ficha de amiga con «vísteme con tu armario», evento
+redibujado, outfit del día publicable al círculo, feed, retos, resumen mensual,
+duelo de armarios. Y tres que no se pueden hacer tal cual: el espejo de las 8
+(no hay notificaciones), «recréalo con mi ropa» (necesita visión por IA sobre
+foto ajena) y el feed (vacío con un círculo de dos).
+
 ---
 
 ## Registro de decisiones previas

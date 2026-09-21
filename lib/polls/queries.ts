@@ -1,7 +1,9 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { BUCKETS } from '@/lib/storage/paths'
 import { looksLikeToken } from '@/lib/security/link-token'
-import type { PollComment, PollOptionView, PollView } from './types'
+import { describeGarment } from '@/lib/wardrobe/labels'
+import { explainFromHighlights } from '@/lib/outfits/name'
+import type { PollComment, PollGarment, PollOptionView, PollView } from './types'
 
 /**
  * Leer una votación por su enlace.
@@ -34,7 +36,8 @@ interface PollRow {
 
 interface OptionRow {
   id: string
-  storage_path: string
+  storage_path: string | null
+  outfit_id: string | null
   label: string | null
   position: number
 }
@@ -91,7 +94,7 @@ export async function loadPollByToken(
   const [{ data: optionData }, { data: voteData }] = await Promise.all([
     supabase
       .from('poll_options')
-      .select('id, storage_path, label, position')
+      .select('id, storage_path, outfit_id, label, position')
       .eq('poll_id', poll.id)
       .order('position'),
     supabase
@@ -104,12 +107,17 @@ export async function loadPollByToken(
   const optionRows = (optionData ?? []) as OptionRow[]
   const votes = (voteData ?? []) as VoteRow[]
 
-  const signed = await supabase.storage
-    .from(BUCKETS.pollPhotos)
-    .createSignedUrls(
-      optionRows.map((o) => o.storage_path),
-      PHOTO_EXPIRY_SECONDS,
-    )
+  const photoPaths = optionRows.map((o) => o.storage_path).filter((p): p is string => Boolean(p))
+
+  const [signed, looks] = await Promise.all([
+    photoPaths.length > 0
+      ? supabase.storage.from(BUCKETS.pollPhotos).createSignedUrls(photoPaths, PHOTO_EXPIRY_SECONDS)
+      : Promise.resolve({ data: [] }),
+    loadLooks(
+      supabase,
+      optionRows.map((o) => o.outfit_id).filter((id): id is string => Boolean(id)),
+    ),
+  ])
 
   const urls = new Map<string, string>()
   for (const entry of signed.data ?? []) {
@@ -120,11 +128,17 @@ export async function loadPollByToken(
 
   const options: PollOptionView[] = optionRows.map((row) => {
     const mine = votes.filter((v) => v.option_id === row.id)
+    const look = row.outfit_id ? looks.get(row.outfit_id) : undefined
     return {
       id: row.id,
       position: row.position,
       label: row.label,
-      imageUrl: urls.get(row.storage_path) ?? null,
+      kind: row.outfit_id ? ('look' as const) : ('photo' as const),
+      name: look?.name ?? null,
+      why: look?.why ?? null,
+      garments: look?.garments ?? [],
+      outfitId: row.outfit_id,
+      imageUrl: row.storage_path ? (urls.get(row.storage_path) ?? null) : null,
       votes: mine.length,
       share: votes.length === 0 ? 0 : Math.round((mine.length / votes.length) * 100),
       voters: mine.map((v) => names.get(v.voter_id) ?? ANON),
@@ -293,4 +307,86 @@ export async function listPendingVotes(userId: string): Promise<PendingVote[]> {
     closesAt: row.closes_at,
     options: row.poll_options?.length ?? 0,
   }))
+}
+
+
+/**
+ * Los looks que se someten a votación, con sus prendas.
+ *
+ * Aquí el service role mira `outfits` y `clothing_items` de otra persona, así
+ * que conviene decir qué se expone y qué no: **solo las prendas que están
+ * dentro de esos looks concretos**, y solo su foto y su nombre. Quien vota no
+ * ve el armario, ve tres conjuntos — que es exactamente lo que promete la
+ * pantalla de crear la votación.
+ */
+interface LookView {
+  name: string | null
+  why: string | null
+  garments: PollGarment[]
+}
+
+async function loadLooks(
+  supabase: ReturnType<typeof createAdminClient>,
+  outfitIds: readonly string[],
+): Promise<Map<string, LookView>> {
+  const looks = new Map<string, LookView>()
+  const unique = [...new Set(outfitIds)]
+  if (unique.length === 0) return looks
+
+  const [{ data: outfitRows }, { data: itemRows }] = await Promise.all([
+    supabase.from('outfits').select('id, context').in('id', unique),
+    supabase
+      .from('outfit_items')
+      .select('outfit_id, clothing_items(id, category, primary_color, fit, pattern, image_path)')
+      .in('outfit_id', unique),
+  ])
+
+  type Garment = {
+    id: string
+    category: string
+    primary_color: string
+    fit: string | null
+    pattern: string | null
+    image_path: string | null
+  }
+
+  const joined = (itemRows ?? []) as unknown as {
+    outfit_id: string
+    clothing_items: Garment | null
+  }[]
+
+  const paths = joined
+    .map((row) => row.clothing_items?.image_path)
+    .filter((p): p is string => Boolean(p))
+
+  const signed =
+    paths.length > 0
+      ? await supabase.storage.from(BUCKETS.clothing).createSignedUrls(paths, PHOTO_EXPIRY_SECONDS)
+      : { data: [] }
+
+  const urls = new Map<string, string>()
+  for (const entry of signed.data ?? []) {
+    if (entry.path && entry.signedUrl) urls.set(entry.path, entry.signedUrl)
+  }
+
+  for (const row of (outfitRows ?? []) as { id: string; context: Record<string, unknown> }[]) {
+    const context = row.context ?? {}
+    const highlights = Array.isArray(context.highlights) ? (context.highlights as string[]) : []
+
+    looks.set(row.id, {
+      name: typeof context.title === 'string' ? context.title : null,
+      why: explainFromHighlights(highlights),
+      garments: joined
+        .filter((item) => item.outfit_id === row.id && item.clothing_items)
+        .map((item) => {
+          const garment = item.clothing_items!
+          return {
+            imageUrl: garment.image_path ? (urls.get(garment.image_path) ?? null) : null,
+            label: describeGarment(garment),
+          }
+        }),
+    })
+  }
+
+  return looks
 }

@@ -13,7 +13,20 @@ import type { PollOptionView } from '@/lib/polls/types'
  */
 
 function option(votes: number, id = String(votes)): PollOptionView {
-  return { id, position: 1, label: null, imageUrl: null, votes, share: 0, voters: [] }
+  return {
+    id,
+    position: 1,
+    label: null,
+    kind: 'look',
+    name: null,
+    why: null,
+    garments: [],
+    outfitId: null,
+    imageUrl: null,
+    votes,
+    share: 0,
+    voters: [],
+  }
 }
 
 describe('el token del enlace', () => {

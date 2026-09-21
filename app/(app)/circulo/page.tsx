@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/supabase/server'
 import { listCircle, type CircleMember } from '@/lib/circle/queries'
 import { setGrant, removeFriend } from './actions'
 import { InviteButton } from '@/components/circle/InviteButton'
-import { BackLink, EmptyState } from '@/components/ui'
+import { BackLink, EmptyState, QuietRow } from '@/components/ui'
 import { cn } from '@/lib/utils/cn'
 
 export const metadata = { title: 'Tu círculo · Estilista' }
@@ -38,10 +38,12 @@ export default async function CirclePage() {
       className="mx-auto w-full max-w-[30rem] pt-safe pb-nav"
       style={{ paddingInline: 'var(--screen-gutter)' }}
     >
-      <BackLink href="/perfil">perfil</BackLink>
+      <BackLink href="/social">social</BackLink>
 
       <header className="pt-2 pb-7">
-        <p className="eyebrow mb-2.5">Las tuyas</p>
+        <p className="eyebrow mb-2.5">
+          Círculo{circle.length > 0 ? ` · ${circle.length} ${circle.length === 1 ? 'persona' : 'personas'}` : ''}
+        </p>
         <h1 className="display text-[31px] leading-[1.06]">
           Tu círculo
           <span className="display-italic block">y lo que ve cada una</span>
@@ -56,7 +58,11 @@ export default async function CirclePage() {
         />
       ) : (
         <>
-          <ul>
+          <QuietRow href="/prestamos" title="Quién tiene qué">
+            Lo que os habéis prestado
+          </QuietRow>
+
+          <ul className="mt-2">
             {circle.map((member) => (
               <MemberRow key={member.id} member={member} />
             ))}
@@ -96,8 +102,24 @@ function MemberRow({ member }: { member: CircleMember }) {
 
   return (
     <li className="border-t border-line py-4 last:border-b">
-      <div className="flex items-baseline justify-between gap-4">
-        <p className="display truncate text-[19px]">{member.name}</p>
+      <div className="flex items-center justify-between gap-4">
+        <span className="flex min-w-0 items-center gap-3">
+          {/*
+            La inicial en un círculo.
+
+            No hay fotos de perfil en esta aplicación y no las va a haber: es un
+            armario, no una red social. La inicial identifica lo suficiente en
+            una lista de cinco personas y no obliga a nadie a elegir una foto
+            suya para poder prestarle una chaqueta a su hermana.
+          */}
+          <span
+            aria-hidden
+            className="display flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sunken text-[17px]"
+          >
+            {member.name.trim().charAt(0).toUpperCase()}
+          </span>
+          <span className="display truncate text-[19px]">{member.name}</span>
+        </span>
 
         <form action={removeFriend}>
           <input type="hidden" name="friendId" value={member.id} />

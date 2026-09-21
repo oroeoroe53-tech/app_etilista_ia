@@ -4,8 +4,8 @@ import { useActionState, useState } from 'react'
 import { useFormStatus } from 'react-dom'
 import Link from 'next/link'
 import { castVote, type VoteState } from '@/app/(app)/votacion/actions'
-import { Button, Notice, TextInput } from '@/components/ui'
-import type { PollView } from '@/lib/polls/types'
+import { Button, Notice, PhotoSlot, TextInput } from '@/components/ui'
+import type { PollOptionView, PollView } from '@/lib/polls/types'
 import { cn } from '@/lib/utils/cn'
 
 /**
@@ -67,23 +67,18 @@ export function VoteBoard({
                   chosen && !showResults && 'ring-2 ring-accent ring-offset-2 ring-offset-[var(--surface)]',
                 )}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={option.imageUrl ?? ''}
-                  alt={option.label ?? `Opción ${option.position}`}
+                <OptionArt
+                  option={option}
                   className={cn(
-                    'bg-sunken object-cover',
-                    showResults
-                      ? 'h-[86px] w-[68px] shrink-0 rounded-2xl'
-                      : 'h-full w-full',
+                    showResults ? 'h-[86px] w-[68px] shrink-0 rounded-2xl' : 'h-full w-full',
                   )}
                 />
 
                 {showResults ? (
                   <span className="min-w-0 flex-1 self-center">
                     <span className="flex items-baseline justify-between gap-3">
-                      <span className="display text-[19px]">
-                        {option.label ?? `Opción ${option.position}`}
+                      <span className="display truncate text-[19px]">
+                        {option.name ?? option.label ?? `Opción ${option.position}`}
                       </span>
                       <span className="mono tabular-nums text-ink">{option.share}%</span>
                     </span>
@@ -105,9 +100,11 @@ export function VoteBoard({
                     </span>
                   </span>
                 ) : (
-                  <span className="absolute inset-x-0 bottom-0 flex items-end justify-between p-2.5">
-                    <span className="mono rounded-full bg-[rgba(21,20,15,.55)] px-2 py-1 text-[9px] text-[#f7f4ee]">
-                      {option.label ?? String(option.position)}
+                  <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-2.5">
+                    <span className="min-w-0">
+                      <span className="mono inline-block rounded-full bg-[rgba(21,20,15,.55)] px-2 py-1 text-[9px] text-[#f7f4ee]">
+                        {option.name ?? option.label ?? String(option.position)}
+                      </span>
                     </span>
                     {chosen ? (
                       <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-[12px] text-accent-ink">
@@ -121,6 +118,26 @@ export function VoteBoard({
           )
         })}
       </ul>
+
+      {/*
+        El porqué de cada look, para quien todavía no ha votado.
+
+        Lo escribe el motor con sus propios criterios, no un modelo de lenguaje:
+        «hace 19°», «no lo llevas desde hace seis semanas». Es lo que convierte
+        tres rectángulos de ropa en tres propuestas que se pueden comparar.
+      */}
+      {!showResults && poll.options.some((o) => o.why) ? (
+        <ul className="mt-4 space-y-1.5">
+          {poll.options.map((option) =>
+            option.why ? (
+              <li key={option.id} className="flex gap-2 text-[11px] leading-[1.45] text-ink-soft">
+                <span className="mono shrink-0 text-ink-faint">{option.position}</span>
+                <span className="min-w-0">{option.why}</span>
+              </li>
+            ) : null,
+          )}
+        </ul>
+      ) : null}
 
       {/* --- Lo que ha dicho la gente --------------------------------------- */}
       {showResults && poll.comments.length > 0 ? (
@@ -196,5 +213,54 @@ function SubmitVote({ disabled, changing }: { disabled: boolean; changing: boole
     <Button type="submit" size="lg" fullWidth disabled={disabled || pending}>
       {pending ? 'Enviando…' : changing ? 'Cambiar mi voto' : 'Votar'}
     </Button>
+  )
+}
+
+
+/**
+ * La imagen de una opción.
+ *
+ * Una foto se enseña tal cual. Un look no tiene foto —nadie se lo ha puesto
+ * todavía— así que se pinta con las prendas que lo componen, la primera grande
+ * y las demás apiladas al lado. Es la misma composición que usa la portada para
+ * el look del día, y se lee de un vistazo: arriba, abajo, y lo que sea que
+ * venga después.
+ */
+function OptionArt({ option, className }: { option: PollOptionView; className?: string }) {
+  if (option.kind === 'photo') {
+    return (
+      <PhotoSlot
+        src={option.imageUrl}
+        label={option.label ?? `Opción ${option.position}`}
+        showLabel={false}
+        className={cn('bg-sunken', className)}
+      />
+    )
+  }
+
+  const [first, ...rest] = option.garments
+
+  return (
+    <span className={cn('flex gap-1 bg-sunken p-1', className)}>
+      <PhotoSlot
+        src={first?.imageUrl ?? null}
+        label={first?.label ?? ''}
+        showLabel={false}
+        className="min-w-0 flex-[1.3] rounded-xl"
+      />
+      {rest.length > 0 ? (
+        <span className="flex min-w-0 flex-1 flex-col gap-1">
+          {rest.slice(0, 3).map((garment, index) => (
+            <PhotoSlot
+              key={index}
+              src={garment.imageUrl}
+              label={garment.label}
+              showLabel={false}
+              className="min-h-0 flex-1 rounded-xl"
+            />
+          ))}
+        </span>
+      ) : null}
+    </span>
   )
 }

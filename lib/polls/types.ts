@@ -6,11 +6,36 @@
  * llega aquí ya está decidido, firmado y contado.
  */
 
+/** Una prenda dentro de un look sometido a votación. */
+export interface PollGarment {
+  imageUrl: string | null
+  label: string
+}
+
 export interface PollOptionView {
   id: string
   position: number
   label: string | null
-  /** URL firmada de diez minutos. `null` si la foto ya no está. */
+
+  /**
+   * De dónde sale la opción.
+   *
+   * `photo` es la forma original: te pones las dos cosas y las fotografías.
+   * `look` es la que propone el diseño y la que se usa por defecto: lo monta el
+   * motor con la ropa del armario, sin fotos y sin vestirse dos veces.
+   */
+  kind: 'photo' | 'look'
+
+  /** Solo en `look`: el nombre del conjunto, «Oliva y crudo». */
+  name: string | null
+  /** Solo en `look`: por qué lo montó así. Sale del motor, no de un modelo. */
+  why: string | null
+  /** Solo en `look`: las prendas, para pintar el collage. */
+  garments: PollGarment[]
+  /** Solo en `look`: el conjunto guardado, para poder marcarlo como puesto. */
+  outfitId: string | null
+
+  /** URL firmada de diez minutos. `null` si la foto ya no está o es un look. */
   imageUrl: string | null
   votes: number
   /** Porcentaje entero sobre el total. 0 cuando nadie ha votado todavía. */
