@@ -60,4 +60,46 @@ describe('límites de arquitectura', () => {
     })
     expect(offenders).toEqual([])
   })
+
+  it('ninguna migración abre la lectura de clothing_items a terceros', () => {
+    /*
+     * La trampa más cara de este proyecto.
+     *
+     * Ninguna consulta del armario filtra por `user_id`: todas se apoyan en que
+     * RLS devuelve solo lo propio. El día que alguien añada a `clothing_items`
+     * una política de lectura para amigas —que es lo natural al construir el
+     * armario compartido— la ropa ajena aparecerá dentro del armario propio,
+     * dentro del motor que compone los looks y dentro del perfil de estilo, sin
+     * un solo error visible.
+     *
+     * El armario ajeno se lee desde el servidor (`lib/wardrobe/shared.ts`),
+     * filtrando por dueño a mano. Este test existe para que esa decisión no se
+     * deshaga por descuido dentro de seis meses.
+     */
+    const dir = join(ROOT, 'supabase', 'migrations')
+    const offenders: string[] = []
+
+    for (const file of readdirSync(dir).filter((f) => f.endsWith('.sql'))) {
+      /*
+       * Sin comentarios: `0010_prestamos.sql` contiene, comentada, la política
+       * exacta que este test prohíbe, escrita ahí para explicar por qué no se
+       * pone. Sería absurdo que el ejemplo de lo que no hay que hacer hiciera
+       * fallar la comprobación de que no se ha hecho.
+       */
+      const sql = readFileSync(join(dir, file), 'utf8')
+        .replace(/--.*/g, '')
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+      // Políticas de SELECT sobre clothing_items que NO sean la del propio dueño.
+      const policies = sql.match(
+        /create policy[^;]*on\s+public\.clothing_items\s+for\s+select[^;]*;/gi,
+      )
+      for (const policy of policies ?? []) {
+        if (!/auth\.uid\(\)\s*\)?\s*=\s*user_id|user_id\s*=\s*\(?\s*select\s+auth\.uid/i.test(policy)) {
+          offenders.push(`${file}: ${policy.slice(0, 80)}…`)
+        }
+      }
+    }
+
+    expect(offenders).toEqual([])
+  })
 })

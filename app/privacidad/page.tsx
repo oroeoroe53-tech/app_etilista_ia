@@ -84,6 +84,14 @@ export default function PrivacyPage() {
         armario al instante.
       </Block>
 
+      <Block title="Ropa prestada">
+        Si le pides una prenda a alguien, las dos veis ese préstamo y nadie más
+        del círculo. Mientras una prenda tuya está prestada dejo de
+        proponértela, porque no la tienes en casa; al volver queda como estaba.
+        La ropa que ves de otra persona no entra en tu armario ni cambia lo que
+        te propongo a ti.
+      </Block>
+
       <Block title="Cuánto se guarda">
         Mientras tengas cuenta. En cuanto la borras desaparece todo: fotos,
         recortes, armario, perfil de estilo e historial. No hay copia de

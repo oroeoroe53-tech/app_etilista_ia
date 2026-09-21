@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/supabase/server'
 import { listCircle, type CircleMember } from '@/lib/circle/queries'
@@ -132,13 +133,16 @@ function MemberRow({ member }: { member: CircleMember }) {
         cambiar desde aquí, porque no es tuyo. Sin esta línea, la pantalla
         parecería decir que la relación es simétrica, y no lo es.
       */}
-      <p className="mono mt-2 text-ink-faint">
-        {member.theyGive === 'style'
-          ? 'te deja ver su ropa y vestirla'
-          : member.theyGive === 'view'
-            ? 'te deja ver su ropa'
-            : 'no te deja ver la suya'}
-      </p>
+      {member.theyGive ? (
+        <Link
+          href={`/armario/de/${member.id}`}
+          className="mono mt-2 inline-block text-ink-soft underline underline-offset-4"
+        >
+          ver su armario →
+        </Link>
+      ) : (
+        <p className="mono mt-2 text-ink-faint">no te deja ver la suya</p>
+      )}
     </li>
   )
 }

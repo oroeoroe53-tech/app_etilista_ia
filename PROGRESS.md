@@ -569,6 +569,41 @@ armario.
 **Sin probar de punta a punta**: hacen falta dos cuentas. Tipos, lint, 301 tests
 y build, sí.
 
+## Armarios compartidos y préstamos — 21 de septiembre de 2026
+
+`0010_prestamos.sql`, `lib/wardrobe/shared.ts`, `lib/loans/`, `/prestamos`,
+`/armario/de/[ownerId]`.
+
+**La decisión más importante es lo que NO se hizo.** Lo natural era abrir
+`clothing_items` con una política `can_view_wardrobe(user_id, auth.uid())`. Eso
+habría roto la aplicación en silencio: **ninguna** consulta del armario filtra
+por `user_id` —todas se apoyan en que RLS devuelve solo lo propio— así que la
+ropa de las amigas habría aparecido en el armario propio, en el motor que
+compone los looks, en el perfil de estilo y en la maleta, sin un solo error
+visible. El armario ajeno se lee desde el servidor filtrando por dueño a mano.
+`tests/architecture.test.ts` prohíbe ahora esa política para que la decisión no
+se deshaga por descuido dentro de seis meses.
+
+**Préstamos**: pedir (con recado, que es lo que hace que te contesten),
+aceptar, rechazar, cancelar y devolver. Un índice único deja un solo préstamo
+vivo por prenda. Al aceptar, la prenda deja de estar disponible —no puedes
+ponerte lo que está en casa de otra— y al devolverla vuelve **al estado que
+tenía**, no a «disponible»: `was_available` existe para que devolver una prenda
+no la saque del trastero.
+
+**Cualquiera de las dos partes puede dar por devuelta** una prenda. Obligar a
+que sea el dueño dejaría préstamos abiertos para siempre el día que alguien deje
+de entrar.
+
+**Perfil enseña cuántas peticiones esperan respuesta.** La aplicación no manda
+correos ni notificaciones, así que ese número es el único sitio donde alguien se
+entera de que le han pedido algo.
+
+⚠️ **Requiere ejecutar `0010_prestamos.sql` en Supabase.**
+
+**Sin probar de punta a punta**: hacen falta dos cuentas con permiso mutuo.
+Tipos, lint, 302 tests y build, sí.
+
 ---
 
 ## Registro de decisiones previas

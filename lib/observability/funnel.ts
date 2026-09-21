@@ -42,6 +42,12 @@ export type FunnelEvent =
    */
   | 'circle_invited'
   | 'circle_joined'
+  /*
+   * Un préstamo aceptado es la señal más fuerte de que el círculo se usa de
+   * verdad: dos personas, un objeto físico y una conversación fuera de aquí.
+   */
+  | 'loan_requested'
+  | 'loan_accepted'
 
 export function track(event: FunnelEvent, userId?: string | null): void {
   after(async () => {

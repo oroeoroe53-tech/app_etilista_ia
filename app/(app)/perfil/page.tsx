@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/lib/supabase/server'
 import { Screen, Meter } from '@/components/ui'
 import { checkEntitlement } from '@/lib/subscriptions/entitlements'
 import { PLAN_LABELS, formatPrice, type Feature } from '@/lib/subscriptions/plans'
+import { countIncoming } from '@/lib/loans/queries'
 import { signOut } from '@/app/(auth)/actions'
 import { DeleteAccount } from '@/components/account/DeleteAccount'
 import { UpgradeCta } from '@/components/account/UpgradeCta'
@@ -25,9 +26,10 @@ export default async function ProfilePage() {
    * Ya no hace falta leer `profiles`: la cabecera enseña el logotipo y el
    * correo, que vienen de la sesión. Una consulta menos en cada visita.
    */
-  const checks = await Promise.all(
-    TRACKED.map((entry) => checkEntitlement(user.id, entry.feature)),
-  )
+  const [checks, pendingLoans] = await Promise.all([
+    Promise.all(TRACKED.map((entry) => checkEntitlement(user.id, entry.feature))),
+    countIncoming(user.id),
+  ])
 
   const plan = checks[0]?.plan ?? 'free'
 
@@ -109,6 +111,31 @@ export default async function ProfilePage() {
           consecuencias para otra gente, y lo único que alguien puede querer
           revisar un martes cualquiera para comprobar quién ve su ropa.
         */}
+        {/*
+          Los préstamos, con el número de peticiones sin contestar.
+
+          Esta aplicación no manda notificaciones ni correos, así que este
+          número es el ÚNICO sitio donde alguien se entera de que una amiga le
+          ha pedido algo. Sin él, la mitad de las peticiones morirían sin
+          respuesta y la función parecería rota cuando solo está callada.
+        */}
+        <Link
+          href="/prestamos"
+          className="flex items-center justify-between gap-4 border-t border-line py-3.5"
+        >
+          <span className="text-[12.5px] leading-[1.35] text-ink">Préstamos</span>
+          <span className="flex shrink-0 items-center gap-2">
+            {pendingLoans > 0 ? (
+              <span className="mono rounded-full bg-clay px-2 py-[3px] text-[9px] text-[#f7f4ee]">
+                {pendingLoans} sin contestar
+              </span>
+            ) : null}
+            <span aria-hidden className="text-[13px] text-ink-faint">
+              →
+            </span>
+          </span>
+        </Link>
+
         <Link
           href="/circulo"
           className="flex items-center justify-between gap-4 border-t border-line py-3.5"
