@@ -210,8 +210,9 @@ export function PollComposer() {
       </div>
       <input type="hidden" name="minutes" value={minutes} />
       <p className="mt-2.5 text-[10.5px] leading-[1.5] text-ink-faint">
-        Pasado ese rato la votación se cierra sola y ya no entran más votos. Las
-        fotos se borran del todo a las 24 horas.
+        La verán las personas de tu círculo, y quien abra el enlace que mandes.
+        Pasado ese rato se cierra sola y ya no entran más votos; las fotos se
+        borran del todo a las 24 horas.
       </p>
 
       {/* --- La pregunta ---------------------------------------------------- */}

@@ -19,7 +19,16 @@ const TABS = [
   { href: '/', label: 'Inicio' },
   { href: '/armario', label: 'Armario' },
   { href: '/outfits', label: 'Outfits' },
-  { href: '/estilo', label: 'Estilo' },
+  /*
+   * Social ocupa el sitio que tenía Estilo.
+   *
+   * Estilo es una pantalla preciosa que se mira dos veces: la primera con
+   * curiosidad y la segunda para enseñársela a alguien. Social tiene cosas que
+   * caducan —votaciones con cuenta atrás, préstamos sin contestar— y eso es lo
+   * que justifica un sitio en una barra de cinco. Estilo sigue entero, colgando
+   * de Perfil.
+   */
+  { href: '/social', label: 'Social' },
   { href: '/perfil', label: 'Perfil' },
 ] as const
 
@@ -36,7 +45,11 @@ const DARK_ROUTES = ['/outfits/swipe']
 function activeTab(pathname: string): string {
   if (pathname === '/') return '/'
   if (pathname.startsWith('/armario')) return '/armario'
-  if (pathname.startsWith('/estilo')) return '/estilo'
+  if (pathname.startsWith('/estilo')) return '/perfil'
+  // Todo lo social vive bajo la misma pestaña aunque tenga rutas propias.
+  for (const prefix of ['/social', '/circulo', '/prestamos', '/eventos', '/vestir', '/votacion']) {
+    if (pathname.startsWith(prefix)) return '/social'
+  }
   if (pathname.startsWith('/perfil')) return '/perfil'
   if (pathname.startsWith('/outfits') || pathname.startsWith('/diario')) return '/outfits'
   return ''

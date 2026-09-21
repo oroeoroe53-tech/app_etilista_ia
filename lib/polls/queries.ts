@@ -213,3 +213,84 @@ export async function listMyPolls(userId: string): Promise<PollSummary[]> {
     options: row.poll_options?.length ?? 0,
   }))
 }
+
+/**
+ * Las votaciones del círculo que esperan tu voto.
+ *
+ * **Esto cambia quién ve una votación**, así que conviene decirlo claro: hasta
+ * ahora una votación solo la veía quien recibía el enlace. Desde aquí, además,
+ * la ven las personas de tu círculo, sin que tengas que mandarles nada.
+ *
+ * Es lo que pide el diseño («Tres amigas esperan tu voto») y es lo que hace que
+ * la pantalla social tenga algo dentro el primer día. El enlace sigue
+ * existiendo para quien no está en el círculo.
+ *
+ * Lo que NO cambia: las fotos siguen caducando a las 24 horas, la votación
+ * sigue cerrándose a su hora, y `/privacidad` lo cuenta.
+ */
+export interface PendingVote {
+  token: string
+  question: string | null
+  ownerName: string
+  closesAt: string
+  options: number
+}
+
+export async function listPendingVotes(userId: string): Promise<PendingVote[]> {
+  const supabase = createAdminClient()
+
+  // 1. Quién es de tu círculo. Sin esto no hay nada que enseñar: una votación
+  //    de alguien de fuera no aparece aquí ni aunque esté abierta.
+  const { data: links } = await supabase
+    .from('connections')
+    .select('friend_id')
+    .eq('user_id', userId)
+
+  const friends = ((links ?? []) as { friend_id: string }[]).map((l) => l.friend_id)
+  if (friends.length === 0) return []
+
+  const now = new Date().toISOString()
+
+  const { data } = await supabase
+    .from('polls')
+    .select('id, token, question, owner_id, closes_at, poll_options(id), poll_votes(voter_id)')
+    .in('owner_id', friends)
+    .gt('closes_at', now)
+    .gt('expires_at', now)
+    .order('closes_at', { ascending: true })
+    .limit(12)
+
+  type Row = {
+    id: string
+    token: string
+    question: string | null
+    owner_id: string
+    closes_at: string
+    poll_options: unknown[]
+    poll_votes: { voter_id: string }[]
+  }
+
+  // 2. Las que ya has votado no esperan nada de ti.
+  const rows = ((data ?? []) as Row[]).filter(
+    (row) => !row.poll_votes?.some((v) => v.voter_id === userId),
+  )
+  if (rows.length === 0) return []
+
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('id, display_name')
+    .in('id', [...new Set(rows.map((r) => r.owner_id))])
+
+  const names = new Map<string, string>()
+  for (const row of (profiles ?? []) as { id: string; display_name: string | null }[]) {
+    names.set(row.id, row.display_name?.trim() || 'Alguien')
+  }
+
+  return rows.map((row) => ({
+    token: row.token,
+    question: row.question,
+    ownerName: names.get(row.owner_id) ?? 'Alguien',
+    closesAt: row.closes_at,
+    options: row.poll_options?.length ?? 0,
+  }))
+}

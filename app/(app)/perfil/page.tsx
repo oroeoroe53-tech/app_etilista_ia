@@ -119,6 +119,20 @@ export default async function ProfilePage() {
           ha pedido algo. Sin él, la mitad de las peticiones morirían sin
           respuesta y la función parecería rota cuando solo está callada.
         */}
+        {/*
+          Estilo cedió su pestaña a Social, así que su puerta está aquí. Sigue
+          entera: lo que cambió es cuánto se cruza uno con ella, no qué es.
+        */}
+        <Link
+          href="/estilo"
+          className="flex items-center justify-between gap-4 border-t border-line py-3.5"
+        >
+          <span className="text-[12.5px] leading-[1.35] text-ink">Tu estilo</span>
+          <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+            →
+          </span>
+        </Link>
+
         <Link
           href="/vestir"
           className="flex items-center justify-between gap-4 border-t border-line py-3.5"

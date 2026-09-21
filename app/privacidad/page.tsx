@@ -66,9 +66,10 @@ export default function PrivacyPage() {
         esta página el mismo día.
       */}
       <Block title="Cuando pides opinión">
-        Las fotos que subes a una votación las ve quien abra el enlace que tú
-        mandas, y solo esa gente: el enlace lleva un identificador que no se
-        puede adivinar y no aparece en buscadores ni en ninguna lista. Hace
+        Las fotos que subes a una votación las ven las personas de tu círculo y
+        quien abra el enlace que mandes, y nadie más: el enlace lleva un
+        identificador que no se puede adivinar y no aparece en buscadores ni en
+        ninguna lista pública. Hace
         falta cuenta para votar, así que sabrás quién ha votado qué. La votación
         se cierra a la hora que tú digas y, pasadas veinticuatro horas, esas
         fotos se borran solas y del todo. No entran en tu armario ni se analizan
