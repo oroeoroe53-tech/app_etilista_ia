@@ -134,12 +134,23 @@ function MemberRow({ member }: { member: CircleMember }) {
         parecería decir que la relación es simétrica, y no lo es.
       */}
       {member.theyGive ? (
-        <Link
-          href={`/armario/de/${member.id}`}
-          className="mono mt-2 inline-block text-ink-soft underline underline-offset-4"
-        >
-          ver su armario →
-        </Link>
+        <p className="mono mt-2 flex gap-4">
+          <Link
+            href={`/armario/de/${member.id}`}
+            className="text-ink-soft underline underline-offset-4"
+          >
+            ver su armario →
+          </Link>
+          {/* Vestirla es un permiso aparte, y solo aparece si lo ha dado. */}
+          {member.theyGive === 'style' ? (
+            <Link
+              href={`/vestir/${member.id}`}
+              className="text-ink-soft underline underline-offset-4"
+            >
+              vestirla →
+            </Link>
+          ) : null}
+        </p>
       ) : (
         <p className="mono mt-2 text-ink-faint">no te deja ver la suya</p>
       )}

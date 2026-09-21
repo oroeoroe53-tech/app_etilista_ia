@@ -92,6 +92,13 @@ export default function PrivacyPage() {
         te propongo a ti.
       </Block>
 
+      <Block title="Quien te viste">
+        Si le das el permiso más alto a alguien, puede montarte looks con tu
+        ropa y mandártelos. Ve tu armario y elige prendas; no puede cambiarlas,
+        ni borrarlas, ni ponerse nada él. Ese look lo veis las dos y nadie más,
+        y lo puedes quitar cuando quieras.
+      </Block>
+
       <Block title="Eventos">
         Lo que subes a un evento —el color, la frase y la foto— lo ven las
         personas apuntadas a ese evento, y nadie más. El evento entero se borra

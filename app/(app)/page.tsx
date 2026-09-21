@@ -8,6 +8,7 @@ import { getDailyLook } from '@/lib/outfits/daily'
 import { findNeglected, neglectMessage, neglectCutoffs } from '@/lib/wardrobe/neglected'
 import { describeGarment } from '@/lib/wardrobe/labels'
 import { listMyPolls } from '@/lib/polls/queries'
+import { countUnseenLooks } from '@/lib/styled/queries'
 import { TodayLook } from '@/components/home/TodayLook'
 import { Countdown } from '@/components/polls/Countdown'
 import { PhotoSlot, QuietRow } from '@/components/ui'
@@ -112,7 +113,11 @@ export default async function HomePage() {
    * comparada con el look del día, y si fallara no debería costarle la portada
    * a nadie.
    */
-  const openPoll = (await listMyPolls(user.id)).find((poll) => !poll.closed) ?? null
+  const [polls, unseenLooks] = await Promise.all([
+    listMyPolls(user.id),
+    countUnseenLooks(user.id),
+  ])
+  const openPoll = polls.find((poll) => !poll.closed) ?? null
 
   const today = new Date()
   const fecha = `${today.toLocaleDateString('es-ES', { weekday: 'long' })} ${today.getDate()}`
@@ -271,6 +276,32 @@ export default async function HomePage() {
         pregunta del día. Presentes sin discutirle el sitio a la tarjeta.
       */}
       <nav className="mt-7">
+        {/*
+          Un look que te ha montado alguien y no has visto.
+
+          Va el primero de todo porque es lo único de esta pantalla que ha hecho
+          una persona a mano, pensando en ti. Si se queda debajo del diario,
+          quien se molestó en montarlo creerá que no le han hecho caso.
+        */}
+        {unseenLooks > 0 ? (
+          <Link
+            href="/vestir"
+            className="flex items-center justify-between gap-4 border-t border-line py-3.5"
+          >
+            <span className="min-w-0">
+              <span className="display block text-[17px]">Te han vestido</span>
+              <span className="mt-0.5 block truncate text-[11px] text-ink-soft">
+                {unseenLooks === 1
+                  ? 'Alguien te ha montado un look con tu ropa'
+                  : `${unseenLooks} looks montados con tu ropa`}
+              </span>
+            </span>
+            <span className="mono shrink-0 rounded-full bg-clay px-2 py-[3px] text-[9px] text-[#f7f4ee]">
+              nuevo
+            </span>
+          </Link>
+        ) : null}
+
         {/*
           La votación en curso, si la hay.
 

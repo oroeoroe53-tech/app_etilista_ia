@@ -637,6 +637,36 @@ quedarían en Storage para siempre.
 
 Tipos, lint, 311 tests y build, sí. De punta a punta, con dos cuentas, no.
 
+## Estilista de confianza — 21 de septiembre de 2026
+
+`0012_estilista.sql`, `lib/styled/`, `/vestir`, `/vestir/[ownerId]`.
+
+La cuarta y la más barata: el nivel `style` de `wardrobe_grants` existía desde
+`0009_circulo.sql`, se guardaba y se leía. Solo faltaba dónde poner lo que
+monta y `can_style_wardrobe()`, hermana de `can_view_wardrobe()` — dos
+funciones y no una con parámetro, porque ver la ropa y decidir cómo se combina
+no son lo mismo, y esa diferencia es justo lo que el dial le pregunta a la
+gente.
+
+**Sin puntuación ni porcentaje.** Quien monta esto es una persona que conoce a
+la otra; ponerle un 72 % de acierto a su elección sería ponerle nota a un
+regalo. La pantalla solo impide lo imposible: lo que está prestado ahora mismo
+no se puede elegir.
+
+**Lo que se comprueba en el servidor es que TODAS las prendas son de quien va a
+llevarlas.** Sin eso se podría mandar un look con ropa de una tercera persona y
+quien lo recibe vería fotos de un armario que no conoce.
+
+**Marcar como visto solo puede quien lo lleva.** Ver por otra persona no es
+ver, y ese dato es lo que le dice a quien lo montó si ha llegado. En la portada
+aparece un aviso mientras haya alguno sin ver: es lo único de esa pantalla que
+ha hecho una persona a mano, pensando en ti.
+
+⚠️ **Requiere ejecutar `0012_estilista.sql` en Supabase.**
+
+Con esto están las cuatro funciones sociales. Tipos, lint, 311 tests y build,
+sí. De punta a punta, con dos cuentas, ninguna.
+
 ---
 
 ## Registro de decisiones previas

@@ -120,6 +120,16 @@ export default async function ProfilePage() {
           respuesta y la función parecería rota cuando solo está callada.
         */}
         <Link
+          href="/vestir"
+          className="flex items-center justify-between gap-4 border-t border-line py-3.5"
+        >
+          <span className="text-[12.5px] leading-[1.35] text-ink">Looks que te han montado</span>
+          <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+            →
+          </span>
+        </Link>
+
+        <Link
           href="/eventos"
           className="flex items-center justify-between gap-4 border-t border-line py-3.5"
         >
