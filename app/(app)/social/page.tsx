@@ -213,8 +213,20 @@ export default async function SocialPage() {
             : 'Quién tiene qué'}
         </QuietRow>
 
+        <QuietRow href="/social/retos" title="Reto de la semana">
+          Lo que se lleva estos siete días
+        </QuietRow>
+
+        <QuietRow href="/social/duelo" title="Duelo de armarios">
+          A ciegas, y que voten ellas
+        </QuietRow>
+
         <QuietRow href="/eventos" title="Eventos">
           Que no vayáis iguales
+        </QuietRow>
+
+        <QuietRow href="/social/resumen" title="Tu mes">
+          Los días que no has tenido que pensar
         </QuietRow>
 
         <QuietRow href="/circulo" title="Mis amigas">

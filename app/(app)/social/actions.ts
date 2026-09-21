@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { createClient, requireUser } from '@/lib/supabase/server'
 import { track } from '@/lib/observability/funnel'
 import { log } from '@/lib/observability/log'
+import { CHALLENGES, weekStart } from '@/lib/challenges/catalogue'
 
 /**
  * Publicar el look del día en tu círculo, y quitarlo.
@@ -81,4 +82,70 @@ export async function unshareDailyLook(formData: FormData): Promise<void> {
   revalidatePath('/social')
   revalidatePath('/social/feed')
   revalidatePath('/')
+}
+
+/* --- Retos de la semana --------------------------------------------------- */
+
+/**
+ * Apuntarse al reto de la semana.
+ *
+ * Lo único que se guarda es que te apuntaste. El progreso se calcula del
+ * historial cada vez que se mira, así que apuntarse no da ventaja ni marca
+ * nada: solo te pone en la lista que ven tus amigas.
+ */
+export async function joinChallenge(formData: FormData): Promise<void> {
+  const user = await requireUser()
+  const challengeId = String(formData.get('challengeId') ?? '')
+
+  // Contra el catálogo, no contra lo que llegue del formulario: sin esto se
+  // podrían crear retos inventados desde el navegador.
+  if (!CHALLENGES.some((c) => c.id === challengeId)) return
+
+  const supabase = await createClient()
+  await supabase.from('challenge_joins').upsert(
+    { user_id: user.id, challenge_id: challengeId, week_start: weekStart() },
+    { onConflict: 'user_id,challenge_id,week_start', ignoreDuplicates: true },
+  )
+
+  track('challenge_joined', user.id)
+  revalidatePath('/social/retos')
+  revalidatePath('/social')
+}
+
+export async function leaveChallenge(formData: FormData): Promise<void> {
+  const user = await requireUser()
+  const challengeId = String(formData.get('challengeId') ?? '')
+
+  const supabase = await createClient()
+  await supabase
+    .from('challenge_joins')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('challenge_id', challengeId)
+    .eq('week_start', weekStart())
+
+  revalidatePath('/social/retos')
+  revalidatePath('/social')
+}
+
+/**
+ * Marcar el reto como completado.
+ *
+ * Se llama desde la propia pantalla cuando el progreso —calculado del
+ * historial— ya llega al objetivo. No es una casilla que alguien pueda marcar:
+ * es dejar constancia de algo que ya es verdad, para poder contarlo en el
+ * resumen del mes sin recalcular doce semanas de historial.
+ */
+export async function markChallengeDone(challengeId: string): Promise<void> {
+  const user = await requireUser()
+  if (!CHALLENGES.some((c) => c.id === challengeId)) return
+
+  const supabase = await createClient()
+  await supabase
+    .from('challenge_joins')
+    .update({ completed_at: new Date().toISOString() })
+    .eq('user_id', user.id)
+    .eq('challenge_id', challengeId)
+    .eq('week_start', weekStart())
+    .is('completed_at', null)
 }

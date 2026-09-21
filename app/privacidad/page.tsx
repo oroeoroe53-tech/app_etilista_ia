@@ -93,6 +93,15 @@ export default function PrivacyPage() {
         más. Puedes quitarlo cuando quieras y desaparece sin avisar a nadie.
       </Block>
 
+      <Block title="Duelos y retos">
+        En un duelo, tu ropa no entra hasta que aceptas: si dices que no, no se
+        compone nada con tu armario y no lo ve nadie. Mientras la votación es a
+        ciegas, los nombres **no salen del servidor**, así que no hay forma de
+        saber de quién es cada look mirando la página. Los retos no guardan
+        nada de lo que haces: el progreso se calcula de tu propio historial cada
+        vez que lo miras.
+      </Block>
+
       <Block title="Ropa prestada">
         Si le pides una prenda a alguien, las dos veis ese préstamo y nadie más
         del círculo. Mientras una prenda tuya está prestada dejo de

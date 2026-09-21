@@ -723,8 +723,27 @@ revés.
 
 ⚠️ **Requiere ejecutar `0014_feed.sql` en Supabase.**
 
-**Pendiente del diseño**: retos semanales, resumen mensual, duelo de armarios.
-Y las tres que no se pueden hacer tal cual: el espejo de las 8 (no hay
+**Retos de la semana** (`lib/challenges/`). Uno por semana, el mismo para todo
+el mundo, sacado del número de semana. **El progreso se calcula del historial
+cada vez**: no hay contador guardado que pueda desviarse, y por tanto no hay
+forma de decir que has completado un reto sin haberte puesto la ropa. Cuatro
+retos que se ganan con lo que ya tienes; ninguno pide comprar nada.
+
+**Resumen del mes** (`lib/social/recap.ts`). Días vestidos, racha máxima, retos
+completados y prenda estrella —la más puesta, no la más cara—. Ni una tabla ni
+un contador nuevos. El diseño pedía vídeo para Stories y TikTok: se comparte
+texto y se dice, que es mejor que fingirlo.
+
+**Duelo de armarios** (`0015_retos_y_duelos.sql`). Dos personas, una ocasión, un
+look cada una del motor, y el círculo vota a ciegas. Lo importante no es el
+juego: **el look de cada una se compone solo después de que ella acepte**.
+Componer los dos al proponer habría sacado prendas del armario de alguien para
+enseñárselas a un grupo antes de que supiera que el duelo existe. Y lo ciego es
+de verdad: los nombres no llegan al navegador hasta que votas.
+
+⚠️ **Requiere ejecutar `0015_retos_y_duelos.sql` en Supabase.**
+
+**Lo que queda del diseño**, y no se puede hacer tal cual: el espejo de las 8 (no hay
 notificaciones), «recréalo con mi ropa» (visión por IA sobre foto ajena) y un
 feed que solo se llena si hay gente publicando. Y tres que no se pueden hacer tal cual: el espejo de las 8
 (no hay notificaciones), «recréalo con mi ropa» (necesita visión por IA sobre
