@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { findClashes, clashMessage } from '@/lib/events/clash'
+import { findClashes, clashMessage, freeColors } from '@/lib/events/clash'
 
 /**
  * El aviso de «vais iguales» es lo único que hace esta función y que no haga ya
@@ -73,5 +73,25 @@ describe('cómo se dice', () => {
   it('sin saber quién mira, no inventa un tú', () => {
     const clash = { color: 'pink', names: ['Marta', 'Lucía'] }
     expect(clashMessage(clash, null)).toBe('Marta y Lucía vais de rosa')
+  })
+})
+
+describe('qué colores quedan libres', () => {
+  it('solo sugiere colores que tienes', () => {
+    const free = freeColors(
+      [{ name: 'Ana', color: 'green' }],
+      ['green', 'navy', 'red'],
+    )
+    expect(free).toEqual(['navy', 'red'])
+  })
+
+  it('no sugiere el negro: no es una sugerencia, es una rendición', () => {
+    expect(freeColors([], ['black', 'navy'])).toEqual(['navy'])
+  })
+
+  it('si no te queda nada, no inventa', () => {
+    expect(
+      freeColors([{ name: 'Ana', color: 'navy' }], ['navy']),
+    ).toEqual([])
   })
 })

@@ -1,8 +1,8 @@
 import { notFound, redirect } from 'next/navigation'
-import { getCurrentUser } from '@/lib/supabase/server'
+import { createClient, getCurrentUser } from '@/lib/supabase/server'
 import { getEvent } from '@/lib/events/queries'
 import { formatEventDate } from '@/lib/events/format'
-import { findClashes, clashMessage } from '@/lib/events/clash'
+import { findClashes, clashMessage, freeColors } from '@/lib/events/clash'
 import { colorLabel } from '@/lib/wardrobe/labels'
 import { COLOR_SWATCHES } from '@/lib/style/describe'
 import { leaveEvent, deleteEvent } from '../actions'
@@ -25,13 +25,40 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
   if (!user) redirect('/login')
 
   const { id } = await params
+  const supabase = await createClient()
   const event = await getEvent(id, user.id)
 
   // Sin acceso y «no existe» se responden igual.
   if (!event) notFound()
 
   const myName = event.me?.name ?? null
-  const clashes = findClashes(event.guests.map((g) => ({ name: g.name, color: g.color })))
+  const guestColors = event.guests.map((g) => ({ name: g.name, color: g.color }))
+  const clashes = findClashes(guestColors)
+
+  /*
+   * Los colores que te quedan libres.
+   *
+   * Solo se calculan si de verdad hay un choque contigo: sugerir alternativas a
+   * quien no está chocando con nadie es ruido. Y salen de tu armario, no de la
+   * paleta entera, porque «ve de teja» a quien no tiene nada teja no es un
+   * consejo.
+   */
+  const iClash = clashes.some((clash) => myName && clash.names.includes(myName))
+
+  const { data: myGarments } = iClash
+    ? await supabase
+        .from('clothing_items')
+        .select('primary_color')
+        .is('deleted_at', null)
+        .eq('is_available', true)
+    : { data: null }
+
+  const free = iClash
+    ? freeColors(
+        guestColors,
+        ((myGarments ?? []) as { primary_color: string }[]).map((g) => g.primary_color),
+      )
+    : []
   const pending = event.guests.filter((g) => !g.color && !g.note && !g.photoUrl)
 
   return (
@@ -55,6 +82,21 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
           {clashes.map((clash) => (
             <Notice key={clash.color}>{clashMessage(clash, myName)}</Notice>
           ))}
+
+          {/*
+            La salida, no solo el problema.
+
+            Un aviso que dice «vais iguales» y ahí se queda deja el trabajo a
+            medias: lo que hace falta a esa hora es saber por dónde salir, y con
+            ropa que se tenga en casa.
+          */}
+          {free.length > 0 ? (
+            <p className="px-4 text-[10.5px] leading-[1.6] text-ink-faint">
+              Nadie va de{' '}
+              {free.map((color) => colorLabel(color).toLowerCase()).join(', ')}, y
+              tú tienes.
+            </p>
+          ) : null}
         </div>
       ) : null}
 

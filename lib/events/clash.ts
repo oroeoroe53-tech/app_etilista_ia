@@ -84,3 +84,27 @@ function joinNames(names: readonly string[]): string {
   if (rest.length === 0) return first
   return `${names.slice(0, -1).join(', ')} y ${rest[rest.length - 1]}`
 }
+
+/**
+ * Qué te queda libre.
+ *
+ * El diseño dice aquí «la IA te ha cambiado a teja», y eso sería mentira: los
+ * looks de un evento los declara cada una a mano, no los monta el motor, así
+ * que no hay nada que cambiar. Lo que sí se puede hacer —y es la mitad útil de
+ * esa frase— es decir qué colores **que tú tienes** no ha cogido nadie.
+ *
+ * De ahí las dos listas: lo que hay en tu armario y lo que ya está pillado. Sin
+ * la primera, la sugerencia sería «ve de amarillo» a quien no tiene nada
+ * amarillo, que es peor que no decir nada.
+ */
+export function freeColors(
+  guests: readonly GuestColor[],
+  myColors: readonly string[],
+  limit = 3,
+): string[] {
+  const taken = new Set(guests.map((g) => g.color).filter((c): c is string => Boolean(c)))
+
+  return [...new Set(myColors)]
+    .filter((color) => !taken.has(color) && !IGNORED.has(color))
+    .slice(0, limit)
+}

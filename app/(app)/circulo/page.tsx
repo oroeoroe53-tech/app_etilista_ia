@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/supabase/server'
 import { listCircle, type CircleMember } from '@/lib/circle/queries'
-import { setGrant, removeFriend } from './actions'
 import { InviteButton } from '@/components/circle/InviteButton'
 import { BackLink, EmptyState, QuietRow } from '@/components/ui'
 import { cn } from '@/lib/utils/cn'
@@ -92,90 +91,54 @@ export default async function CirclePage() {
  * sin un solo componente de cliente.
  */
 function MemberRow({ member }: { member: CircleMember }) {
-  const levels = [
-    { value: 'none', label: 'Nada' },
-    { value: 'view', label: 'Ve mi ropa' },
-    { value: 'style', label: 'Y me viste' },
-  ] as const
-
-  const current = member.iGive ?? 'none'
-
   return (
-    <li className="border-t border-line py-4 last:border-b">
-      <div className="flex items-center justify-between gap-4">
-        <span className="flex min-w-0 items-center gap-3">
-          {/*
-            La inicial en un círculo.
+    <li>
+      <Link
+        href={`/circulo/${member.id}`}
+        className="flex items-center gap-3.5 border-t border-line py-3.5 last:border-b"
+      >
+        {/*
+          La inicial en un círculo.
 
-            No hay fotos de perfil en esta aplicación y no las va a haber: es un
-            armario, no una red social. La inicial identifica lo suficiente en
-            una lista de cinco personas y no obliga a nadie a elegir una foto
-            suya para poder prestarle una chaqueta a su hermana.
-          */}
-          <span
-            aria-hidden
-            className="display flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sunken text-[17px]"
-          >
-            {member.name.trim().charAt(0).toUpperCase()}
-          </span>
-          <span className="display truncate text-[19px]">{member.name}</span>
+          No hay fotos de perfil en esta aplicación y no las va a haber: es un
+          armario, no una red social. La inicial identifica de sobra en una
+          lista de cinco y no obliga a nadie a elegir una foto suya para poder
+          prestarle una chaqueta a su hermana.
+        */}
+        <span
+          aria-hidden
+          className="display flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sunken text-[17px]"
+        >
+          {member.name.trim().charAt(0).toUpperCase()}
         </span>
 
-        <form action={removeFriend}>
-          <input type="hidden" name="friendId" value={member.id} />
-          <button type="submit" className="shrink-0 py-1 text-[10.5px] text-ink-faint">
-            quitar
-          </button>
-        </form>
-      </div>
+        <span className="min-w-0 flex-1">
+          <span className="display block truncate text-[19px]">{member.name}</span>
+          <span className="mono mt-0.5 block truncate text-ink-faint">
+            {member.theyGive === 'style'
+              ? 'te deja ver su ropa y vestirla'
+              : member.theyGive === 'view'
+                ? 'te deja ver su ropa'
+                : 'armario privado'}
+          </span>
+        </span>
 
-      <form action={setGrant} className="mt-2.5 flex gap-1.5">
-        <input type="hidden" name="friendId" value={member.id} />
-        {levels.map((level) => (
-          <button
-            key={level.value}
-            type="submit"
-            name="level"
-            value={level.value}
-            aria-pressed={current === level.value}
-            className={cn(
-              'rounded-full border px-3 py-[7px] text-[11px] transition-colors',
-              current === level.value
-                ? 'border-accent bg-accent text-accent-ink'
-                : 'border-[color-mix(in_srgb,var(--ink)_16%,transparent)] text-ink-soft',
-            )}
-          >
-            {level.label}
-          </button>
-        ))}
-      </form>
-
-      {/*
-        Lo que ella te deja ver a ti. Informativo y en voz baja: no se puede
-        cambiar desde aquí, porque no es tuyo. Sin esta línea, la pantalla
-        parecería decir que la relación es simétrica, y no lo es.
-      */}
-      {member.theyGive ? (
-        <p className="mono mt-2 flex gap-4">
-          <Link
-            href={`/armario/de/${member.id}`}
-            className="text-ink-soft underline underline-offset-4"
-          >
-            ver su armario →
-          </Link>
-          {/* Vestirla es un permiso aparte, y solo aparece si lo ha dado. */}
-          {member.theyGive === 'style' ? (
-            <Link
-              href={`/vestir/${member.id}`}
-              className="text-ink-soft underline underline-offset-4"
-            >
-              vestirla →
-            </Link>
-          ) : null}
-        </p>
-      ) : (
-        <p className="mono mt-2 text-ink-faint">no te deja ver la suya</p>
-      )}
+        {/*
+          Lo que TÚ le dejas ver, en una etiqueta. El dial se ha mudado a su
+          ficha: cinco diales seguidos en una lista invitan a tocarlos sin
+          mirar, y esto no es una fila de interruptores, son permisos.
+        */}
+        <span
+          className={cn(
+            'mono shrink-0 rounded-full px-2.5 py-1 text-[9px]',
+            member.iGive
+              ? 'bg-accent text-accent-ink'
+              : 'border border-line text-ink-faint',
+          )}
+        >
+          {member.iGive === 'style' ? 'te viste' : member.iGive === 'view' ? 've tu ropa' : 'nada'}
+        </span>
+      </Link>
     </li>
   )
 }

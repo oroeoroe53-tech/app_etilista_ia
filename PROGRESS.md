@@ -699,9 +699,21 @@ también tu círculo. Dicho en el compositor y en `/privacidad`.
 
 ⚠️ **Requiere ejecutar `0013_votacion_looks.sql` en Supabase.**
 
-**Pendiente del diseño**: ficha de amiga con «vísteme con tu armario», evento
-redibujado, outfit del día publicable al círculo, feed, retos, resumen mensual,
-duelo de armarios. Y tres que no se pueden hacer tal cual: el espejo de las 8
+**Ficha de amiga** (`/circulo/[friendId]`) con **«Vísteme con tu armario»**: el
+motor compone un look **con la ropa de ella y tu perfil de estilo**, y señala la
+prenda protagonista —una que tú no tienes— con el botón de pedirla prestada. Es
+la idea más fina del rediseño porque contesta a lo que de verdad lleva a alguien
+al armario de una amiga: no «qué tiene», sino «qué tiene que a mí me quedaría
+bien». El dial de permisos se muda de la lista a esta ficha: cinco diales
+seguidos invitan a tocarlos sin mirar.
+
+**Evento**: cuando hay choque de color, además del aviso se dicen los colores
+libres **que tú tienes**. El diseño decía «la IA te ha cambiado a teja» y eso
+sería mentira —los looks del evento los declara cada una a mano, no hay nada que
+cambiar—, así que se hace la mitad que sí es verdad y sí sirve.
+
+**Pendiente del diseño**: outfit del día publicable al círculo, feed, retos,
+resumen mensual, duelo de armarios. Y tres que no se pueden hacer tal cual: el espejo de las 8
 (no hay notificaciones), «recréalo con mi ropa» (necesita visión por IA sobre
 foto ajena) y el feed (vacío con un círculo de dos).
 
