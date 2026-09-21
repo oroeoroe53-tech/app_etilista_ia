@@ -5,6 +5,7 @@ import { listPendingVotes } from '@/lib/polls/queries'
 import { listCircle } from '@/lib/circle/queries'
 import { countIncoming } from '@/lib/loans/queries'
 import { countUnseenLooks } from '@/lib/styled/queries'
+import { whoSharedToday } from '@/lib/feed/queries'
 import { currentStreak, weekStates, streakWindowStart } from '@/lib/social/streak'
 import { findNeglected, neglectMessage, neglectCutoffs } from '@/lib/wardrobe/neglected'
 import { describeGarment } from '@/lib/wardrobe/labels'
@@ -39,12 +40,20 @@ export default async function SocialPage() {
   const cutoffs = neglectCutoffs()
   const since = streakWindowStart()
 
-  const [pending, circle, incomingLoans, unseenLooks, { data: worn }, { data: forNeglect }] =
-    await Promise.all([
+  const [
+    pending,
+    circle,
+    incomingLoans,
+    unseenLooks,
+    sharedNames,
+    { data: worn },
+    { data: forNeglect },
+  ] = await Promise.all([
       listPendingVotes(user.id),
       listCircle(user.id),
       countIncoming(user.id),
       countUnseenLooks(user.id),
+      whoSharedToday(user.id, new Date().toISOString().slice(0, 10)),
       // Sesenta días bastan para una racha: nadie enseña una de tres meses en
       // una pantalla, y pedir el historial entero por un número es caro.
       supabase
@@ -173,6 +182,21 @@ export default async function SocialPage() {
       <nav className="mt-8">
         <QuietRow href="/votacion/nueva" title="¿Cuál me pongo?">
           Que lo decidan ellas, en minutos
+        </QuietRow>
+
+        {/*
+          Quién ha enseñado hoy lo que se ha puesto.
+
+          Los nombres, y no un número, porque es lo que hace que apetezca
+          entrar: «Marta y Lucía» es una invitación; «2 publicaciones» es una
+          métrica.
+        */}
+        <QuietRow href="/social/feed" title="Lo que se pone tu gente">
+          {sharedNames.length === 0
+            ? 'Hoy todavía no ha enseñado nadie nada'
+            : sharedNames.length === 1
+              ? `${sharedNames[0]} ha enseñado el suyo`
+              : `${sharedNames.slice(0, 2).join(' y ')}${sharedNames.length > 2 ? ` y ${sharedNames.length - 2} más` : ''} han enseñado el suyo`}
         </QuietRow>
 
         {unseenLooks > 0 ? (

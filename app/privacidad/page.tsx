@@ -85,6 +85,14 @@ export default function PrivacyPage() {
         armario al instante.
       </Block>
 
+      <Block title="Cuando enseñas lo que te has puesto">
+        Publicar el look del día es un gesto que haces tú, cada día, y lo ven
+        solo las personas de tu círculo. No hay muro público, ni gente
+        desconocida, ni forma de que alguien llegue a tus looks sin estar en tu
+        círculo. No hay «me gusta» ni contadores: no se gana nada publicando
+        más. Puedes quitarlo cuando quieras y desaparece sin avisar a nadie.
+      </Block>
+
       <Block title="Ropa prestada">
         Si le pides una prenda a alguien, las dos veis ese préstamo y nadie más
         del círculo. Mientras una prenda tuya está prestada dejo de

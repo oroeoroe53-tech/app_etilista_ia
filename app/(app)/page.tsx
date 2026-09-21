@@ -9,6 +9,8 @@ import { findNeglected, neglectMessage, neglectCutoffs } from '@/lib/wardrobe/ne
 import { describeGarment } from '@/lib/wardrobe/labels'
 import { listMyPolls } from '@/lib/polls/queries'
 import { countUnseenLooks } from '@/lib/styled/queries'
+import { listCircle } from '@/lib/circle/queries'
+import { sharedToday } from '@/lib/feed/queries'
 import { TodayLook } from '@/components/home/TodayLook'
 import { Countdown } from '@/components/polls/Countdown'
 import { PhotoSlot, QuietRow } from '@/components/ui'
@@ -113,9 +115,11 @@ export default async function HomePage() {
    * comparada con el look del día, y si fallara no debería costarle la portada
    * a nadie.
    */
-  const [polls, unseenLooks] = await Promise.all([
+  const [polls, unseenLooks, circle, alreadyShared] = await Promise.all([
     listMyPolls(user.id),
     countUnseenLooks(user.id),
+    listCircle(user.id),
+    sharedToday(user.id, new Date().toISOString().slice(0, 10)),
   ])
   const openPoll = polls.find((poll) => !poll.closed) ?? null
 
@@ -165,6 +169,8 @@ export default async function HomePage() {
               imageUrl: item.imagePath ? (signed.get(item.imagePath) ?? null) : null,
             })),
           }}
+          canShare={circle.length > 0}
+          shared={alreadyShared}
         />
       ) : (
         <Link

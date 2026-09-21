@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { markWorn } from '@/app/(app)/outfits/actions'
+import { shareDailyLook } from '@/app/(app)/social/actions'
 import { Button, PhotoSlot } from '@/components/ui'
 
 export interface TodayLookView {
@@ -34,9 +35,19 @@ export function TodayLook({
    * en un trámite.
    */
   href,
+  /*
+   * Enseñarlo al círculo.
+   *
+   * Solo aparece cuando hay círculo: un botón de «enseñar a tus amigas» sin
+   * amigas es un botón que solo sirve para recordarte que no las tienes.
+   */
+  canShare,
+  shared,
 }: {
   look: TodayLookView
   href?: string
+  canShare?: boolean
+  shared?: boolean
 }) {
   const [worn, setWorn] = useState(false)
   const [isPending, startTransition] = useTransition()
@@ -132,6 +143,35 @@ export function TodayLook({
           </Link>
         </div>
       )}
+
+      {/*
+        Publicar es un gesto aparte y debajo del principal.
+
+        Lo que resuelve esta tarjeta es vestirse; enseñarlo es opcional y no
+        debe competir por el mismo sitio. Y va con el look concreto de hoy: no
+        hay interruptor de «compartir siempre», porque acabaría enseñando a
+        diario ropa que nadie decidió enseñar ese día.
+      */}
+      {!href && canShare ? (
+        shared ? (
+          <Link
+            href="/social/feed"
+            className="mono mt-3 block text-center text-ink-faint underline underline-offset-4"
+          >
+            lo están viendo tus amigas →
+          </Link>
+        ) : (
+          <form action={shareDailyLook} className="mt-3">
+            <input type="hidden" name="outfitId" value={look.outfitId} />
+            <button
+              type="submit"
+              className="mono w-full py-1 text-center text-ink-faint underline underline-offset-4"
+            >
+              enseñárselo a mi círculo
+            </button>
+          </form>
+        )
+      ) : null}
 
       {error ? (
         <p role="alert" className="mt-2.5 text-[11px] text-danger">

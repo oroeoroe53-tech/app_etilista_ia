@@ -51,6 +51,7 @@ export type FunnelEvent =
   | 'event_created'
   | 'event_joined'
   | 'styled_sent'
+  | 'look_shared'
 
 export function track(event: FunnelEvent, userId?: string | null): void {
   after(async () => {

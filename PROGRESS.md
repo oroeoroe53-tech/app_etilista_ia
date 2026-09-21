@@ -712,8 +712,21 @@ libres **que tú tienes**. El diseño decía «la IA te ha cambiado a teja» y e
 sería mentira —los looks del evento los declara cada una a mano, no hay nada que
 cambiar—, así que se hace la mitad que sí es verdad y sí sirve.
 
-**Pendiente del diseño**: outfit del día publicable al círculo, feed, retos,
-resumen mensual, duelo de armarios. Y tres que no se pueden hacer tal cual: el espejo de las 8
+**Publicar el look del día y feed del círculo** (`0014_feed.sql`). Un look por
+día, publicado a mano, visible solo para el círculo. Sin «me gusta», sin
+contadores, sin orden por interés y sin desconocidos: por fecha y se acaba. Lo
+único accionable es pedir prestada una prenda, y solo cuando esa persona te deja
+ver su armario. `in_same_circle()` completa la familia de
+`can_view_wardrobe()` / `can_style_wardrobe()`; nótese el orden de los
+argumentos en la política: pregunta si **quien publicó** te tiene a ti, no al
+revés.
+
+⚠️ **Requiere ejecutar `0014_feed.sql` en Supabase.**
+
+**Pendiente del diseño**: retos semanales, resumen mensual, duelo de armarios.
+Y las tres que no se pueden hacer tal cual: el espejo de las 8 (no hay
+notificaciones), «recréalo con mi ropa» (visión por IA sobre foto ajena) y un
+feed que solo se llena si hay gente publicando. Y tres que no se pueden hacer tal cual: el espejo de las 8
 (no hay notificaciones), «recréalo con mi ropa» (necesita visión por IA sobre
 foto ajena) y el feed (vacío con un círculo de dos).
 
