@@ -55,8 +55,8 @@ export default function PrivacyPage() {
       <Block title="Quién ve tus fotos">
         Nadie más que tú, salvo que tú lo pidas. Para analizarlas se mandan al
         proveedor del modelo de visión, que las procesa y no las usa para
-        entrenar. Ningún otro usuario puede ver tu armario: la base de datos lo
-        impide a nivel de fila, no solo en la pantalla.
+        entrenar. Ningún otro usuario puede ver tu armario mientras tú no se lo
+        des: la base de datos lo impide a nivel de fila, no solo en la pantalla.
       </Block>
 
       {/*
@@ -73,6 +73,15 @@ export default function PrivacyPage() {
         se cierra a la hora que tú digas y, pasadas veinticuatro horas, esas
         fotos se borran solas y del todo. No entran en tu armario ni se analizan
         con nada.
+      </Block>
+
+      <Block title="Tu círculo">
+        Solo entra quien tú invitas, con un enlace tuyo que vale para una
+        persona y caduca en una semana. No hay buscador de usuarios: nadie puede
+        encontrarte por tu nombre ni por tu correo. Y estar en tu círculo no
+        deja ver tu ropa: ese permiso se da persona a persona desde Perfil →
+        Tu círculo, se quita igual de rápido, y quien lo pierde deja de ver tu
+        armario al instante.
       </Block>
 
       <Block title="Cuánto se guarda">

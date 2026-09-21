@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { createClient, requireUser } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { newPollToken, looksLikeToken } from '@/lib/polls/token'
+import { newLinkToken, looksLikeToken } from '@/lib/security/link-token'
 import { purgeExpiredPolls } from '@/lib/polls/purge'
 import { track } from '@/lib/observability/funnel'
 import { log } from '@/lib/observability/log'
@@ -85,7 +85,7 @@ export async function createPoll(
     .insert({
       owner_id: user.id,
       question: question || null,
-      token: newPollToken(),
+      token: newLinkToken(),
       closes_at: new Date(now + minutes * 60_000).toISOString(),
       // Un día desde ahora, pase lo que pase con la cuenta atrás.
       expires_at: new Date(now + 24 * 3600_000).toISOString(),

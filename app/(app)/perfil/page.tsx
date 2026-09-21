@@ -104,6 +104,23 @@ export default async function ProfilePage() {
           mucha gente usa la web unos días antes de decidirse a instalarla, y
           para entonces ya no vuelve a pasar por el login.
         */}
+        {/*
+          El círculo va el primero de estas filas: es lo único de aquí que tiene
+          consecuencias para otra gente, y lo único que alguien puede querer
+          revisar un martes cualquiera para comprobar quién ve su ropa.
+        */}
+        <Link
+          href="/circulo"
+          className="flex items-center justify-between gap-4 border-t border-line py-3.5"
+        >
+          <span className="text-[12.5px] leading-[1.35] text-ink">
+            Tu círculo y lo que ve cada una
+          </span>
+          <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+            →
+          </span>
+        </Link>
+
         <Link
           href="/instalar"
           className="flex items-center justify-between gap-4 border-t border-line py-3.5"

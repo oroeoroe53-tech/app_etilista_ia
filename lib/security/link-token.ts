@@ -1,5 +1,9 @@
 /**
- * El identificador que viaja en el enlace.
+ * El identificador que viaja en un enlace compartido.
+ *
+ * Lo usan las votaciones y las invitaciones al círculo. Es el mismo problema
+ * —algo que se manda por un mensaje y que no puede adivinarse— así que es el
+ * mismo generador, y no dos parecidos que se separen con el tiempo.
  *
  * Es lo único que separa una votación de quien no debería verla, así que no se
  * parece a los identificadores del resto de la aplicación:
@@ -19,7 +23,7 @@
 const ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789'
 const LENGTH = 12
 
-export function newPollToken(): string {
+export function newLinkToken(): string {
   const bytes = new Uint8Array(LENGTH)
   crypto.getRandomValues(bytes)
 

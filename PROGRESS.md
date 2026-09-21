@@ -531,6 +531,44 @@ existen ni las tablas ni el bucket, y la función falla entera.
 **Sin probar de punta a punta**: hace falta la migración y dos sesiones
 distintas (quien pregunta y quien vota). Tipos, lint, 298 tests y build, sí.
 
+## El círculo — 21 de septiembre de 2026
+
+La base de las tres funciones sociales que faltan (préstamos, eventos y
+estilista de confianza). `0009_circulo.sql`.
+
+**La decisión que lo ordena todo: estar en el círculo NO abre el armario.**
+Son dos tablas y dos gestos distintos: `connections` es la relación,
+`wardrobe_grants` es el permiso. Si aceptar una invitación abriera el armario,
+la decisión de enseñar toda tu ropa se tomaría con prisa, en el mismo gesto, y
+nadie recordaría haberla tomado.
+
+**Se entra solo por invitación.** Enlace `/c/<token>`, de un solo uso y con una
+semana de vida; máximo veinte abiertas a la vez. **No hay buscador de
+usuarios**: sin él, nadie puede aparecer en la pantalla de otro sin que le
+hayan dado un enlace, y esta aplicación no se convierte en un directorio de
+gente con fotos de su ropa.
+
+**Tres niveles, un solo dial** (`Nada` / `Ve mi ropa` / `Y me viste`). Con dos
+interruptores sueltos existiría «puede montarme looks pero no ver mi ropa», que
+no significa nada. La pantalla dice además qué te deja ver ella a ti: la
+relación no es simétrica y disimularlo sería mentir.
+
+**`can_view_wardrobe(dueño, mirón)`** es la pregunta que harán todas las
+funciones siguientes, en una sola función `security definer` con `search_path`
+fijado. Repetida a mano en cinco políticas, bastaría olvidar una.
+
+Salir del círculo borra la relación **y los permisos en los dos sentidos**, y no
+avisa a nadie: una notificación de «te han quitado» es una crueldad
+automatizada que no arregla nada.
+
+`/privacidad` gana un bloque y corrige la frase que decía que nadie puede ver tu
+armario.
+
+⚠️ **Requiere ejecutar `0009_circulo.sql` en Supabase.**
+
+**Sin probar de punta a punta**: hacen falta dos cuentas. Tipos, lint, 301 tests
+y build, sí.
+
 ---
 
 ## Registro de decisiones previas

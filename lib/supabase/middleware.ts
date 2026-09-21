@@ -22,6 +22,9 @@ const PUBLIC_PREFIXES = [
    * VOTAR sí hace falta cuenta, y eso lo comprueba la acción, no esta lista.
    */
   '/v',
+  // Las invitaciones al círculo, por el mismo motivo: hay que poder leer quién
+  // te invita antes de que te pidamos una cuenta. Aceptar sí la exige.
+  '/c',
   '/privacidad',
   '/manifest.webmanifest',
   '/icons',

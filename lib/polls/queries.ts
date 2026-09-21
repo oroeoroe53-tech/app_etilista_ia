@@ -1,6 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { BUCKETS } from '@/lib/storage/paths'
-import { looksLikeToken } from './token'
+import { looksLikeToken } from '@/lib/security/link-token'
 import type { PollComment, PollOptionView, PollView } from './types'
 
 /**

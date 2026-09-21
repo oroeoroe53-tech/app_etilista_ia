@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { newPollToken, looksLikeToken } from '@/lib/polls/token'
+import { newLinkToken, looksLikeToken } from '@/lib/security/link-token'
 import { leaderOf } from '@/lib/polls/queries'
 import { safeNext } from '@/lib/utils/next-url'
 import type { PollOptionView } from '@/lib/polls/types'
@@ -19,7 +19,7 @@ function option(votes: number, id = String(votes)): PollOptionView {
 describe('el token del enlace', () => {
   it('tiene siempre la misma longitud y se reconoce a sí mismo', () => {
     for (let i = 0; i < 200; i++) {
-      const token = newPollToken()
+      const token = newLinkToken()
       expect(token).toHaveLength(12)
       expect(looksLikeToken(token)).toBe(true)
     }
@@ -29,14 +29,14 @@ describe('el token del enlace', () => {
     // No demuestra que sea criptográfico, pero sí detecta el error clásico:
     // sembrar el generador con algo fijo, o usar la hora como semilla.
     const seen = new Set<string>()
-    for (let i = 0; i < 2000; i++) seen.add(newPollToken())
+    for (let i = 0; i < 2000; i++) seen.add(newLinkToken())
     expect(seen.size).toBe(2000)
   })
 
   it('no usa caracteres que se confunden al dictarlos', () => {
     const forbidden = /[0o1li]/
     for (let i = 0; i < 300; i++) {
-      expect(newPollToken()).not.toMatch(forbidden)
+      expect(newLinkToken()).not.toMatch(forbidden)
     }
   })
 

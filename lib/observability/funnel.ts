@@ -36,6 +36,12 @@ export type FunnelEvent =
   | 'poll_created'
   | 'poll_opened'
   | 'poll_voted'
+  /*
+   * El círculo. `circle_joined` es la otra mitad del boca a boca, junto a
+   * `poll_voted`: gente que llega porque alguien de dentro la ha traído.
+   */
+  | 'circle_invited'
+  | 'circle_joined'
 
 export function track(event: FunnelEvent, userId?: string | null): void {
   after(async () => {
