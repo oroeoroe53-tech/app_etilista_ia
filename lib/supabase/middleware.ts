@@ -25,6 +25,8 @@ const PUBLIC_PREFIXES = [
   // Las invitaciones al círculo, por el mismo motivo: hay que poder leer quién
   // te invita antes de que te pidamos una cuenta. Aceptar sí la exige.
   '/c',
+  // Las invitaciones a un evento. Mismo motivo que las dos anteriores.
+  '/e',
   '/privacidad',
   '/manifest.webmanifest',
   '/icons',

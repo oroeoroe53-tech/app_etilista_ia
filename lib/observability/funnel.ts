@@ -48,6 +48,8 @@ export type FunnelEvent =
    */
   | 'loan_requested'
   | 'loan_accepted'
+  | 'event_created'
+  | 'event_joined'
 
 export function track(event: FunnelEvent, userId?: string | null): void {
   after(async () => {

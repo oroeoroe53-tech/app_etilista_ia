@@ -92,6 +92,13 @@ export default function PrivacyPage() {
         te propongo a ti.
       </Block>
 
+      <Block title="Eventos">
+        Lo que subes a un evento —el color, la frase y la foto— lo ven las
+        personas apuntadas a ese evento, y nadie más. El evento entero se borra
+        solo una semana después del día señalado, fotos incluidas. No entra en
+        tu armario ni cambia lo que te propongo.
+      </Block>
+
       <Block title="Cuánto se guarda">
         Mientras tengas cuenta. En cuanto la borras desaparece todo: fotos,
         recortes, armario, perfil de estilo e historial. No hay copia de

@@ -14,6 +14,7 @@ export const BUCKETS = {
   generated: 'generated-images',
   avatars: 'avatars',
   pollPhotos: 'poll-photos',
+  eventPhotos: 'event-photos',
 } as const
 
 export type BucketName = (typeof BUCKETS)[keyof typeof BUCKETS]
@@ -64,6 +65,16 @@ export function generatedImagePath(userId: string, outfitId: string): string {
  * sigue siendo el uid de quien la sube, como en todos los demás.
  */
 export function pollPhotoPath(userId: string, mimeType: string): string {
+  return `${userId}/${token()}.${extensionFor(mimeType)}`
+}
+
+/**
+ * Foto del look que alguien piensa ponerse en un evento.
+ *
+ * Bucket propio, como las de votación y por lo mismo: la ven personas que no
+ * son su dueña y se borran solas una semana después del evento.
+ */
+export function eventPhotoPath(userId: string, mimeType: string): string {
   return `${userId}/${token()}.${extensionFor(mimeType)}`
 }
 

@@ -604,6 +604,39 @@ entera de que le han pedido algo.
 **Sin probar de punta a punta**: hacen falta dos cuentas con permiso mutuo.
 Tipos, lint, 302 tests y build, sí.
 
+## Eventos: no ir iguales — 21 de septiembre de 2026
+
+`0011_eventos.sql`, `lib/events/`, `/eventos`, `/e/[token]`.
+
+**Aquí sí se usa RLS para que unas vean cosas de otras** (`is_event_guest()`),
+y se puede sin miedo porque las tablas son nuevas: no hay ninguna consulta
+escrita antes que dé por hecho que solo devuelven lo propio. Esa es justo la
+diferencia con `clothing_items`.
+
+**El aviso de coincidencias es la función entera.** Poner cuatro fotos en una
+rejilla lo hace ya WhatsApp; decir «Marta y tú vais de verde» no. Por eso cada
+invitada elige un color de la taxonomía del armario: es el único dato que la
+aplicación entiende. El negro y el multicolor **no cuentan** —en una boda va de
+negro media lista y avisar ahí quema el aviso— y quien no ha dicho nada no se
+adivina. `tests/events.test.ts`.
+
+**Tres formas de decir de qué vas, ninguna obligatoria**: color, frase o foto.
+Exigir la foto dejaría media lista vacía, y una lista a medias no evita que
+nadie repita vestido.
+
+**El enlace del evento NO es de un solo uso**, al revés que el del círculo: se
+manda al grupo entero de la boda. Puede serlo porque apuntarse no abre el
+armario de nadie.
+
+**Todo caduca**: una semana después del día señalado se borra el evento con sus
+fotos. Y al cancelar un evento las fotos se borran **antes** que la fila,
+porque el borrado en cascada se lleva las rutas y sin ellas los archivos
+quedarían en Storage para siempre.
+
+⚠️ **Requiere ejecutar `0011_eventos.sql` en Supabase.**
+
+Tipos, lint, 311 tests y build, sí. De punta a punta, con dos cuentas, no.
+
 ---
 
 ## Registro de decisiones previas
