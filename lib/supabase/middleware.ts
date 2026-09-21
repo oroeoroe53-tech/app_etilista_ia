@@ -16,6 +16,12 @@ const PUBLIC_PREFIXES = [
   '/auth',
   '/demo',
   '/instalar',
+  /*
+   * Las votaciones. Se ven sin cuenta a propósito: quien abre el enlace de una
+   * amiga tiene que poder ver de qué va antes de que le pidamos nada. Para
+   * VOTAR sí hace falta cuenta, y eso lo comprueba la acción, no esta lista.
+   */
+  '/v',
   '/privacidad',
   '/manifest.webmanifest',
   '/icons',

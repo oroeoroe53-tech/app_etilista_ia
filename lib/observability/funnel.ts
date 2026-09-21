@@ -28,6 +28,14 @@ export type FunnelEvent =
   | 'analysis_done'
   | 'first_proposal'
   | 'opened_day'
+  /*
+   * Los tres de la votación. `poll_voted` es el más valioso de todos: es
+   * alguien que se ha registrado porque una amiga le pidió opinión, o sea el
+   * boca a boca funcionando, y se ve aquí antes que en ningún otro sitio.
+   */
+  | 'poll_created'
+  | 'poll_opened'
+  | 'poll_voted'
 
 export function track(event: FunnelEvent, userId?: string | null): void {
   after(async () => {

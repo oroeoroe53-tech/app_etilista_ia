@@ -53,10 +53,26 @@ export default function PrivacyPage() {
       </Block>
 
       <Block title="Quién ve tus fotos">
-        Nadie más que tú. Para analizarlas se mandan al proveedor del modelo de
-        visión, que las procesa y no las usa para entrenar. Ningún otro usuario
-        puede ver tu armario: la base de datos lo impide a nivel de fila, no
-        solo en la pantalla.
+        Nadie más que tú, salvo que tú lo pidas. Para analizarlas se mandan al
+        proveedor del modelo de visión, que las procesa y no las usa para
+        entrenar. Ningún otro usuario puede ver tu armario: la base de datos lo
+        impide a nivel de fila, no solo en la pantalla.
+      </Block>
+
+      {/*
+        La votación es la única función que enseña algo tuyo a otra gente, así
+        que se explica aquí con todas sus consecuencias y no en letra pequeña.
+        Si algún día deja de ser verdad alguna de estas cuatro frases, se cambia
+        esta página el mismo día.
+      */}
+      <Block title="Cuando pides opinión">
+        Las fotos que subes a una votación las ve quien abra el enlace que tú
+        mandas, y solo esa gente: el enlace lleva un identificador que no se
+        puede adivinar y no aparece en buscadores ni en ninguna lista. Hace
+        falta cuenta para votar, así que sabrás quién ha votado qué. La votación
+        se cierra a la hora que tú digas y, pasadas veinticuatro horas, esas
+        fotos se borran solas y del todo. No entran en tu armario ni se analizan
+        con nada.
       </Block>
 
       <Block title="Cuánto se guarda">

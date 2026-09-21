@@ -7,7 +7,9 @@ import { fetchWeather } from '@/lib/weather/provider'
 import { getDailyLook } from '@/lib/outfits/daily'
 import { findNeglected, neglectMessage, neglectCutoffs } from '@/lib/wardrobe/neglected'
 import { describeGarment } from '@/lib/wardrobe/labels'
+import { listMyPolls } from '@/lib/polls/queries'
 import { TodayLook } from '@/components/home/TodayLook'
+import { Countdown } from '@/components/polls/Countdown'
 import { PhotoSlot, QuietRow } from '@/components/ui'
 
 /**
@@ -102,6 +104,15 @@ export default async function HomePage() {
     ].filter((p): p is string => Boolean(p)),
     user.id,
   )
+
+  /*
+   * La votación abierta, si la hay.
+   *
+   * Después de las consultas pesadas y sin bloquearlas: es una fila de adorno
+   * comparada con el look del día, y si fallara no debería costarle la portada
+   * a nadie.
+   */
+  const openPoll = (await listMyPolls(user.id)).find((poll) => !poll.closed) ?? null
 
   const today = new Date()
   const fecha = `${today.toLocaleDateString('es-ES', { weekday: 'long' })} ${today.getDate()}`
@@ -260,6 +271,36 @@ export default async function HomePage() {
         pregunta del día. Presentes sin discutirle el sitio a la tarjeta.
       */}
       <nav className="mt-7">
+        {/*
+          La votación en curso, si la hay.
+
+          Cuando alguien tiene una votación abierta, es lo único de esta pantalla
+          que está pasando AHORA: hay gente contestando y quedan minutos. Por eso
+          se cuela por encima del diario, con el tiempo corriendo, y desaparece
+          sola en cuanto se cierra.
+        */}
+        {openPoll ? (
+          <Link
+            href={`/v/${openPoll.token}`}
+            className="flex items-center justify-between gap-4 border-t border-line py-3.5"
+          >
+            <span className="min-w-0">
+              <span className="display block text-[17px]">Tu votación</span>
+              <span className="mt-0.5 block truncate text-[11px] text-ink-soft">
+                {openPoll.totalVotes === 0
+                  ? 'Todavía no ha votado nadie'
+                  : openPoll.totalVotes === 1
+                    ? '1 voto'
+                    : `${openPoll.totalVotes} votos`}
+              </span>
+            </span>
+            <Countdown closesAt={openPoll.closesAt} onZeroRefresh={false} className="shrink-0 text-[13px]" />
+          </Link>
+        ) : (
+          <QuietRow href="/votacion/nueva" title="¿Cuál me pongo?">
+            Que lo decidan tus amigas, en minutos
+          </QuietRow>
+        )}
         <QuietRow href="/diario" title="Diario">
           Lo que te has ido poniendo
         </QuietRow>

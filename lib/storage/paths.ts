@@ -13,6 +13,7 @@ export const BUCKETS = {
   clothing: 'clothing-images',
   generated: 'generated-images',
   avatars: 'avatars',
+  pollPhotos: 'poll-photos',
 } as const
 
 export type BucketName = (typeof BUCKETS)[keyof typeof BUCKETS]
@@ -53,6 +54,17 @@ export function clothingImagePath(userId: string, itemId: string): string {
 
 export function generatedImagePath(userId: string, outfitId: string): string {
   return `${userId}/${outfitId}-${token()}.png`
+}
+
+/**
+ * Foto de una opción de votación.
+ *
+ * Vive en su propio bucket porque tiene otra vida que el resto: se enseña a
+ * gente que no es su dueña y se borra sola a las veinticuatro horas. La carpeta
+ * sigue siendo el uid de quien la sube, como en todos los demás.
+ */
+export function pollPhotoPath(userId: string, mimeType: string): string {
+  return `${userId}/${token()}.${extensionFor(mimeType)}`
 }
 
 export function avatarPath(userId: string, mimeType: string): string {

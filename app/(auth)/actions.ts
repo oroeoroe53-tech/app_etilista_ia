@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
+import { safeNext } from '@/lib/utils/next-url'
 import { createClient } from '@/lib/supabase/server'
 import { requestOrigin } from '@/lib/utils/origin'
 import { track } from '@/lib/observability/funnel'
@@ -45,7 +46,7 @@ export async function signIn(_prev: AuthState, formData: FormData): Promise<Auth
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect(safeNext(formData.get('next')))
 }
 
 export async function signUp(_prev: AuthState, formData: FormData): Promise<AuthState> {
@@ -80,7 +81,7 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
   track('registered')
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect(safeNext(formData.get('next')))
 }
 
 export async function signOut() {

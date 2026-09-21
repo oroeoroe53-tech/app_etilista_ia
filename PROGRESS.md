@@ -486,6 +486,51 @@ era de la demo, era de cualquier armario. Arreglado y con test.
   borrada). **Con datos reales y sesión iniciada no se han visto.**
 - El cobro del plan completo no existe: `UpgradeCta` lo dice al pulsarlo.
 
+## Votación: «¿cuál me pongo?» — 21 de septiembre de 2026
+
+La primera función social, y la primera vez que alguien ve algo de otra persona
+dentro de esta aplicación.
+
+**Cómo funciona.** `/votacion/nueva`: de dos a cuatro fotos, una cuenta atrás
+(10 min, 20 min, 1 h o 3 h) y una pregunta opcional. Sale un enlace corto
+—`/v/<token>`— que se manda al grupo con el botón «Mandar al grupo»
+(`navigator.share`, y copia al portapapeles cuando no existe).
+
+**Ver es libre; votar exige cuenta.** Decisión del usuario y es la que sostiene
+el boca a boca: cada votación mete la aplicación en un grupo entero. Quien abre
+el enlace ve las fotos, la pregunta y el tiempo que queda; al tocar una foto se
+le pide cuenta y al terminar vuelve a la votación (`?next=`, validado por
+`safeNext()` para que no sirva de trampolín a dominios ajenos).
+
+**Quien no ha votado no ve los resultados.** Enseñarle lo que van ganando las
+demás antes de que opine es decirle lo que tiene que opinar. El dueño sí los ve
+desde el principio: para eso preguntó. Un empate no tiene ganadora, se dice que
+están empatadas.
+
+**Seguridad: el token es la llave y la cerradura está en el servidor.**
+`polls` y `poll_options` NO tienen política de lectura para terceros. Quien no
+es el dueño pasa por `lib/polls/queries.ts`, que valida forma del token,
+existencia y caducidad antes de usar el service role. `poll_votes` está
+revocada a `anon` y `authenticated`: los votos solo se escriben desde la acción,
+que comprueba que la votación sigue abierta, que la opción es de esa votación y
+que quien vota no es quien pregunta. Las rutas de foto que llegan del navegador
+se rechazan si no empiezan por la carpeta de quien pregunta.
+
+**Las fotos caducan de verdad.** Bucket propio (`poll-photos`), y a las 24 h se
+borran archivo y fila (`lib/polls/purge.ts`, que se ejecuta en `after()` al
+crear una votación: sin cron). `/privacidad` lo explica y ya no dice que las
+fotos no las ve nadie más, porque dejaría de ser verdad.
+
+**Tres eventos nuevos en el embudo**: `poll_created`, `poll_opened`,
+`poll_voted`. El último es el más valioso que tiene la aplicación: alguien que
+se registró porque una amiga le pidió opinión.
+
+⚠️ **Requiere ejecutar `0008_votacion.sql` en Supabase.** Hasta entonces no
+existen ni las tablas ni el bucket, y la función falla entera.
+
+**Sin probar de punta a punta**: hace falta la migración y dos sesiones
+distintas (quien pregunta y quien vota). Tipos, lint, 298 tests y build, sí.
+
 ---
 
 ## Registro de decisiones previas

@@ -9,13 +9,17 @@ interface AuthFormProps {
   action: (prev: AuthState, formData: FormData) => Promise<AuthState>
   submitLabel: string
   withName?: boolean
+  /** A dónde volver al terminar. Lo valida el servidor, no este formulario. */
+  next?: string
 }
 
-export function AuthForm({ action, submitLabel, withName }: AuthFormProps) {
+export function AuthForm({ action, submitLabel, withName, next }: AuthFormProps) {
   const [state, formAction] = useActionState<AuthState, FormData>(action, {})
 
   return (
     <form action={formAction} className="space-y-4">
+      {next ? <input type="hidden" name="next" value={next} /> : null}
+
       {withName ? (
         <Field
           name="displayName"
