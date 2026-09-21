@@ -96,5 +96,23 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  return response
+  /*
+   * El identificador ya validado, para que las pantallas no lo revaliden.
+   *
+   * `getUser()` no lee una cookie: pregunta a Supabase, y eso es un viaje de
+   * ida y vuelta. Aquí ya se ha hecho, así que repetirlo en cada página era
+   * pagar dos veces por la misma respuesta en **todas** las navegaciones.
+   *
+   * SEGURIDAD: la cabecera se escribe SIEMPRE, con valor o vacía. Esa es toda
+   * la defensa: si alguien manda `x-estilista-uid` desde fuera, esta línea lo
+   * pisa antes de que llegue a ninguna parte. Si algún día se pone dentro de un
+   * `if`, una petición con esa cabecera se convierte en una sesión falsa —así
+   * que no se pone dentro de un `if`.
+   */
+  const headers = new Headers(request.headers)
+  headers.set('x-estilista-uid', user?.id ?? '')
+
+  const forwarded = NextResponse.next({ request: { headers } })
+  for (const cookie of response.cookies.getAll()) forwarded.cookies.set(cookie)
+  return forwarded
 }

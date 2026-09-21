@@ -1,11 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { createClient, getCurrentUser } from '@/lib/supabase/server'
-import { listPendingVotes } from '@/lib/polls/queries'
-import { listCircle } from '@/lib/circle/queries'
-import { countIncoming } from '@/lib/loans/queries'
-import { countUnseenLooks } from '@/lib/styled/queries'
-import { whoSharedToday } from '@/lib/feed/queries'
+import { createClient, requireUserId } from '@/lib/supabase/server'
+import { getSocialSummary } from '@/lib/social/summary'
 import { currentStreak, weekStates, streakWindowStart } from '@/lib/social/streak'
 import { findNeglected, neglectMessage, neglectCutoffs } from '@/lib/wardrobe/neglected'
 import { describeGarment } from '@/lib/wardrobe/labels'
@@ -33,45 +29,43 @@ export const metadata = { title: 'Social · Estilista' }
  * (`lib/social/streak.ts` explica por qué eso importa).
  */
 export default async function SocialPage() {
-  const user = await getCurrentUser()
-  if (!user) redirect('/login')
+  // El proxy ya validó la sesión en esta misma petición.
+  let userId: string
+  try {
+    userId = await requireUserId()
+  } catch {
+    redirect('/login')
+  }
 
   const supabase = await createClient()
   const cutoffs = neglectCutoffs()
   const since = streakWindowStart()
 
-  const [
-    pending,
-    circle,
-    incomingLoans,
-    unseenLooks,
-    sharedNames,
-    { data: worn },
-    { data: forNeglect },
-  ] = await Promise.all([
-      listPendingVotes(user.id),
-      listCircle(user.id),
-      countIncoming(user.id),
-      countUnseenLooks(user.id),
-      whoSharedToday(user.id, new Date().toISOString().slice(0, 10)),
-      // Sesenta días bastan para una racha: nadie enseña una de tres meses en
-      // una pantalla, y pedir el historial entero por un número es caro.
-      supabase
-        .from('wear_history')
-        .select('worn_on')
-        .gte('worn_on', since)
-        .order('worn_on', { ascending: false }),
-      supabase
-        .from('clothing_items')
-        .select(
-          'id, category, primary_color, fit, pattern, image_path, seasons, is_available, times_worn, last_worn_at, created_at',
-        )
-        .is('deleted_at', null)
-        .eq('is_available', true)
-        .or(`last_worn_at.lt.${cutoffs.lastWornBefore},last_worn_at.is.null`)
-        .order('last_worn_at', { ascending: true, nullsFirst: false })
-        .limit(40),
-    ])
+  /*
+   * Dos consultas, no ocho.
+   *
+   * Todo lo social —votaciones pendientes, préstamos, looks sin ver, círculo,
+   * quién ha publicado hoy— lo contesta `social_summary()` de una vez dentro de
+   * Postgres. Lo demás va en la misma tanda porque no depende de ello.
+   */
+  const [summary, { data: worn }, { data: forNeglect }] = await Promise.all([
+    getSocialSummary(supabase, userId),
+    supabase
+      .from('wear_history')
+      .select('worn_on')
+      .gte('worn_on', since)
+      .order('worn_on', { ascending: false }),
+    supabase
+      .from('clothing_items')
+      .select(
+        'id, category, primary_color, fit, pattern, image_path, seasons, is_available, times_worn, last_worn_at, created_at',
+      )
+      .is('deleted_at', null)
+      .eq('is_available', true)
+      .or(`last_worn_at.lt.${cutoffs.lastWornBefore},last_worn_at.is.null`)
+      .order('last_worn_at', { ascending: true, nullsFirst: false })
+      .limit(40),
+  ])
 
   const dates = ((worn ?? []) as { worn_on: string }[]).map((w) => w.worn_on)
   const streak = currentStreak(dates)
@@ -79,7 +73,7 @@ export default async function SocialPage() {
 
   const olvidada = findNeglected((forNeglect ?? []) as never[], new Date(), 1)[0] ?? null
   const signed = olvidada?.image_path
-    ? await signMany(supabase, BUCKETS.clothing, [olvidada.image_path], user.id)
+    ? await signMany(supabase, BUCKETS.clothing, [olvidada.image_path], userId)
     : null
 
   return (
@@ -93,7 +87,7 @@ export default async function SocialPage() {
           {new Date().toLocaleDateString('es-ES', { weekday: 'long' })} · tu círculo
         </p>
         <h1 className="display text-[2rem] leading-[1.02]">
-          {headline(pending.length, circle.length)}
+          {headline(summary.pendingVotes.length, summary.circleCount)}
         </h1>
       </header>
 
@@ -130,11 +124,11 @@ export default async function SocialPage() {
       </section>
 
       {/* --- Lo que espera tu voto ------------------------------------------- */}
-      {pending.length > 0 ? (
+      {summary.pendingVotes.length > 0 ? (
         <section className="mt-8">
           <p className="eyebrow mb-3">Votaciones pendientes</p>
           <div className="bleed-row flex gap-3">
-            {pending.map((poll) => (
+            {summary.pendingVotes.map((poll) => (
               <Link
                 key={poll.token}
                 href={`/v/${poll.token}`}
@@ -192,24 +186,24 @@ export default async function SocialPage() {
           métrica.
         */}
         <QuietRow href="/social/feed" title="Lo que se pone tu gente">
-          {sharedNames.length === 0
+          {summary.sharedNames.length === 0
             ? 'Hoy todavía no ha enseñado nadie nada'
-            : sharedNames.length === 1
-              ? `${sharedNames[0]} ha enseñado el suyo`
-              : `${sharedNames.slice(0, 2).join(' y ')}${sharedNames.length > 2 ? ` y ${sharedNames.length - 2} más` : ''} han enseñado el suyo`}
+            : summary.sharedNames.length === 1
+              ? `${summary.sharedNames[0]} ha enseñado el suyo`
+              : `${summary.sharedNames.slice(0, 2).join(' y ')}${summary.sharedNames.length > 2 ? ` y ${summary.sharedNames.length - 2} más` : ''} han enseñado el suyo`}
         </QuietRow>
 
-        {unseenLooks > 0 ? (
+        {summary.unseenLooks > 0 ? (
           <QuietRow href="/vestir" title="Te han vestido">
-            {unseenLooks === 1
+            {summary.unseenLooks === 1
               ? 'Alguien te ha montado un look con tu ropa'
-              : `${unseenLooks} looks montados con tu ropa`}
+              : `${summary.unseenLooks} looks montados con tu ropa`}
           </QuietRow>
         ) : null}
 
         <QuietRow href="/prestamos" title="Préstamos">
-          {incomingLoans > 0
-            ? `${incomingLoans} sin contestar`
+          {summary.pendingLoans > 0
+            ? `${summary.pendingLoans} sin contestar`
             : 'Quién tiene qué'}
         </QuietRow>
 
@@ -230,9 +224,9 @@ export default async function SocialPage() {
         </QuietRow>
 
         <QuietRow href="/circulo" title="Mis amigas">
-          {circle.length === 0
+          {summary.circleCount === 0
             ? 'Todavía no hay nadie: invita a alguien'
-            : `${circle.length} ${circle.length === 1 ? 'persona' : 'personas'} y lo que ve cada una`}
+            : `${summary.circleCount} ${summary.circleCount === 1 ? 'persona' : 'personas'} y lo que ve cada una`}
         </QuietRow>
       </nav>
     </div>

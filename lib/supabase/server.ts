@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import { publicEnv } from '@/lib/env'
 
@@ -48,4 +48,33 @@ export async function requireUser() {
   const user = await getCurrentUser()
   if (!user) throw new Error('UNAUTHENTICATED')
   return user
+}
+
+/**
+ * El identificador del usuario, sin volver a preguntárselo a Supabase.
+ *
+ * Lo deja el proxy en una cabecera después de validar la sesión (ver
+ * `lib/supabase/middleware.ts`). Como esa validación ya ha ocurrido en esta
+ * misma petición, llamar otra vez a `getUser()` era un viaje de ida y vuelta
+ * regalado en cada navegación.
+ *
+ * La cabecera la escribe siempre el proxy, así que una enviada desde fuera se
+ * pisa antes de llegar aquí. Aun así, si faltara —una ruta que el proxy no
+ * cubra, o un cambio futuro en el `matcher`— se cae con elegancia a preguntar
+ * de verdad: preferimos una página lenta a una página que se cree a quien no
+ * debe.
+ */
+export async function getUserId(): Promise<string | null> {
+  const fromProxy = (await headers()).get('x-estilista-uid')
+  if (fromProxy) return fromProxy
+
+  const user = await getCurrentUser()
+  return user?.id ?? null
+}
+
+/** Igual, pero lanza. Para código de servidor que ya está detrás del proxy. */
+export async function requireUserId(): Promise<string> {
+  const id = await getUserId()
+  if (!id) throw new Error('UNAUTHENTICATED')
+  return id
 }

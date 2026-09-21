@@ -1,17 +1,18 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
-import { createClient, getCurrentUser } from '@/lib/supabase/server'
+import { createClient, requireUserId } from '@/lib/supabase/server'
 import { signMany } from '@/lib/storage/signed'
 import { BUCKETS } from '@/lib/storage/paths'
-import { fetchWeather } from '@/lib/weather/provider'
-import { getDailyLook } from '@/lib/outfits/daily'
 import { findNeglected, neglectMessage, neglectCutoffs } from '@/lib/wardrobe/neglected'
 import { describeGarment } from '@/lib/wardrobe/labels'
-import { listMyPolls } from '@/lib/polls/queries'
-import { countUnseenLooks } from '@/lib/styled/queries'
-import { listCircle } from '@/lib/circle/queries'
-import { sharedToday } from '@/lib/feed/queries'
-import { TodayLook } from '@/components/home/TodayLook'
+import { getSocialSummary } from '@/lib/social/summary'
+import { DailyLookSection, DailyLookSkeleton } from '@/components/home/DailyLookSection'
+import {
+  DailyHeadlineSecond,
+  DailyHeadlineFallback,
+  DailyWeather,
+} from '@/components/home/DailyHeadline'
 import { Countdown } from '@/components/polls/Countdown'
 import { PhotoSlot, QuietRow } from '@/components/ui'
 
@@ -26,8 +27,17 @@ import { PhotoSlot, QuietRow } from '@/components/ui'
  * cupo ni llamar a ningún modelo está explicado en `lib/outfits/daily.ts`.
  */
 export default async function HomePage() {
-  const user = await getCurrentUser()
-  if (!user) redirect('/login')
+  /*
+   * El identificador viene del proxy, que ya validó la sesión en esta misma
+   * petición. Volver a pedírselo a Supabase aquí era un viaje de ida y vuelta
+   * regalado en cada navegación (ver `lib/supabase/server.ts`).
+   */
+  let userId: string
+  try {
+    userId = await requireUserId()
+  } catch {
+    redirect('/login')
+  }
 
   const supabase = await createClient()
   const cutoffs = neglectCutoffs()
@@ -37,13 +47,13 @@ export default async function HomePage() {
       supabase
         .from('profiles')
         .select('display_name, onboarding_stage')
-        .eq('id', user.id)
+        .eq('id', userId)
         .maybeSingle(),
       supabase
         .from('clothing_items')
         .select('id', { count: 'exact', head: true })
         .is('deleted_at', null),
-      supabase.from('user_preferences').select('city, lat, lon').eq('user_id', user.id).maybeSingle(),
+      supabase.from('user_preferences').select('city, lat, lon').eq('user_id', userId).maybeSingle(),
       // La tira del armario: cinco prendas, las últimas en entrar.
       supabase
         .from('clothing_items')
@@ -76,15 +86,6 @@ export default async function HomePage() {
 
   const prefs = (prefsRow ?? {}) as { city?: string | null; lat?: number | null; lon?: number | null }
 
-  // Si la API del tiempo falla, la pantalla funciona igual: el dato desaparece
-  // de la esquina y el motor compone sin temperatura (PLAN.md §35).
-  const weather =
-    prefs.lat != null && prefs.lon != null
-      ? await fetchWeather({ lat: prefs.lat, lon: prefs.lon })
-      : null
-
-  const look = prendas > 0 ? await getDailyLook(supabase, user.id, weather) : null
-
   // Una sola prenda olvidada, la que más tiempo lleve. Una lista aquí sería ruido.
   const olvidada = findNeglected((forNeglect ?? []) as never[], new Date(), 1)[0] ?? null
 
@@ -97,37 +98,27 @@ export default async function HomePage() {
     image_path: string | null
   }>
 
-  // Una sola firma para las fotos del look y las de la tira.
-  const signed = await signMany(
-    supabase,
-    BUCKETS.clothing,
-    [
-      ...(look?.items.map((i) => i.imagePath) ?? []),
-      ...stripItems.map((i) => i.image_path),
-    ].filter((p): p is string => Boolean(p)),
-    user.id,
-  )
-
   /*
-   * La votación abierta, si la hay.
+   * Las dos últimas esperas, a la vez.
    *
-   * Después de las consultas pesadas y sin bloquearlas: es una fila de adorno
-   * comparada con el look del día, y si fallara no debería costarle la portada
-   * a nadie.
+   * Firmar las fotos de la tira y pedir el resumen social no dependen la una de
+   * la otra, así que encadenarlas era sumar dos viajes donde cabe uno.
    */
-  const [polls, unseenLooks, circle, alreadyShared] = await Promise.all([
-    listMyPolls(user.id),
-    countUnseenLooks(user.id),
-    listCircle(user.id),
-    sharedToday(user.id, new Date().toISOString().slice(0, 10)),
+  const [signed, summary] = await Promise.all([
+    signMany(
+      supabase,
+      BUCKETS.clothing,
+      stripItems.map((i) => i.image_path).filter((p): p is string => Boolean(p)),
+      userId,
+    ),
+    getSocialSummary(supabase, userId),
   ])
-  const openPoll = polls.find((poll) => !poll.closed) ?? null
+
+  const openPoll = summary.openPoll
 
   const today = new Date()
   const fecha = `${today.toLocaleDateString('es-ES', { weekday: 'long' })} ${today.getDate()}`
   const lugar = prefs.city ? ` · ${prefs.city}` : ''
-
-  const headline = titleFor({ prendas, look })
 
   return (
     <div
@@ -142,51 +133,54 @@ export default async function HomePage() {
             {lugar}
           </p>
           <h1 className="display mt-2.5 text-[33px] leading-[1.05]">
-            {headline.first}
-            <span className="display-italic mt-0.5 block">{headline.second}</span>
+            {prendas === 0 ? 'Enséñame' : 'Hoy te veo'}
+            {/*
+              La segunda línea depende del look, y el look tarda. Se transmite
+              aparte para que la cabecera aparezca entera desde el primer
+              instante: `DailyHeadlineFallback` ocupa exactamente su sitio.
+            */}
+            {prendas === 0 ? (
+              <span className="display-italic mt-0.5 block">cómo vistes</span>
+            ) : (
+              <Suspense fallback={<DailyHeadlineFallback />}>
+                <DailyHeadlineSecond userId={userId} />
+              </Suspense>
+            )}
           </h1>
         </div>
 
-        {weather ? (
-          <p className="shrink-0 pt-1 text-right text-[11px] leading-[1.5] text-ink-soft">
-            {Math.round(weather.temperatureC)}°
-            <span className="block">{weather.description.toLowerCase()}</span>
-          </p>
-        ) : null}
+        <Suspense fallback={null}>
+          <DailyWeather userId={userId} />
+        </Suspense>
       </header>
 
       {/* --- El look de hoy ---------------------------------------------- */}
-      {look ? (
-        <TodayLook
-          look={{
-            outfitId: look.outfitId,
-            title: look.title,
-            explanation: look.explanation,
-            match: look.match,
-            items: look.items.map((item) => ({
-              id: item.id,
-              name: item.name,
-              imageUrl: item.imagePath ? (signed.get(item.imagePath) ?? null) : null,
-            })),
-          }}
-          canShare={circle.length > 0}
-          shared={alreadyShared}
-        />
+      {/*
+        En streaming.
+
+        Es la parte cara de esta pantalla —API del tiempo, armario entero,
+        motor— y antes la portada no enseñaba nada hasta que terminaba. Ahora
+        aparece todo lo demás y el look llega detrás, en un hueco de su mismo
+        tamaño para que no salte nada.
+      */}
+      {prendas > 0 ? (
+        <Suspense fallback={<DailyLookSkeleton />}>
+          <DailyLookSection
+            userId={userId}
+            hasWardrobe
+            circleCount={summary.circleCount}
+            sharedToday={summary.sharedToday}
+          />
+        </Suspense>
       ) : (
         <Link
-          href={prendas === 0 ? '/onboarding' : '/outfits/que-me-pongo'}
+          href="/onboarding"
           className="mt-5 block rounded-[var(--radius-card)] bg-accent p-5 text-accent-ink"
         >
-          <span className="eyebrow block text-accent-ink/55">
-            {prendas === 0 ? 'Primer paso' : 'Ahora mismo'}
-          </span>
-          <span className="display mt-2 block text-[26px]">
-            {prendas === 0 ? 'Enséñame cómo vistes' : '¿Qué me pongo?'}
-          </span>
+          <span className="eyebrow block text-accent-ink/55">Primer paso</span>
+          <span className="display mt-2 block text-[26px]">Enséñame cómo vistes</span>
           <span className="mt-2 block text-[11.5px] leading-[1.5] opacity-70">
-            {prendas === 0
-              ? 'Cinco o seis fotos de looks que ya lleves. Valen las del espejo.'
-              : 'Con lo que hay disponible no consigo montar nada solo. Dime la ocasión y lo intento contigo.'}
+            Cinco o seis fotos de looks que ya lleves. Valen las del espejo.
           </span>
         </Link>
       )}
@@ -289,7 +283,7 @@ export default async function HomePage() {
           una persona a mano, pensando en ti. Si se queda debajo del diario,
           quien se molestó en montarlo creerá que no le han hecho caso.
         */}
-        {unseenLooks > 0 ? (
+        {summary.unseenLooks > 0 ? (
           <Link
             href="/vestir"
             className="flex items-center justify-between gap-4 border-t border-line py-3.5"
@@ -297,9 +291,9 @@ export default async function HomePage() {
             <span className="min-w-0">
               <span className="display block text-[17px]">Te han vestido</span>
               <span className="mt-0.5 block truncate text-[11px] text-ink-soft">
-                {unseenLooks === 1
+                {summary.unseenLooks === 1
                   ? 'Alguien te ha montado un look con tu ropa'
-                  : `${unseenLooks} looks montados con tu ropa`}
+                  : `${summary.unseenLooks} looks montados con tu ropa`}
               </span>
             </span>
             <span className="mono shrink-0 rounded-full bg-clay px-2 py-[3px] text-[9px] text-[#f7f4ee]">
@@ -324,11 +318,11 @@ export default async function HomePage() {
             <span className="min-w-0">
               <span className="display block text-[17px]">Tu votación</span>
               <span className="mt-0.5 block truncate text-[11px] text-ink-soft">
-                {openPoll.totalVotes === 0
+                {openPoll.votes === 0
                   ? 'Todavía no ha votado nadie'
-                  : openPoll.totalVotes === 1
+                  : openPoll.votes === 1
                     ? '1 voto'
-                    : `${openPoll.totalVotes} votos`}
+                    : `${openPoll.votes} votos`}
               </span>
             </span>
             <Countdown closesAt={openPoll.closesAt} onZeroRefresh={false} className="shrink-0 text-[13px]" />
@@ -349,24 +343,3 @@ export default async function HomePage() {
   )
 }
 
-/**
- * El titular de la portada.
- *
- * Dos líneas, la segunda en cursiva. La cursiva no es decoración: es la que
- * lleva lo que cambia cada día, y por eso la primera línea puede quedarse
- * quieta sin que la pantalla parezca la misma de ayer.
- */
-function titleFor({
-  prendas,
-  look,
-}: {
-  prendas: number
-  look: { title: string } | null
-}): { first: string; second: string } {
-  if (prendas === 0) return { first: 'Enséñame', second: 'cómo vistes' }
-  if (!look) return { first: 'Hoy te veo', second: 'como tú quieras' }
-
-  // "Neutros y una chaqueta" → "en neutros y una chaqueta".
-  const lowered = look.title.charAt(0).toLowerCase() + look.title.slice(1)
-  return { first: 'Hoy te veo', second: `en ${lowered}` }
-}
