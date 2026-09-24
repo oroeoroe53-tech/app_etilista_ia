@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation'
 import { createClient, getCurrentUser } from '@/lib/supabase/server'
 import { signMany } from '@/lib/storage/signed'
 import { BUCKETS } from '@/lib/storage/paths'
-import { Screen, PageTitle, EmptyState, Button, PhotoSlot, QuietRow } from '@/components/ui'
+import { Screen, PageTitle, EmptyState, Button, PhotoSlot } from '@/components/ui'
+import { Tile } from '@/components/social/Tile'
 
 export const dynamic = 'force-dynamic'
 
@@ -98,18 +99,14 @@ export default async function OutfitsPage() {
       </Link>
 
       {/*
-        La maleta y el diario no están en el rediseño —la maleta queda fuera de
-        su alcance a propósito— pero son las dos únicas puertas que tienen. Van
-        en filas finas: presentes sin competir con las dos tarjetas de arriba.
+        La maleta y el diario son las dos únicas puertas que tienen. Van en dos
+        piezas a media pantalla, la misma forma que en la portada: presentes sin
+        competir con las tarjetas de arriba, y sin volver a ser una lista.
       */}
-      <nav className="mt-6">
-        <QuietRow href="/outfits/maleta" title="La maleta">
-          Qué meter para un viaje
-        </QuietRow>
-        <QuietRow href="/diario" title="Diario">
-          Lo que te has ido poniendo
-        </QuietRow>
-      </nav>
+      <ul className="mt-6 grid grid-cols-6 gap-2.5">
+        <Tile span={3} href="/outfits/maleta" title="La maleta" note="Qué meter para un viaje" />
+        <Tile span={3} href="/diario" title="Diario" note="Lo que te has ido poniendo" />
+      </ul>
 
       {(itemCount ?? 0) === 0 ? (
         <EmptyState

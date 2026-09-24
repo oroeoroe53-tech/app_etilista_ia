@@ -237,6 +237,22 @@ body {
   letter-spacing: 0.02em;
 }
 
+/*
+ * AVISO, y vale para `.eyebrow`, `.mono` y `.display`.
+ *
+ * Estas clases fijan color o tamaño en CSS plano, fuera de las capas de
+ * Tailwind. Eso significa que GANAN a cualquier `text-*` que se les ponga al
+ * lado, en silencio y sin dar error: se ve un contador diminuto donde se pedía
+ * uno grande, o una volanta negra sobre fondo negro. Para cambiarlas hace falta
+ * otra regla plana como esta, y colocada DESPUÉS, porque con la misma
+ * especificidad decide el orden.
+ */
+.mono-lead {
+  font-size: var(--text-lead);
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+}
+
 /* El scroll horizontal de categorías no debe enseñar barra en escritorio. */
 .no-scrollbar {
   scrollbar-width: none;

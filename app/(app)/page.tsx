@@ -14,7 +14,9 @@ import {
   DailyWeather,
 } from '@/components/home/DailyHeadline'
 import { Countdown } from '@/components/polls/Countdown'
-import { PhotoSlot, QuietRow } from '@/components/ui'
+import { PhotoSlot } from '@/components/ui'
+import { Tile } from '@/components/social/Tile'
+import { packTiles } from '@/lib/social/mosaic'
 
 /**
  * Portada.
@@ -119,6 +121,81 @@ export default async function HomePage() {
   const today = new Date()
   const fecha = `${today.toLocaleDateString('es-ES', { weekday: 'long' })} ${today.getDate()}`
   const lugar = prefs.city ? ` · ${prefs.city}` : ''
+
+  /*
+   * Las piezas del final.
+   *
+   * Un look que te ha montado alguien va el primero de todo, y a ancho
+   * completo: es lo único de esta pantalla que ha hecho una persona a mano
+   * pensando en ti. Si queda debajo del diario, quien se molestó en montarlo
+   * creerá que no le han hecho caso.
+   *
+   * La votación en curso va después, también grande, porque es lo único que
+   * está pasando AHORA: hay gente contestando y quedan minutos. Desaparece sola
+   * al cerrarse y deja su sitio a «¿Cuál me pongo?».
+   */
+  const tiles = packTiles([
+    ...(summary.unseenLooks > 0
+      ? ([
+          [
+            {
+              key: 'vestir',
+              props: {
+                href: '/vestir',
+                eyebrow: 'Sin ver',
+                title: 'Te han vestido',
+                note:
+                  summary.unseenLooks === 1
+                    ? 'Alguien te ha montado un look con tu ropa'
+                    : `${summary.unseenLooks} looks montados con tu ropa`,
+                badge: summary.unseenLooks,
+                tone: 'raised' as const,
+              },
+            },
+            'hero' as const,
+          ],
+        ] as const)
+      : []),
+
+    openPoll
+      ? ([
+          {
+            key: 'votacion',
+            props: {
+              href: `/v/${openPoll.token}`,
+              eyebrow: 'Ahora mismo',
+              title: 'Tu votación',
+              note:
+                openPoll.votes === 0
+                  ? 'Todavía no ha votado nadie'
+                  : openPoll.votes === 1
+                    ? '1 voto'
+                    : `${openPoll.votes} votos`,
+              tone: 'raised' as const,
+              children: (
+                <Countdown closesAt={openPoll.closesAt} onZeroRefresh={false} className="mono-lead" />
+              ),
+            },
+          },
+          'hero' as const,
+        ] as const)
+      : ([
+          {
+            key: 'nueva-votacion',
+            props: {
+              href: '/votacion/nueva',
+              eyebrow: 'En minutos',
+              title: '¿Cuál me pongo?',
+              note: 'Que lo decidan tus amigas',
+              tone: 'ink' as const,
+            },
+          },
+          'hero' as const,
+        ] as const),
+
+    [{ key: 'diario', props: { href: '/diario', title: 'Diario', note: 'Lo que te has ido poniendo' } }, 'half' as const],
+    [{ key: 'maleta', props: { href: '/outfits/maleta', title: 'La maleta', note: 'Qué meter para un viaje' } }, 'half' as const],
+  ])
 
   return (
     <div
@@ -288,70 +365,16 @@ export default async function HomePage() {
         Vuelven aquí abajo, en filas finas, después de lo que sí responde a la
         pregunta del día. Presentes sin discutirle el sitio a la tarjeta.
       */}
-      <nav className="mt-7">
-        {/*
-          Un look que te ha montado alguien y no has visto.
-
-          Va el primero de todo porque es lo único de esta pantalla que ha hecho
-          una persona a mano, pensando en ti. Si se queda debajo del diario,
-          quien se molestó en montarlo creerá que no le han hecho caso.
-        */}
-        {summary.unseenLooks > 0 ? (
-          <Link
-            href="/vestir"
-            className="flex items-center justify-between gap-4 border-t border-line py-3.5"
-          >
-            <span className="min-w-0">
-              <span className="display block text-lead">Te han vestido</span>
-              <span className="mt-0.5 block truncate text-small text-ink-soft">
-                {summary.unseenLooks === 1
-                  ? 'Alguien te ha montado un look con tu ropa'
-                  : `${summary.unseenLooks} looks montados con tu ropa`}
-              </span>
-            </span>
-            <span className="mono shrink-0 rounded-full bg-clay px-2 py-[3px] text-micro text-[#f7f4ee]">
-              nuevo
-            </span>
-          </Link>
-        ) : null}
-
-        {/*
-          La votación en curso, si la hay.
-
-          Cuando alguien tiene una votación abierta, es lo único de esta pantalla
-          que está pasando AHORA: hay gente contestando y quedan minutos. Por eso
-          se cuela por encima del diario, con el tiempo corriendo, y desaparece
-          sola en cuanto se cierra.
-        */}
-        {openPoll ? (
-          <Link
-            href={`/v/${openPoll.token}`}
-            className="flex items-center justify-between gap-4 border-t border-line py-3.5"
-          >
-            <span className="min-w-0">
-              <span className="display block text-lead">Tu votación</span>
-              <span className="mt-0.5 block truncate text-small text-ink-soft">
-                {openPoll.votes === 0
-                  ? 'Todavía no ha votado nadie'
-                  : openPoll.votes === 1
-                    ? '1 voto'
-                    : `${openPoll.votes} votos`}
-              </span>
-            </span>
-            <Countdown closesAt={openPoll.closesAt} onZeroRefresh={false} className="shrink-0 text-small" />
-          </Link>
-        ) : (
-          <QuietRow href="/votacion/nueva" title="¿Cuál me pongo?">
-            Que lo decidan tus amigas, en minutos
-          </QuietRow>
-        )}
-        <QuietRow href="/diario" title="Diario">
-          Lo que te has ido poniendo
-        </QuietRow>
-        <QuietRow href="/outfits/maleta" title="La maleta">
-          Qué meter para un viaje
-        </QuietRow>
-      </nav>
+      {/* --- El mosaico del final -------------------------------------------
+          Eran tres filas iguales con flecha. El mismo problema que tenía Social:
+          todas pesaban lo mismo y ninguna podía enseñar lo que tenía dentro —una
+          votación con el tiempo corriendo cabe en una pieza y no cabe en una
+          fila. Los anchos los reparte `packTiles`. */}
+      <ul className="mt-7 grid grid-cols-6 gap-2.5">
+        {tiles.map(({ item, span }) => (
+          <Tile key={item.key} span={span} {...item.props} />
+        ))}
+      </ul>
     </div>
   )
 }
