@@ -98,31 +98,51 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="pb-nav">
-      {/* --- Foto a sangre ------------------------------------------------ */}
+      {/* --- La foto, y nada más -------------------------------------------
+          Ocupa dos tercios de la pantalla y llega hasta arriba del todo, por
+          detrás de la hora y la batería. Antes eran 400 píxeles con la página
+          empezando debajo: correcto y sin ninguna fuerza. Una prenda es lo
+          único que hay que mirar en esta pantalla, así que se mira.
+
+          Los controles flotan encima en cristal en lugar de esperar abajo, y
+          el contenido sube sobre la imagen como una hoja de papel. Eso es lo
+          que hace que la foto parezca estar DETRÁS de la página y no encima de
+          ella. */}
       <div className="relative">
         <PhotoSlot
           src={imageUrl}
           label={nombre}
           showLabel={false}
-          className="h-[400px] w-full"
+          className="h-[62vh] max-h-[560px] min-h-[340px] w-full"
           style={imageUrl ? { viewTransitionName: 'garment' } : undefined}
         />
 
-        <div className="absolute top-0 left-0 pt-safe">
+        {imageUrl ? <span aria-hidden className="photo-fade" /> : null}
+
+        <div className="pt-safe absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
           <Link
             href="/armario"
-            className="m-4 inline-block rounded-full bg-[rgba(255,253,248,0.9)] px-3.5 py-2 text-small text-ink backdrop-blur-sm"
+            className="press glass-pill inline-block rounded-full px-3.5 py-2 text-small"
           >
             ← armario
+          </Link>
+
+          <Link
+            href={`/armario/${item.id}/editar`}
+            className="press glass-pill inline-block rounded-full px-3.5 py-2 text-small"
+          >
+            editar
           </Link>
         </div>
       </div>
 
-      {/* --- Cuerpo -------------------------------------------------------- */}
+      {/* --- Cuerpo --------------------------------------------------------
+          Sube sobre la foto con un radio grande: es la hoja que la tapa. */}
       <div
-        className="mx-auto w-full max-w-[30rem] pt-5 pb-7"
+        className="relative z-10 -mt-8 rounded-t-[30px] bg-surface pt-7 pb-7"
         style={{ paddingInline: 'var(--screen-gutter)' }}
       >
+       <div className="mx-auto w-full max-w-[30rem]">
         <p className="eyebrow">
           {capa} · {colorLabel(item.primary_color)}
         </p>
@@ -209,18 +229,18 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
         ) : null}
 
         {/* --- Acciones ----------------------------------------------------- */}
-        <div className="mt-7 flex gap-2.5">
-          <Link href="/outfits/que-me-pongo" className="flex-1">
+        {/* Editar vive arriba, flotando sobre la foto: repetirlo aquí sería
+            dar dos puertas a lo mismo en la misma pantalla. */}
+        <div className="mt-7">
+          <Link href="/outfits/que-me-pongo" className="block">
             <Button fullWidth>Montar look con esto</Button>
-          </Link>
-          <Link href={`/armario/${item.id}/editar`}>
-            <Button variant="secondary">Editar</Button>
           </Link>
         </div>
 
         <div className="mt-5">
           <ItemActions itemId={item.id} available={item.is_available} name={nombre} />
         </div>
+       </div>
       </div>
     </div>
   )

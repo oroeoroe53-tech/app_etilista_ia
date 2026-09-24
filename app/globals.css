@@ -416,6 +416,50 @@ body::after {
 }
 
 /* ---------------------------------------------------------------------------
+ * Cristal sobre foto
+ *
+ * Para los controles que flotan encima de una imagen. Aquí sí es cristal de
+ * verdad: `backdrop-filter: blur()` está soportado en Safari desde hace años.
+ * Lo que Safari NO ejecuta es un FILTRO SVG dentro de `backdrop-filter`, que es
+ * lo que usaba el componente de cristal líquido del encargo.
+ *
+ * La saturación de más es lo que lo separa de un gris translúcido: el desenfoque
+ * solo apaga, y un cristal de verdad concentra el color de lo que hay detrás.
+ *
+ * El borde claro no es adorno. Sobre una foto oscura, una pastilla oscura sin
+ * canto desaparece; ese pelo de luz es lo único que la dibuja.
+ * ------------------------------------------------------------------------- */
+.glass-pill {
+  background: rgba(21, 20, 15, 0.5);
+  color: #f7f4ee;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+}
+
+/*
+ * Velo del pie de la foto.
+ *
+ * La hoja de contenido sube sobre la imagen, y sin esto el corte entre foto y
+ * papel es una línea seca. El degradado hace que la foto se apague al llegar
+ * abajo, como si la hoja le diera sombra.
+ */
+.photo-fade {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 32%;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(12, 11, 8, 0.4) 0%,
+    rgba(12, 11, 8, 0.14) 45%,
+    rgba(12, 11, 8, 0) 100%
+  );
+}
+
+/* ---------------------------------------------------------------------------
  * Superficies con relieve
  *
  * Lo que se pulsa tiene que parecer un objeto, no una zona pulsable. Y lo que
