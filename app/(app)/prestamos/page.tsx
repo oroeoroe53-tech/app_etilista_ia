@@ -144,9 +144,20 @@ function Section({
   return (
     <section className="mb-9">
       <p className="eyebrow mb-3">{title}</p>
-      <ul>
+      {/*
+        Tarjetas y no filas.
+
+        Aquí dentro hay botones —aceptar, devolver— así que la tarjeta NO es
+        pulsable ni lleva destello: solo el material. Envolver esto en un enlace
+        metería botones dentro de un enlace, que es exactamente la clase de nudo
+        que rompe el teclado y los lectores de pantalla.
+      */}
+      <ul className="space-y-2.5">
         {items.map((loan) => (
-          <li key={loan.id} className="flex gap-3.5 border-t border-line py-3.5 last:border-b">
+          <li
+            key={loan.id}
+            className="lift-paper flex gap-3.5 rounded-[22px] border border-line p-3.5"
+          >
             <PhotoSlot
               src={loan.imageUrl}
               label={describeGarment(loan.itemLabel)}

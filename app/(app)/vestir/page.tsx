@@ -49,18 +49,22 @@ export default async function StyledLooksPage() {
           {received.length > 0 ? (
             <section className="mb-9">
               <p className="eyebrow mb-3">Para ti</p>
+              <div className="space-y-2.5">
               {received.map((look) => (
                 <LookCard key={look.id} look={look} />
               ))}
+              </div>
             </section>
           ) : null}
 
           {sent.length > 0 ? (
             <section>
               <p className="eyebrow mb-3">Los que has montado</p>
-              {sent.map((look) => (
-                <LookCard key={look.id} look={look} />
-              ))}
+              <div className="space-y-2.5">
+                {sent.map((look) => (
+                  <LookCard key={look.id} look={look} />
+                ))}
+              </div>
             </section>
           ) : null}
         </>
@@ -71,7 +75,7 @@ export default async function StyledLooksPage() {
 
 function LookCard({ look }: { look: StyledLook }) {
   return (
-    <article className="border-t border-line py-4 last:border-b">
+    <article className="lift-paper rounded-[22px] border border-line p-3.5">
       <div className="flex items-baseline justify-between gap-4">
         <p className="display truncate text-lead">
           {look.forMe ? `De ${look.otherName}` : `Para ${look.otherName}`}

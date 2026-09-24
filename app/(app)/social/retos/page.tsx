@@ -114,9 +114,12 @@ export default async function ChallengesPage() {
 
       <section className="mt-9">
         <p className="eyebrow mb-3">Lo que viene</p>
-        <ul>
+        <ul className="space-y-2.5">
           {upcoming.map((next, index) => (
-            <li key={`${next.id}-${index}`} className="border-t border-line py-3.5 last:border-b">
+            <li
+              key={`${next.id}-${index}`}
+              className="lift-paper rounded-[22px] border border-line p-3.5"
+            >
               <p className="display text-lead">{next.name}</p>
               <p className="mt-0.5 text-small text-ink-soft">{next.description}</p>
             </li>

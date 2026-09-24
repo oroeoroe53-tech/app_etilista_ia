@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/supabase/server'
 import { listCircle, type CircleMember } from '@/lib/circle/queries'
 import { InviteButton } from '@/components/circle/InviteButton'
-import { BackLink, EmptyState, QuietRow } from '@/components/ui'
+import { BackLink, EmptyState } from '@/components/ui'
+import { Tile } from '@/components/social/Tile'
 import { cn } from '@/lib/utils/cn'
 
 export const metadata = { title: 'Tu círculo · Estilista' }
@@ -57,11 +58,25 @@ export default async function CirclePage() {
         />
       ) : (
         <>
-          <QuietRow href="/prestamos" title="Quién tiene qué">
-            Lo que os habéis prestado
-          </QuietRow>
+          <ul className="mb-2.5 grid grid-cols-6 gap-2.5">
+            <Tile
+              span={6}
+              href="/prestamos"
+              title="Quién tiene qué"
+              note="Lo que os habéis prestado"
+            />
+          </ul>
 
-          <ul className="mt-2">
+          {/*
+            Una tarjeta por persona, no una fila con filete.
+
+            Sigue siendo una lista —son personas, y el orden importa— pero cada
+            una es un objeto con el mismo material que el resto de la
+            aplicación. Una línea separada por un pelo de tinta se lee como una
+            tabla, y esto es lo contrario de una tabla: es a quién le preguntas
+            antes de salir.
+          */}
+          <ul className="space-y-2.5">
             {circle.map((member) => (
               <MemberRow key={member.id} member={member} />
             ))}
@@ -95,7 +110,7 @@ function MemberRow({ member }: { member: CircleMember }) {
     <li>
       <Link
         href={`/circulo/${member.id}`}
-        className="flex items-center gap-3.5 border-t border-line py-3.5 last:border-b"
+        className="press sheen sheen-paper lift-paper flex items-center gap-3.5 rounded-[22px] border border-line p-3.5"
       >
         {/*
           La inicial en un círculo.

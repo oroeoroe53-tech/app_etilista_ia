@@ -53,12 +53,12 @@ export default async function EventsPage() {
         />
       ) : (
         <>
-          <ul>
+          <ul className="space-y-2.5">
             {events.map((event) => (
               <li key={event.id}>
                 <Link
                   href={`/eventos/${event.id}`}
-                  className="flex items-center justify-between gap-4 border-t border-line py-4 last:border-b"
+                  className="press sheen sheen-paper lift-paper flex items-center justify-between gap-4 rounded-[22px] border border-line p-3.5"
                 >
                   <span className="min-w-0">
                     <span className="display block truncate text-lead">{event.title}</span>

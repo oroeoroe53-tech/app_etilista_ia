@@ -44,12 +44,12 @@ export default async function DuelsPage() {
       {duels.length > 0 ? (
         <section className="mb-9">
           <p className="eyebrow mb-3">En marcha</p>
-          <ul>
+          <ul className="space-y-2.5">
             {duels.map((duel) => (
               <li key={duel.id}>
                 <Link
                   href={`/social/duelo/${duel.id}`}
-                  className="flex items-center justify-between gap-4 border-t border-line py-3.5 last:border-b"
+                  className="press sheen sheen-paper lift-paper flex items-center justify-between gap-4 rounded-[22px] border border-line p-3.5"
                 >
                   <span className="min-w-0">
                     <span className="display block truncate text-lead">

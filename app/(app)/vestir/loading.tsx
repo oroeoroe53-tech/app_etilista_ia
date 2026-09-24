@@ -13,9 +13,9 @@ export default function Loading() {
         <Shimmer className="mt-2 h-7 w-1/2" />
       </div>
 
-      <div className="mt-8 space-y-3">
+      <div className="mt-8 space-y-2.5">
         {[0, 1, 2, 3, 4].map((row) => (
-          <div key={row} className="border-t border-line py-4">
+          <div key={row} className="rounded-[22px] border border-line p-3.5">
             <Shimmer className="h-4 w-44" />
             <Shimmer className="mt-2 h-2.5 w-52" />
           </div>
