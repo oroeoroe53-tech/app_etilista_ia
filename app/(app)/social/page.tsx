@@ -8,7 +8,9 @@ import { describeGarment } from '@/lib/wardrobe/labels'
 import { signMany } from '@/lib/storage/signed'
 import { BUCKETS } from '@/lib/storage/paths'
 import { Countdown } from '@/components/polls/Countdown'
-import { PhotoSlot, QuietRow } from '@/components/ui'
+import { PhotoSlot } from '@/components/ui'
+import { Tile } from '@/components/social/Tile'
+import { packTiles } from '@/lib/social/mosaic'
 import { cn } from '@/lib/utils/cn'
 
 export const dynamic = 'force-dynamic'
@@ -75,6 +77,135 @@ export default async function SocialPage() {
   const signed = olvidada?.image_path
     ? await signMany(supabase, BUCKETS.clothing, [olvidada.image_path], userId)
     : null
+
+  /*
+   * Las piezas del mosaico.
+   *
+   * El peso no es decoración: dice si esa pieza tiene algo que contarte HOY.
+   * Préstamos sin contestar ocupa media pantalla; préstamos al día, un tercio.
+   * Lo que no está pasando encoge y deja sitio a lo que sí.
+   */
+  const compartenHoy =
+    summary.sharedNames.length === 0
+      ? 'Hoy todavía no ha enseñado nadie'
+      : summary.sharedNames.length === 1
+        ? `${summary.sharedNames[0]} ha enseñado el suyo`
+        : `${summary.sharedNames.slice(0, 2).join(' y ')}${
+            summary.sharedNames.length > 2 ? ` y ${summary.sharedNames.length - 2} más` : ''
+          }`
+
+  const tiles = packTiles([
+    /*
+     * La única pieza negra de la pantalla, y a ancho completo.
+     *
+     * No es la más urgente —si hubiera votaciones esperando, esas van arriba en
+     * su propia tira— pero sí es lo que esta pantalla existe para que hagas.
+     */
+    [
+      {
+        key: 'votacion',
+        props: {
+          href: '/votacion/nueva',
+          eyebrow: 'En minutos',
+          title: '¿Cuál me pongo?',
+          note: 'Subes dos o tres y que lo decidan ellas',
+          tone: 'ink' as const,
+        },
+      },
+      'hero' as const,
+    ],
+
+    // Nombres y no un número: «Marta y Lucía» invita, «2 publicaciones» informa.
+    [
+      {
+        key: 'feed',
+        props: {
+          href: '/social/feed',
+          eyebrow: 'Hoy',
+          title: 'Lo que se pone tu gente',
+          note: compartenHoy,
+          tone: 'raised' as const,
+        },
+      },
+      summary.sharedNames.length > 0 ? ('half' as const) : ('small' as const),
+    ],
+
+    ...(summary.unseenLooks > 0
+      ? ([
+          [
+            {
+              key: 'vestir',
+              props: {
+                href: '/vestir',
+                eyebrow: 'Sin ver',
+                title: 'Te han vestido',
+                note:
+                  summary.unseenLooks === 1
+                    ? 'Alguien te ha montado un look con tu ropa'
+                    : `${summary.unseenLooks} looks con tu ropa`,
+                badge: summary.unseenLooks,
+                tone: 'raised' as const,
+              },
+            },
+            'half' as const,
+          ],
+        ] as const)
+      : []),
+
+    [
+      {
+        key: 'prestamos',
+        props: {
+          href: '/prestamos',
+          title: 'Préstamos',
+          note: summary.pendingLoans > 0 ? 'Esperando tu respuesta' : 'Quién tiene qué',
+          badge: summary.pendingLoans > 0 ? summary.pendingLoans : undefined,
+        },
+      },
+      summary.pendingLoans > 0 ? ('half' as const) : ('small' as const),
+    ],
+
+    [
+      {
+        key: 'retos',
+        props: {
+          href: '/social/retos',
+          eyebrow: 'Esta semana',
+          title: 'El reto',
+          note: 'Lo que se lleva estos siete días',
+        },
+      },
+      'half' as const,
+    ],
+
+    [
+      { key: 'duelo', props: { href: '/social/duelo', title: 'Duelo', note: 'A ciegas' } },
+      'small' as const,
+    ],
+    [
+      { key: 'eventos', props: { href: '/eventos', title: 'Eventos', note: 'Sin ir iguales' } },
+      'small' as const,
+    ],
+    [
+      { key: 'resumen', props: { href: '/social/resumen', title: 'Tu mes', note: 'En números' } },
+      'small' as const,
+    ],
+
+    [
+      {
+        key: 'circulo',
+        props: {
+          href: '/circulo',
+          title: 'Mis amigas',
+          note:
+            summary.circleCount === 0
+              ? 'Todavía no hay nadie: invita a alguien'
+              : `${summary.circleCount} ${summary.circleCount === 1 ? 'persona' : 'personas'} y lo que ve cada una`,
+        },
+      },
+      summary.circleCount === 0 ? ('hero' as const) : ('half' as const),
+    ],
+  ])
 
   return (
     <div
@@ -172,63 +303,18 @@ export default async function SocialPage() {
         </section>
       ) : null}
 
-      {/* --- Lo demás, por orden de urgencia --------------------------------- */}
-      <nav className="mt-8">
-        <QuietRow href="/votacion/nueva" title="¿Cuál me pongo?">
-          Que lo decidan ellas, en minutos
-        </QuietRow>
+      {/* --- El mosaico ------------------------------------------------------
+          Ocho filas idénticas se leían como una pantalla de ajustes: todas
+          pesaban lo mismo y ninguna podía enseñar lo que tenía dentro.
 
-        {/*
-          Quién ha enseñado hoy lo que se ha puesto.
-
-          Los nombres, y no un número, porque es lo que hace que apetezca
-          entrar: «Marta y Lucía» es una invitación; «2 publicaciones» es una
-          métrica.
-        */}
-        <QuietRow href="/social/feed" title="Lo que se pone tu gente">
-          {summary.sharedNames.length === 0
-            ? 'Hoy todavía no ha enseñado nadie nada'
-            : summary.sharedNames.length === 1
-              ? `${summary.sharedNames[0]} ha enseñado el suyo`
-              : `${summary.sharedNames.slice(0, 2).join(' y ')}${summary.sharedNames.length > 2 ? ` y ${summary.sharedNames.length - 2} más` : ''} han enseñado el suyo`}
-        </QuietRow>
-
-        {summary.unseenLooks > 0 ? (
-          <QuietRow href="/vestir" title="Te han vestido">
-            {summary.unseenLooks === 1
-              ? 'Alguien te ha montado un look con tu ropa'
-              : `${summary.unseenLooks} looks montados con tu ropa`}
-          </QuietRow>
-        ) : null}
-
-        <QuietRow href="/prestamos" title="Préstamos">
-          {summary.pendingLoans > 0
-            ? `${summary.pendingLoans} sin contestar`
-            : 'Quién tiene qué'}
-        </QuietRow>
-
-        <QuietRow href="/social/retos" title="Reto de la semana">
-          Lo que se lleva estos siete días
-        </QuietRow>
-
-        <QuietRow href="/social/duelo" title="Duelo de armarios">
-          A ciegas, y que voten ellas
-        </QuietRow>
-
-        <QuietRow href="/eventos" title="Eventos">
-          Que no vayáis iguales
-        </QuietRow>
-
-        <QuietRow href="/social/resumen" title="Tu mes">
-          Los días que no has tenido que pensar
-        </QuietRow>
-
-        <QuietRow href="/circulo" title="Mis amigas">
-          {summary.circleCount === 0
-            ? 'Todavía no hay nadie: invita a alguien'
-            : `${summary.circleCount} ${summary.circleCount === 1 ? 'persona' : 'personas'} y lo que ve cada una`}
-        </QuietRow>
-      </nav>
+          Aquí cada pieza declara lo que pide —grande, media o pequeña— según
+          tenga algo que contar hoy, y `packTiles` reparte los anchos para que
+          ninguna fila quede a medias. Ver `lib/social/mosaic.ts`. */}
+      <ul className="mt-8 grid grid-cols-6 gap-2.5">
+        {tiles.map(({ item, span }) => (
+          <Tile key={item.key} span={span} {...item.props} />
+        ))}
+      </ul>
     </div>
   )
 }

@@ -218,6 +218,17 @@ body {
   color: var(--ink-faint);
 }
 
+/*
+ * Sobre tinta hay que invertirla, y tiene que ser una regla y no una utilidad
+ * de Tailwind: `.eyebrow` fija el color en CSS plano y gana a cualquier
+ * `text-*`, que vive en una capa. Y tiene que ir DESPUÉS de `.eyebrow`: con la
+ * misma especificidad decide el orden, y colocada antes perdía y la volanta se
+ * quedaba negra sobre negro sin dar ningún error.
+ */
+.eyebrow-on-ink {
+  color: rgba(247, 244, 238, 0.55);
+}
+
 /* Contadores y etiquetas dentro de los huecos de foto. */
 .mono {
   font-family: var(--font-mono);
