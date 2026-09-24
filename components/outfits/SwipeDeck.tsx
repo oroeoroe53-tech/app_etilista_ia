@@ -223,9 +223,9 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
         contenedor con transformaciones dan resultados distintos según el
         navegador.
       */}
-      <div className="relative h-[360px]">
+      <div className="relative h-[400px] pb-10">
         <div
-          className="absolute inset-0"
+          className="absolute inset-x-0 top-0 bottom-10"
           style={{
             transform: `rotate(${drag.x * 0.02}deg)`,
             transition: drag.active ? 'none' : 'transform 280ms ease-out',
@@ -249,13 +249,48 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
             transition: drag.active ? 'none' : 'transform 280ms ease-out, opacity 280ms ease-out',
             touchAction: 'none',
           }}
-          className="absolute inset-0 cursor-grab active:cursor-grabbing"
+          className="absolute inset-x-0 top-0 bottom-10 cursor-grab active:cursor-grabbing"
         >
           <CardFace card={card} />
 
           <Stamp show={drag.x > 40} tone="like" label="Sí" />
           <Stamp show={drag.x < -40} tone="dislike" label="No" />
           <Stamp show={drag.y < -40 && Math.abs(drag.x) < 60} tone="love" label="Me encanta" />
+        </div>
+
+      {/*
+        Los mandos, flotando sobre el abanico.
+
+        Antes eran una fila debajo, separada de las cartas por un hueco. Puestos
+        encima, la mano no tiene que salir de la zona donde está mirando para
+        contestar, y la pantalla deja de partirse en "lo que miras" y "lo que
+        pulsas".
+
+        La cápsula es cristal de verdad —desenfoque del fondo— y por eso es
+        oscura pase lo que pase con el modo del teléfono: está sobre las fotos
+        de las prendas, no sobre la página, y ahí lo que manda es la foto.
+
+        Esto arregla además un fallo que dejé al quitar el fondo negro de esta
+        pantalla: los botones llevaban colores fijos de cuando todo aquí era
+        oscuro, así que en modo claro el de "me encanta" era crema sobre crema.
+
+        El orden es el de la intensidad: no, ni fu ni fa, sí, me encanta. Leído
+        de izquierda a derecha es una escala, y eso ahorra explicar qué hace
+        cada botón.
+      */}
+      <div className="glass-pill absolute inset-x-0 bottom-0 mx-auto flex w-fit items-center justify-center gap-2.5 rounded-full p-2.5">
+        <ActionButton label="No me gusta" onClick={() => react('dislike')}>
+          <IconCross />
+        </ActionButton>
+        <ActionButton label="Ni fu ni fa" onClick={() => react('skip')}>
+          <IconSkip />
+        </ActionButton>
+        <ActionButton label="Me gusta" tone="yes" onClick={() => react('like')}>
+          <span className="text-small font-medium">sí</span>
+        </ActionButton>
+        <ActionButton label="Me encanta" tone="love" onClick={() => react('love')}>
+          <IconHeart />
+        </ActionButton>
         </div>
       </div>
 
@@ -282,25 +317,6 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
         </div>
       ) : null}
 
-      {/*
-        El orden es el del diseño y también el de la intensidad: no, ni fu ni
-        fa, sí, me encanta. Leído de izquierda a derecha es una escala, y eso
-        ahorra tener que explicar qué hace cada botón.
-      */}
-      <div className="mt-5 flex items-center justify-center gap-2.5">
-        <ActionButton label="No me gusta" onClick={() => react('dislike')}>
-          <IconCross />
-        </ActionButton>
-        <ActionButton label="Ni fu ni fa" onClick={() => react('skip')}>
-          <IconSkip />
-        </ActionButton>
-        <ActionButton label="Me gusta" tone="yes" onClick={() => react('like')}>
-          <span className="text-small font-medium">sí</span>
-        </ActionButton>
-        <ActionButton label="Me encanta" tone="love" onClick={() => react('love')}>
-          <IconHeart />
-        </ActionButton>
-      </div>
 
       <div className="mt-5 rounded-[18px] border border-line px-4 py-3.5">
         <p className="text-small leading-[1.5] text-ink-soft">
@@ -407,10 +423,16 @@ function ActionButton({
       aria-label={label}
       title={label}
       className={cn(
-        'flex h-[52px] w-[52px] items-center justify-center rounded-full border transition-transform active:scale-90',
-        tone === 'yes' && 'border-clay bg-clay/20 text-clay-soft',
+        /*
+         * Los colores son fijos y no tokens, y aquí sí es lo correcto: estos
+         * botones viven dentro de una cápsula de cristal oscuro, que es oscura
+         * en los dos modos. Si siguieran al tema, en modo oscuro serían tinta
+         * sobre tinta.
+         */
+        'flex h-[50px] w-[50px] items-center justify-center rounded-full border transition-transform active:scale-90',
+        tone === 'yes' && 'border-[#d8b48f] bg-[rgba(216,180,143,0.22)] text-[#e8d0b4]',
         tone === 'love' && 'border-transparent bg-[#f7f4ee] text-[#15140f]',
-        !tone && 'border-[rgba(247,244,238,0.22)] text-ink-soft',
+        !tone && 'border-[rgba(247,244,238,0.3)] text-[rgba(247,244,238,0.8)]',
       )}
     >
       {children}
