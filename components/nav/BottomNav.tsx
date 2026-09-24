@@ -5,31 +5,68 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils/cn'
 
 /**
- * Navegación principal (PLAN.md §32).
+ * Navegación principal.
  *
- * Sin iconos: un punto de 5px sobre la etiqueta marca dónde estás.
+ * Una cápsula que flota sobre el contenido, no una franja pegada al borde. La
+ * diferencia no es decorativa: una barra anclada abajo parte la pantalla en dos
+ * y hace de suelo; una cápsula deja que el contenido siga por debajo y sea la
+ * página la que mande.
  *
- * La maqueta los evita a propósito y la decisión se mantiene — dibujar cinco
- * iconos de línea obligaría a inventar un lenguaje gráfico que no existe en
- * ninguna otra parte de la aplicación, y cinco metáforas mediocres ("una
- * percha", "una chispa") ensucian más de lo que orientan. Con cinco destinos y
- * una palabra cada uno, la palabra basta.
+ * Iconos. La versión anterior los evitaba a propósito —cinco metáforas
+ * mediocres ensucian más de lo que orientan— y esa decisión se revierte aquí
+ * por una razón concreta: con cinco palabras de 10px la barra no podía tener
+ * jerarquía, y sin jerarquía no hay acción principal. Con iconos, el centro
+ * puede ser un disco oscuro que se ve desde el otro lado de la habitación.
+ *
+ * Ese centro es Outfits: la pregunta por la que se abre esta aplicación.
  */
-const TABS = [
-  { href: '/', label: 'Inicio' },
-  { href: '/armario', label: 'Armario' },
-  { href: '/outfits', label: 'Outfits' },
-  /*
-   * Social ocupa el sitio que tenía Estilo.
-   *
-   * Estilo es una pantalla preciosa que se mira dos veces: la primera con
-   * curiosidad y la segunda para enseñársela a alguien. Social tiene cosas que
-   * caducan —votaciones con cuenta atrás, préstamos sin contestar— y eso es lo
-   * que justifica un sitio en una barra de cinco. Estilo sigue entero, colgando
-   * de Perfil.
-   */
-  { href: '/social', label: 'Social' },
-  { href: '/perfil', label: 'Perfil' },
+
+type Tab = {
+  href: string
+  label: string
+  /** Trazado del icono, sobre una caja de 24×24. */
+  path: string
+  /** El disco oscuro del centro. Solo uno. */
+  primary?: boolean
+}
+
+/*
+ * Los trazados son de línea, todos con el mismo grosor y la misma caja, para
+ * que ninguno pese más que otro salvo el que debe.
+ */
+const TABS: readonly Tab[] = [
+  {
+    href: '/',
+    label: 'Inicio',
+    path: 'M3 10.2 12 3.5l9 6.7V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
+  },
+  {
+    // Una percha: el único objeto que significa "armario" sin ambigüedad.
+    href: '/armario',
+    label: 'Armario',
+    path: 'M12 4.5a2 2 0 0 0-2 2c0 1 .8 1.7 2 2v2m0 0L3.6 16.1a1 1 0 0 0 .6 1.8h15.6a1 1 0 0 0 .6-1.8L12 10.5z',
+  },
+  {
+    /*
+     * Una chispa. No describe un outfit —nada lo hace en 24 píxeles— pero sí
+     * describe lo que pasa al pulsar, que es lo que importa en el botón que
+     * carga el gesto principal.
+     */
+    href: '/outfits',
+    label: 'Outfits',
+    path: 'M12 3.2l1.9 4.9 4.9 1.9-4.9 1.9L12 16.8l-1.9-4.9L5.2 10l4.9-1.9zM18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z',
+    primary: true,
+  },
+  {
+    href: '/social',
+    label: 'Social',
+    path: 'M9 11a3.4 3.4 0 1 0 0-6.8A3.4 3.4 0 0 0 9 11m7.2-.4a2.8 2.8 0 1 0 0-5.6M2.8 19.4c0-2.7 2.8-4.3 6.2-4.3s6.2 1.6 6.2 4.3M17 15.4c2.6.3 4.2 1.6 4.2 3.6',
+  },
+  {
+    href: '/perfil',
+    label: 'Perfil',
+    path: 'M12 11.8a3.9 3.9 0 1 0 0-7.8 3.9 3.9 0 0 0 0 7.8M4.8 20.4c0-3.2 3.2-5.2 7.2-5.2s7.2 2 7.2 5.2',
+  },
 ] as const
 
 /**
@@ -55,6 +92,23 @@ function activeTab(pathname: string): string {
   return ''
 }
 
+function Icon({ path }: { path: string }) {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-[21px] w-[21px]"
+    >
+      <path d={path} />
+    </svg>
+  )
+}
+
 export function BottomNav() {
   const pathname = usePathname()
   const dark = DARK_ROUTES.some((route) => pathname.startsWith(route))
@@ -63,37 +117,60 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Navegación principal"
-      className={cn(
-        'fixed inset-x-0 bottom-0 z-40 border-t',
-        dark ? 'on-dark border-[rgba(247,244,238,0.12)] bg-[#15140f]' : 'border-line bg-surface',
-      )}
-      style={{ paddingBottom: 'calc(24px + env(safe-area-inset-bottom))' }}
+      className={cn('fixed inset-x-0 bottom-0 z-40', dark && 'on-dark')}
+      style={{
+        paddingBottom: 'calc(14px + env(safe-area-inset-bottom))',
+        /*
+         * `.on-dark` redefine las variables Y pinta el fondo. Lo segundo aquí
+         * dibujaría una banda negra a lo ancho detrás de la cápsula, que es
+         * justo lo que esta barra deja de ser. Solo queremos las variables.
+         */
+        background: 'transparent',
+      }}
     >
-      <ul className="mx-auto flex w-full max-w-[30rem] items-stretch px-6 pt-3">
-        {TABS.map(({ href, label }) => {
+      <ul
+        className={cn(
+          'mx-auto flex w-[min(23rem,calc(100%-2rem))] items-center justify-between',
+          'rounded-full border border-line bg-raised px-2.5 py-2 shadow-float',
+          // El disco sobresale por arriba; sin esto quedaría recortado.
+          'relative',
+        )}
+      >
+        {TABS.map(({ href, label, path, primary }) => {
           const active = current === href
-          return (
-            <li key={href} className="flex-1">
-              <Link
-                href={href}
-                aria-current={active ? 'page' : undefined}
-                className="flex flex-col items-center gap-[5px] py-1"
-              >
-                <span
-                  aria-hidden
+
+          if (primary) {
+            return (
+              <li key={href} className="px-1">
+                <Link
+                  href={href}
+                  aria-label={label}
+                  aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'h-[5px] w-[5px] rounded-full',
-                    active ? 'bg-ink' : 'bg-transparent',
-                  )}
-                />
-                <span
-                  className={cn(
-                    'text-[10px] leading-none',
-                    active ? 'font-medium text-ink' : 'text-ink-faint',
+                    'flex h-[52px] w-[52px] -translate-y-[9px] items-center justify-center rounded-full',
+                    'bg-accent text-accent-ink shadow-float-strong',
+                    'transition-transform duration-200 active:scale-[0.93]',
                   )}
                 >
-                  {label}
-                </span>
+                  <Icon path={path} />
+                </Link>
+              </li>
+            )
+          }
+
+          return (
+            <li key={href}>
+              <Link
+                href={href}
+                aria-label={label}
+                aria-current={active ? 'page' : undefined}
+                className={cn(
+                  'flex h-[42px] w-[46px] items-center justify-center rounded-full',
+                  'transition-colors duration-200',
+                  active ? 'bg-sunken text-ink' : 'text-ink-faint',
+                )}
+              >
+                <Icon path={path} />
               </Link>
             </li>
           )
