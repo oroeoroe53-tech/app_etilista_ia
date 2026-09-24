@@ -403,6 +403,46 @@ body::after {
 }
 
 /* ---------------------------------------------------------------------------
+ * Respuesta al dedo
+ *
+ * Lo que se pulsa se hunde un 3%. Es poco a propósito: no se busca una
+ * animación, se busca que el dedo reciba respuesta antes de que llegue la
+ * página siguiente. En un móvil con red lenta, ese medio segundo de silencio es
+ * lo que hace que alguien vuelva a pulsar creyendo que no ha funcionado.
+ *
+ * La vuelta es más lenta que la ida porque así se comporta la materia: ceder es
+ * instantáneo, recuperar cuesta.
+ *
+ * Es una clase propia y no la variante `active:scale-*` de Tailwind por lo de
+ * abajo: quien pide menos movimiento no quiere un hundido instantáneo, quiere
+ * que no lo haya. Con la variante suelta, la regla global de reduced-motion
+ * solo le quita la duración y el salto se queda.
+ * ------------------------------------------------------------------------- */
+/*
+ * Lleva también color y opacidad porque algunas variantes cambian el fondo al
+ * pulsarse. Declarar aquí la transición entera evita que una utilidad de
+ * Tailwind como `transition-opacity` sustituya a esta y se lleve por delante el
+ * hundido sin que nadie se entere.
+ */
+.press {
+  transition:
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 200ms ease-out,
+    background-color 200ms ease-out;
+}
+
+.press:active {
+  transform: scale(0.97);
+  transition-duration: 75ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press:active {
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Transiciones entre pantallas
  *
  * La foto de una prenda crece hasta convertirse en su ficha, en lugar de un

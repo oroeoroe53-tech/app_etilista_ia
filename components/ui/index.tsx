@@ -89,7 +89,12 @@ export function QuietRow({
   return (
     <Link
       href={href}
-      className="flex items-center justify-between gap-4 border-t border-line py-3.5 last:border-b"
+      className={cn(
+        'flex items-center justify-between gap-4 border-t border-line py-3.5 last:border-b',
+        // Una fila no se puede hundir sin despegarse de las de al lado: lo que
+        // cede aquí es el fondo, que se enciende un instante bajo el dedo.
+        'transition-colors duration-200 active:bg-sunken',
+      )}
     >
       <span className="min-w-0">
         <span className="display block text-lead">{title}</span>

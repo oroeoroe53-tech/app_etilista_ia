@@ -13,6 +13,9 @@ type Size = 'sm' | 'md' | 'lg'
  *
  * El secundario no lleva fondo propio. Sobre crema y sobre negro funciona
  * igual, que es lo que permite reutilizarlo tal cual dentro de "Descubre".
+ *
+ * Al pulsar se hunde: la clase `press` de `globals.css`, donde está explicado
+ * por qué y por qué no es la variante de Tailwind.
  */
 const VARIANTS: Record<Variant, string> = {
   primary: 'bg-accent text-accent-ink active:opacity-85',
@@ -45,7 +48,7 @@ export function Button({
     <button
       className={cn(
         'inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-[0.03em]',
-        'transition-opacity disabled:opacity-40 disabled:pointer-events-none',
+        'press disabled:opacity-40 disabled:pointer-events-none',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
         VARIANTS[variant],
         SIZES[size],

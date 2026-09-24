@@ -101,19 +101,25 @@ export default function DemoHome() {
 
       <section className="mt-6">
         <div className="mb-3 flex items-baseline justify-between gap-4">
-          <h2 className="display text-body">Este armario · {wardrobe.length}</h2>
+          <h2 className="display text-lead">Este armario · {wardrobe.length}</h2>
           <Link href="/demo/armario" className="text-micro whitespace-nowrap text-ink-faint">
             ver todo
           </Link>
         </div>
-        <ul className="no-scrollbar bleed-row flex gap-[7px] overflow-x-auto pb-1">
+        {/*
+          La tira sube de 56×70 a 94×125.
+
+          A cincuenta y seis píxeles de ancho una prenda no es una prenda: es
+          una muestra de color. Esta tira existe para reconocer lo que tienes de
+          un vistazo, y para eso hay que verle la forma.
+        */}
+        <ul className="no-scrollbar bleed-row flex gap-[9px] overflow-x-auto pb-1">
           {strip.map((item) => (
             <li key={item.id} className="shrink-0">
               <PhotoSlot
                 src={null}
                 label={describeGarment(item)}
-                showLabel={false}
-                className="h-[70px] w-14 rounded-xl"
+                className="h-[125px] w-[94px] rounded-[14px]"
               />
             </li>
           ))}

@@ -83,7 +83,14 @@ export function GarmentTile({
   if (!href) return <div className={className}>{body}</div>
 
   return (
-    <TransitionLink href={href} sharedName="garment" className={cn('block', className)}>
+    <TransitionLink
+      href={href}
+      sharedName="garment"
+      className={cn(
+        'press block',
+        className,
+      )}
+    >
       {body}
     </TransitionLink>
   )

@@ -148,8 +148,7 @@ export function BottomNav() {
                   aria-current={active ? 'page' : undefined}
                   className={cn(
                     'flex h-[52px] w-[52px] -translate-y-[9px] items-center justify-center rounded-full',
-                    'bg-accent text-accent-ink shadow-float-strong',
-                    'transition-transform duration-200 active:scale-[0.93]',
+                    'press bg-accent text-accent-ink shadow-float-strong',
                   )}
                 >
                   <Icon path={path} />

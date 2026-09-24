@@ -237,13 +237,20 @@ export default async function HomePage() {
       {/* --- Tu armario --------------------------------------------------- */}
       <section className="mt-6">
         <div className="mb-3 flex items-baseline justify-between gap-4">
-          <h2 className="display text-body">Tu armario · {prendas}</h2>
+          <h2 className="display text-lead">Tu armario · {prendas}</h2>
           <Link href="/armario" className="text-micro whitespace-nowrap text-ink-faint">
             ver todo
           </Link>
         </div>
 
-        <ul className="no-scrollbar bleed-row flex gap-[7px] overflow-x-auto pb-1">
+        {/*
+          La tira sube de 56×70 a 94×125.
+
+          A cincuenta y seis píxeles de ancho una prenda no es una prenda: es
+          una muestra de color. Esta tira existe para reconocer lo que tienes de
+          un vistazo, y para eso hay que verle la forma.
+        */}
+        <ul className="no-scrollbar bleed-row flex gap-[9px] overflow-x-auto pb-1">
           {stripItems.map((item) => {
             const nombre = describeGarment(item)
             return (
@@ -253,7 +260,7 @@ export default async function HomePage() {
                     src={item.image_path ? (signed.get(item.image_path) ?? null) : null}
                     label={nombre}
                     showLabel={false}
-                    className="h-[70px] w-14 rounded-xl"
+                    className="press h-[125px] w-[94px] rounded-[14px]"
                   />
                 </Link>
               </li>
@@ -264,7 +271,7 @@ export default async function HomePage() {
             <Link
               href="/armario/nueva"
               aria-label="Añadir una prenda"
-              className="flex h-[70px] w-14 items-center justify-center rounded-xl border border-dashed border-line text-lg text-ink-faint"
+              className="press flex h-[125px] w-[94px] items-center justify-center rounded-[14px] border border-dashed border-line text-lead text-ink-faint"
             >
               +
             </Link>
