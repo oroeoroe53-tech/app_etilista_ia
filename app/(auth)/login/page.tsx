@@ -3,7 +3,7 @@ import { AuthForm } from '../AuthForm'
 import { signIn } from '../actions'
 import { safeNext } from '@/lib/utils/next-url'
 
-export const metadata = { title: 'Entrar · Estilista' }
+export const metadata = { title: 'Entrar · Selyqo' }
 
 export default async function LoginPage({
   searchParams,
@@ -17,7 +17,7 @@ export default async function LoginPage({
   return (
     <>
       <header className="mb-9">
-        <p className="eyebrow mb-3">Estilista</p>
+        <p className="eyebrow mb-3">Selyqo</p>
         <h1 className="display text-display leading-[1.05]">
           Hola
           <span className="display-italic block">otra vez</span>

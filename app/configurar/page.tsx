@@ -1,4 +1,4 @@
-export const metadata = { title: 'Configuración pendiente · Estilista' }
+export const metadata = { title: 'Configuración pendiente · Selyqo' }
 
 /**
  * Pantalla que aparece cuando falta `.env.local`.
@@ -9,7 +9,7 @@ export const metadata = { title: 'Configuración pendiente · Estilista' }
 export default function SetupPage() {
   return (
     <main className="mx-auto w-full max-w-md px-6 py-16">
-      <p className="eyebrow mb-3">Estilista</p>
+      <p className="eyebrow mb-3">Selyqo</p>
       <h1 className="display mb-4 text-4xl">Falta conectar Supabase</h1>
 
       <p className="mb-8 text-sm leading-relaxed text-ink-soft">

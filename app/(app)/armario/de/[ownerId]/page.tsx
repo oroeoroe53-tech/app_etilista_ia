@@ -7,7 +7,7 @@ import { BackLink, PhotoSlot } from '@/components/ui'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = { title: 'Su armario · Estilista' }
+export const metadata = { title: 'Su armario · Selyqo' }
 
 /**
  * El armario de otra persona.

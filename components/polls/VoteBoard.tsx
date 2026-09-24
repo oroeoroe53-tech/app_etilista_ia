@@ -141,9 +141,9 @@ export function VoteBoard({
 
       {/* --- Lo que ha dicho la gente --------------------------------------- */}
       {showResults && poll.comments.length > 0 ? (
-        <ul className="mt-6">
+        <ul className="mt-6 space-y-2.5">
           {poll.comments.map((comment, index) => (
-            <li key={index} className="border-t border-line py-3 last:border-b">
+            <li key={index} className="lift-paper rounded-[22px] border border-line p-3.5">
               <p className="text-small leading-[1.5]">{comment.text}</p>
               <p className="mono mt-1 text-ink-faint">
                 {comment.name.toLowerCase()} · opción {comment.optionPosition}

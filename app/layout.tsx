@@ -17,12 +17,12 @@ const displaySerif = Instrument_Serif({
 })
 
 export const metadata: Metadata = {
-  title: 'Estilista',
+  title: 'Selyqo',
   description: 'Enséñale cómo vistes y aprenderá a vestirte.',
-  applicationName: 'Estilista',
+  applicationName: 'Selyqo',
   appleWebApp: {
     capable: true,
-    title: 'Estilista',
+    title: 'Selyqo',
     statusBarStyle: 'default',
   },
   formatDetection: { telephone: false },

@@ -4,7 +4,7 @@ import { createClient, getCurrentUser } from '@/lib/supabase/server'
 import { TripForm } from '@/components/outfits/TripForm'
 import { Screen, EmptyState, Button } from '@/components/ui'
 
-export const metadata = { title: 'La maleta · Estilista' }
+export const metadata = { title: 'La maleta · Selyqo' }
 export const dynamic = 'force-dynamic'
 
 export default async function TripPage() {

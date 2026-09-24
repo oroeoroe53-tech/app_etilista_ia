@@ -5,7 +5,7 @@ import { checkEntitlement } from '@/lib/subscriptions/entitlements'
 import { NewItemFlow } from '@/components/wardrobe/NewItemFlow'
 import { Screen, Notice, Button, BackLink } from '@/components/ui'
 
-export const metadata = { title: 'Añadir prenda · Estilista' }
+export const metadata = { title: 'Añadir prenda · Selyqo' }
 export const dynamic = 'force-dynamic'
 
 export default async function NewItemPage() {

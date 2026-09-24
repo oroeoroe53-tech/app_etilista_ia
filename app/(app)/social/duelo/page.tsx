@@ -8,7 +8,7 @@ import { BackLink } from '@/components/ui'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = { title: 'Duelo de armarios · Estilista' }
+export const metadata = { title: 'Duelo de armarios · Selyqo' }
 
 /**
  * Los duelos vivos, y el formulario para empezar otro.

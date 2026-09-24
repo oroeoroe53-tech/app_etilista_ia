@@ -7,7 +7,7 @@ import { BackLink, EmptyState, PhotoSlot } from '@/components/ui'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = { title: 'Lo que se pone la gente · Estilista' }
+export const metadata = { title: 'Lo que se pone la gente · Selyqo' }
 
 /**
  * El feed del círculo.

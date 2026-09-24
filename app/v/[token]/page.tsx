@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
   // vista previa automática, y la vista previa la ve gente que no ha abierto el
   // enlace. Lo que se enseña ahí es genérico a propósito.
   return {
-    title: poll ? '¿Cuál me pongo? · Estilista' : 'Esta votación ya no está · Estilista',
+    title: poll ? '¿Cuál me pongo? · Selyqo' : 'Esta votación ya no está · Selyqo',
     description: 'Una votación rápida para decidir qué ponerse.',
     robots: { index: false, follow: false },
   }
@@ -157,7 +157,7 @@ export default async function PollPage({ params }: { params: Promise<{ token: st
       {/* --- Quiénes somos, al final y en voz baja -------------------------- */}
       <footer className="mt-12 border-t border-line pt-6 text-center">
         <p className="text-small leading-[1.6] text-ink-faint">
-          Esto es <span className="display text-ink">Estilista</span>: te propone
+          Esto es <span className="display text-ink">Selyqo</span>: te propone
           qué ponerte con la ropa que ya tienes.
         </p>
         <p className="mt-2.5 text-small">

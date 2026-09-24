@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient, getCurrentUser } from '@/lib/supabase/server'
 import { AnalysisProgress } from '@/components/onboarding/AnalysisProgress'
 
-export const metadata = { title: 'Analizando · Estilista' }
+export const metadata = { title: 'Analizando · Selyqo' }
 export const dynamic = 'force-dynamic'
 
 export default async function AnalyzingPage() {

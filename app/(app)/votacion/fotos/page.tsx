@@ -1,7 +1,7 @@
 import { BackLink } from '@/components/ui'
 import { PollComposer } from '@/components/polls/PollComposer'
 
-export const metadata = { title: '¿Cuál me pongo? · Estilista' }
+export const metadata = { title: '¿Cuál me pongo? · Selyqo' }
 
 /**
  * Montar una votación.

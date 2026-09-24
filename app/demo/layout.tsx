@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { DemoBar } from '@/components/demo/DemoBar'
 
 export const metadata = {
-  title: 'Así funciona · Estilista',
+  title: 'Así funciona · Selyqo',
   description: 'Un armario de ejemplo, con looks compuestos de verdad. Sin registrarse.',
 }
 

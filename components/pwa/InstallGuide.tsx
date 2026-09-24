@@ -65,7 +65,7 @@ const GUIDES: Record<Platform, { label: string; steps: string[]; note?: string }
       'Mira al final de la barra de direcciones: sale un icono de instalar, una pantalla pequeña con una flecha.',
       'Púlsalo y confirma.',
     ],
-    note: 'Si no aparece, está en el menú del navegador, como «Instalar Estilista…». Firefox no lo permite.',
+    note: 'Si no aparece, está en el menú del navegador, como «Instalar Selyqo…». Firefox no lo permite.',
   },
 }
 

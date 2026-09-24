@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils/cn'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = { title: 'Social · Estilista' }
+export const metadata = { title: 'Social · Selyqo' }
 
 /**
  * La portada social.

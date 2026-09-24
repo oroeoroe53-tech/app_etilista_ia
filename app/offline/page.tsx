@@ -1,4 +1,4 @@
-export const metadata = { title: 'Sin conexión · Estilista' }
+export const metadata = { title: 'Sin conexión · Selyqo' }
 
 /**
  * Pantalla que sirve el service worker cuando no hay red (PLAN.md §33).

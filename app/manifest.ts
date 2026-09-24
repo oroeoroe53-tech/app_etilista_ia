@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Estilista',
-    short_name: 'Estilista',
+    name: 'Selyqo',
+    short_name: 'Selyqo',
     description: 'Enséñale cómo vistes y aprenderá a vestirte.',
     start_url: '/',
     display: 'standalone',

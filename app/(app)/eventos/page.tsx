@@ -7,7 +7,7 @@ import { BackLink, Button, EmptyState } from '@/components/ui'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = { title: 'Eventos · Estilista' }
+export const metadata = { title: 'Eventos · Selyqo' }
 
 /**
  * Los eventos a los que vas.

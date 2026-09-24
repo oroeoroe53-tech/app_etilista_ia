@@ -8,7 +8,7 @@ import {
   type DuplicateQuestion,
 } from '@/components/onboarding/DuplicateReview'
 
-export const metadata = { title: 'Revisar · Estilista' }
+export const metadata = { title: 'Revisar · Selyqo' }
 export const dynamic = 'force-dynamic'
 
 interface DetectionRow {

@@ -7,7 +7,7 @@ import { describeGarment } from '@/lib/wardrobe/labels'
 import { OutfitCard, type OutfitView } from '@/components/outfits/OutfitCard'
 import { Screen, Button, BackLink } from '@/components/ui'
 
-export const metadata = { title: 'Tus looks · Estilista' }
+export const metadata = { title: 'Tus looks · Selyqo' }
 export const dynamic = 'force-dynamic'
 
 interface OutfitRow {

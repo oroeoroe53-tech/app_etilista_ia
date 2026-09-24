@@ -1,4 +1,4 @@
-# Estilista
+# Selyqo
 
 > Enséñale cómo vistes y aprenderá a vestirte.
 

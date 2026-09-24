@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { PLAN_LIMITS } from '@/lib/subscriptions/plans'
 
 export const metadata = {
-  title: 'Qué hago con tus datos · Estilista',
+  title: 'Qué hago con tus datos · Selyqo',
   description: 'Qué se guarda, cuánto tiempo, quién lo ve y cómo borrarlo.',
 }
 

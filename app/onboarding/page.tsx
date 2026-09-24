@@ -5,7 +5,7 @@ import { getPlan } from '@/lib/subscriptions/entitlements'
 import { ONBOARDING_PHOTOS } from '@/lib/subscriptions/plans'
 import { PhotoUploader } from '@/components/onboarding/PhotoUploader'
 
-export const metadata = { title: 'Enséñame cómo vistes · Estilista' }
+export const metadata = { title: 'Enséñame cómo vistes · Selyqo' }
 export const dynamic = 'force-dynamic'
 
 /**

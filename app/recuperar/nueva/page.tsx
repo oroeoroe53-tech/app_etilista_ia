@@ -3,7 +3,7 @@ import { getCurrentUser } from '@/lib/supabase/server'
 import { NewPasswordForm } from '@/components/auth/NewPasswordForm'
 import { Button, Notice } from '@/components/ui'
 
-export const metadata = { title: 'Contraseña nueva · Estilista' }
+export const metadata = { title: 'Contraseña nueva · Selyqo' }
 export const dynamic = 'force-dynamic'
 
 /**
@@ -22,7 +22,7 @@ export default async function NewPasswordPage() {
       style={{ paddingInline: 'var(--screen-gutter)' }}
     >
       <header className="mb-9">
-        <p className="eyebrow mb-3">Estilista</p>
+        <p className="eyebrow mb-3">Selyqo</p>
         <h1 className="display text-display leading-[1.05]">
           Elige una
           <span className="display-italic block">contraseña nueva</span>

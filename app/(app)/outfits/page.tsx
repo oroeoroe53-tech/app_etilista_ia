@@ -125,7 +125,7 @@ export default async function OutfitsPage() {
       ) : (
         <section className="mt-8">
           <h2 className="eyebrow mb-1">Antes te propuse</h2>
-          <ul>
+          <ul className="space-y-2.5">
             {history.map(([requestId, row]) => {
               const path = thumbs.get(row.id)
               const url = path ? (signed.get(path) ?? null) : null
@@ -133,7 +133,7 @@ export default async function OutfitsPage() {
                 <li key={requestId}>
                   <Link
                     href={`/outfits/propuesta/${requestId}`}
-                    className="flex items-center gap-3.5 border-b border-line py-3"
+                    className="press sheen sheen-paper lift-paper flex items-center gap-3.5 rounded-[22px] border border-line p-2.5"
                   >
                     <PhotoSlot
                       src={url}

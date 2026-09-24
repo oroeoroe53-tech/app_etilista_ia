@@ -6,7 +6,7 @@ import { BUCKETS } from '@/lib/storage/paths'
 import { describeGarment } from '@/lib/wardrobe/labels'
 import { Screen, PageTitle, EmptyState, Button } from '@/components/ui'
 
-export const metadata = { title: 'Diario · Estilista' }
+export const metadata = { title: 'Diario · Selyqo' }
 export const dynamic = 'force-dynamic'
 
 interface HistoryRow {

@@ -7,7 +7,7 @@ import { BackLink, EmptyState } from '@/components/ui'
 import { Tile } from '@/components/social/Tile'
 import { cn } from '@/lib/utils/cn'
 
-export const metadata = { title: 'Tu círculo · Estilista' }
+export const metadata = { title: 'Tu círculo · Selyqo' }
 
 /*
  * Nunca estática: lo que se ve aquí son permisos, y un permiso servido desde

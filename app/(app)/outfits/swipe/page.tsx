@@ -10,7 +10,7 @@ import { describeGarment } from '@/lib/wardrobe/labels'
 import { SwipeDeck, type SwipeCard } from '@/components/outfits/SwipeDeck'
 import { Screen, EmptyState, Button, Notice, BackLink } from '@/components/ui'
 
-export const metadata = { title: 'Descubre · Estilista' }
+export const metadata = { title: 'Descubre · Selyqo' }
 export const dynamic = 'force-dynamic'
 
 /*

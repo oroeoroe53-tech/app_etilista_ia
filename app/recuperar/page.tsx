@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { RecoverForm } from '@/components/auth/RecoverForm'
 
-export const metadata = { title: 'Recuperar la contraseña · Estilista' }
+export const metadata = { title: 'Recuperar la contraseña · Selyqo' }
 
 /**
  * Recuperar la contraseña.
@@ -17,7 +17,7 @@ export default function RecoverPage() {
       style={{ paddingInline: 'var(--screen-gutter)' }}
     >
       <header className="mb-9">
-        <p className="eyebrow mb-3">Estilista</p>
+        <p className="eyebrow mb-3">Selyqo</p>
         <h1 className="display text-display leading-[1.05]">
           No pasa nada
           <span className="display-italic block">te mando un enlace</span>

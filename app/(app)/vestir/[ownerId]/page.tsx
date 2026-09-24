@@ -6,7 +6,7 @@ import { BackLink } from '@/components/ui'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = { title: 'Vestirla · Estilista' }
+export const metadata = { title: 'Vestirla · Selyqo' }
 
 /**
  * Montarle un look a alguien.

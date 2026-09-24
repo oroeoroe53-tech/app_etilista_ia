@@ -7,7 +7,7 @@ import { describeGarment, LAYER_LABELS } from '@/lib/wardrobe/labels'
 import { layerOf, type Category, type Layer } from '@/lib/wardrobe/taxonomy'
 import { Screen, Button } from '@/components/ui'
 
-export const metadata = { title: 'Tu maleta · Estilista' }
+export const metadata = { title: 'Tu maleta · Selyqo' }
 export const dynamic = 'force-dynamic'
 
 interface OutfitRow {

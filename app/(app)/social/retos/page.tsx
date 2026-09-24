@@ -8,7 +8,7 @@ import { BackLink, Meter } from '@/components/ui'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = { title: 'Reto de la semana · Estilista' }
+export const metadata = { title: 'Reto de la semana · Selyqo' }
 
 /**
  * El reto de la semana.

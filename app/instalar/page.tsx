@@ -10,8 +10,8 @@ import { track } from '@/lib/observability/funnel'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  title: 'Llévatela al móvil · Estilista',
-  description: 'Cómo añadir Estilista a la pantalla de inicio, sin pasar por ninguna tienda.',
+  title: 'Llévatela al móvil · Selyqo',
+  description: 'Cómo añadir Selyqo a la pantalla de inicio, sin pasar por ninguna tienda.',
 }
 
 /**
@@ -49,7 +49,7 @@ export default function InstallPage() {
       {/* --- Qué cambia --------------------------------------------------- */}
       <section className="mt-10">
         <p className="eyebrow mb-3">Qué cambia</p>
-        <ul className="space-y-0">
+        <ul className="space-y-2.5">
           <Gain title="Se abre desde su icono">
             Como cualquier otra aplicación del móvil, sin buscar la pestaña.
           </Gain>
@@ -81,7 +81,7 @@ export default function InstallPage() {
 
 function Gain({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <li className="border-t border-line py-3.5 last:border-b">
+    <li className="lift-paper rounded-[22px] border border-line p-3.5">
       <p className="display text-lead">{title}</p>
       <p className="mt-1 text-small leading-[1.5] text-ink-soft">{children}</p>
     </li>

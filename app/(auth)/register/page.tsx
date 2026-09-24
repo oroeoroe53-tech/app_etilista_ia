@@ -3,7 +3,7 @@ import { AuthForm } from '../AuthForm'
 import { signUp } from '../actions'
 import { safeNext } from '@/lib/utils/next-url'
 
-export const metadata = { title: 'Crear cuenta · Estilista' }
+export const metadata = { title: 'Crear cuenta · Selyqo' }
 
 export default async function RegisterPage({
   searchParams,
@@ -24,7 +24,7 @@ export default async function RegisterPage({
         argumento de venta del producto entero es cambiarle de conversación.
       */}
       <header className="mb-9">
-        <p className="eyebrow mb-3">Estilista</p>
+        <p className="eyebrow mb-3">Selyqo</p>
         {voting ? (
           <>
             <h1 className="display text-display leading-[1.05]">

@@ -7,7 +7,7 @@ import { BackLink, EmptyState, PhotoSlot } from '@/components/ui'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = { title: 'Te han vestido · Estilista' }
+export const metadata = { title: 'Te han vestido · Selyqo' }
 
 /**
  * Los looks que alguien te ha montado, y los que has montado tú.

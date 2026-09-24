@@ -1,7 +1,7 @@
 import { BackLink } from '@/components/ui'
 import { EventForm } from '@/components/events/EventForm'
 
-export const metadata = { title: 'Nuevo evento · Estilista' }
+export const metadata = { title: 'Nuevo evento · Selyqo' }
 
 export default function NewEventPage() {
   return (

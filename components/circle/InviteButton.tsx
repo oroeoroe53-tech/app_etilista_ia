@@ -32,7 +32,7 @@ export function InviteButton() {
       }
 
       setUrl(result.url)
-      const text = 'Te invito a mi círculo en Estilista'
+      const text = 'Te invito a mi círculo en Selyqo'
 
       if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
         try {

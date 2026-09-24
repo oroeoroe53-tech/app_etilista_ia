@@ -8,7 +8,7 @@ import { ShareRecap } from '@/components/social/ShareRecap'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = { title: 'Tu mes · Estilista' }
+export const metadata = { title: 'Tu mes · Selyqo' }
 
 /**
  * El resumen del mes.

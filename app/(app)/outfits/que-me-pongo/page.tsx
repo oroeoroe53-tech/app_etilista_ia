@@ -6,7 +6,7 @@ import { fetchWeather } from '@/lib/weather/provider'
 import { RequestForm } from '@/components/outfits/RequestForm'
 import { Screen, Notice, Button, EmptyState, BackLink } from '@/components/ui'
 
-export const metadata = { title: '¿Qué me pongo? · Estilista' }
+export const metadata = { title: '¿Qué me pongo? · Selyqo' }
 export const dynamic = 'force-dynamic'
 
 export default async function WhatToWearPage() {

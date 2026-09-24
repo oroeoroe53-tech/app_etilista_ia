@@ -9,7 +9,7 @@ import { Button } from '@/components/ui'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  title: 'Un evento · Estilista',
+  title: 'Un evento · Selyqo',
   robots: { index: false, follow: false },
 }
 
@@ -114,7 +114,7 @@ export default async function EventInvitePage({
 
       <footer className="mt-12 border-t border-line pt-6 text-center">
         <p className="text-small leading-[1.6] text-ink-faint">
-          Esto es <span className="display text-ink">Estilista</span>: te propone
+          Esto es <span className="display text-ink">Selyqo</span>: te propone
           qué ponerte con la ropa que ya tienes.
         </p>
       </footer>

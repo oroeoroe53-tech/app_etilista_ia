@@ -1,7 +1,7 @@
 import { BackLink } from '@/components/ui'
 import { LookPollForm } from '@/components/polls/LookPollForm'
 
-export const metadata = { title: '¿Cuál me pongo? · Estilista' }
+export const metadata = { title: '¿Cuál me pongo? · Selyqo' }
 
 /**
  * Pedir opinión.

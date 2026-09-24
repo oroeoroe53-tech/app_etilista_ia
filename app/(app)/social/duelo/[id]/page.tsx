@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils/cn'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = { title: 'Duelo de armarios · Estilista' }
+export const metadata = { title: 'Duelo de armarios · Selyqo' }
 
 /**
  * Un duelo, a ciegas.

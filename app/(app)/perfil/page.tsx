@@ -50,7 +50,7 @@ export default async function ProfilePage() {
             propio nombre. En el resto de pantallas no hace falta: quien la
             abre ya sabe dónde está.
           */}
-          <h1 className="display text-display-l leading-none">Estilista</h1>
+          <h1 className="display text-display-l leading-none">Selyqo</h1>
           <p className="shrink-0 pt-1 text-right text-small leading-[1.5] text-ink-soft">
             {user.email}
             {desde ? <span className="block">desde {desde}</span> : null}
@@ -96,7 +96,7 @@ export default async function ProfilePage() {
       {/* --- Pasar al plan completo ---------------------------------------- */}
       {plan === 'free' ? (
         <div className="mt-4">
-          <UpgradeCta label={`Pasar a Estilista completo · ${formatPrice('pro')}/mes`} />
+          <UpgradeCta label={`Pasar a Selyqo completo · ${formatPrice('pro')}/mes`} />
         </div>
       ) : null}
 
