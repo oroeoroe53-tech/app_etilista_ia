@@ -275,11 +275,19 @@ body {
   min-height: 100vh;
   background-attachment: fixed;
   background-repeat: no-repeat;
+  /*
+   * Los focos son grandes y se solapan. La primera versión los hacía del 30% de
+   * la pantalla y los aparcaba en las cuatro esquinas: los dos de arriba caían
+   * justo detrás del titular y el centro se quedaba desnudo, con lo que se leía
+   * exactamente igual que la luz de cabecera. Para que esto sea una atmósfera y
+   * no cuatro manchas, cada uno tiene que llegar más allá de la mitad.
+   */
   background-image:
-    radial-gradient(48% 30% at 8% 6%, rgba(211, 168, 124, 0.55), transparent 70%),
-    radial-gradient(42% 26% at 94% 18%, rgba(182, 150, 160, 0.4), transparent 70%),
-    radial-gradient(52% 32% at 78% 72%, rgba(212, 194, 156, 0.4), transparent 72%),
-    radial-gradient(46% 28% at 4% 92%, rgba(188, 168, 150, 0.34), transparent 72%);
+    radial-gradient(90% 62% at 2% 0%, rgba(211, 168, 124, 0.5), transparent 74%),
+    radial-gradient(85% 58% at 100% 14%, rgba(182, 150, 160, 0.42), transparent 74%),
+    radial-gradient(95% 62% at 88% 64%, rgba(212, 194, 156, 0.44), transparent 76%),
+    radial-gradient(90% 60% at 0% 96%, rgba(190, 166, 146, 0.4), transparent 76%),
+    radial-gradient(75% 55% at 50% 44%, rgba(214, 196, 164, 0.26), transparent 80%);
 }
 
 /* Sobre negro la misma luz tiene que venir de dentro, no de fuera. */
