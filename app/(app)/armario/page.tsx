@@ -63,8 +63,9 @@ export default async function WardrobePage({
 
   if (all.length === 0) {
     return (
+      <div className="page-light">
       <Screen>
-        <PageTitle eyebrow="Lo que tienes" title="Armario" />
+        <PageTitle eyebrow="Lo que tienes" title="Armario" light={false} />
         <EmptyState
           title="Todavía está vacío"
           body="Sube unas cuantas fotos de looks que ya lleves y crearé tu armario a partir de ellas."
@@ -82,6 +83,7 @@ export default async function WardrobePage({
           }
         />
       </Screen>
+      </div>
     )
   }
 
@@ -120,13 +122,16 @@ export default async function WardrobePage({
 
   const porRevisar = all.filter((i) => !i.user_verified && (i.ai_confidence ?? 1) < 0.6).length
 
+  /* PRUEBA: veladura por toda la pantalla. Ver el comentario de la portada. */
   return (
+    <div className="page-light">
     <Screen>
       <PageTitle
         eyebrow={`${all.length} ${all.length === 1 ? 'prenda' : 'prendas'} · ${
           availableLayers.length
         } ${availableLayers.length === 1 ? 'categoría' : 'categorías'}`}
         title="Armario"
+        light={false}
         action={
           <Link href="/armario/nueva">
             <Button size="sm" className="whitespace-nowrap">
@@ -227,5 +232,6 @@ export default async function WardrobePage({
         </Link>
       </div>
     </Screen>
+    </div>
   )
 }

@@ -14,7 +14,7 @@ import {
   DailyWeather,
 } from '@/components/home/DailyHeadline'
 import { Countdown } from '@/components/polls/Countdown'
-import { HeaderLight, PhotoSlot, QuietRow } from '@/components/ui'
+import { PhotoSlot, QuietRow } from '@/components/ui'
 
 /**
  * Portada.
@@ -120,7 +120,14 @@ export default async function HomePage() {
   const fecha = `${today.toLocaleDateString('es-ES', { weekday: 'long' })} ${today.getDate()}`
   const lugar = prefs.city ? ` · ${prefs.city}` : ''
 
+  /*
+   * PRUEBA: la veladura por toda la pantalla en lugar de solo en la cabecera.
+   * Está solo en Inicio y en Armario, para verlo con ropa de verdad antes de
+   * decidir. Si se queda, va a todas; si no, se quita de aquí y de la
+   * demostración.
+   */
   return (
+    <div className="page-light">
     <div
       className="mx-auto w-full max-w-[30rem] pt-safe pb-nav"
       style={{ paddingInline: 'var(--screen-gutter)' }}
@@ -130,8 +137,7 @@ export default async function HomePage() {
         La cabecera lleva la luz detrás. `relative` es lo que la sostiene, y el
         contenido va con `relative` propio para quedar por delante de ella.
       */}
-      <header className="relative flex items-start justify-between gap-4 pt-5">
-        <HeaderLight />
+      <header className="flex items-start justify-between gap-4 pt-5">
         <div className="relative min-w-0">
           <p className="eyebrow">
             {fecha}
@@ -353,6 +359,7 @@ export default async function HomePage() {
           Qué meter para un viaje
         </QuietRow>
       </nav>
+    </div>
     </div>
   )
 }
