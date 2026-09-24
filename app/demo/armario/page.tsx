@@ -1,7 +1,8 @@
 import { demoWardrobe } from '@/lib/demo/wardrobe'
 import { describeGarment, LAYER_LABELS } from '@/lib/wardrobe/labels'
 import { layerOf, type Layer } from '@/lib/wardrobe/taxonomy'
-import { PageTitle, PhotoSlot } from '@/components/ui'
+import { PageTitle } from '@/components/ui'
+import { GarmentTile } from '@/components/wardrobe/GarmentTile'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,24 +42,22 @@ export default function DemoWardrobe() {
               </div>
               <div className="rule mb-3" />
 
-              <ul className="grid grid-cols-3 gap-[9px]">
-                {items.map((item) => {
+              <ul className="grid grid-cols-2 gap-[10px]">
+                {items.map((item, index) => {
                   const nombre = describeGarment(item)
+                  const hero = index === 0
                   return (
-                    <li key={item.id}>
-                      <PhotoSlot
+                    <li key={item.id} className={hero ? 'col-span-2' : undefined}>
+                      <GarmentTile
                         src={null}
-                        label={nombre}
-                        className="h-[118px] w-full rounded-[14px]"
+                        name={nombre}
+                        hero={hero}
+                        meta={
+                          item.times_worn === 0
+                            ? 'sin estrenar'
+                            : `${item.times_worn} ${item.times_worn === 1 ? 'uso' : 'usos'}`
+                        }
                       />
-                      <p className="mt-1.5 line-clamp-2 text-small leading-[1.3] text-ink">
-                        {nombre}
-                      </p>
-                      <p className="text-micro leading-[1.3] text-ink-faint">
-                        {item.times_worn === 0
-                          ? 'sin estrenar'
-                          : `${item.times_worn} ${item.times_worn === 1 ? 'uso' : 'usos'}`}
-                      </p>
                     </li>
                   )
                 })}

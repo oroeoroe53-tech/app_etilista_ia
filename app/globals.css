@@ -254,6 +254,50 @@ body::after {
 }
 
 /*
+ * Velo de la baldosa.
+ *
+ * El nombre de la prenda va sobre la foto, y sobre una camisa blanca el texto
+ * blanco desaparece. Un degradado que solo ocupa el tercio inferior resuelve el
+ * contraste sin apagar la prenda: arriba la foto llega limpia.
+ *
+ * Las dos paradas intermedias no son adorno. Un degradado lineal de negro a
+ * transparente pasa por grises sucios a mitad de camino y deja una banda gris
+ * visible sobre fondos claros; curvarlo lo hace desaparecer.
+ */
+.tile-scrim {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 34%;
+  pointer-events: none;
+  /*
+   * La curva está cargada abajo a propósito. Repartido por igual, sobre una
+   * prenda blanca el velo se ve como una mancha gris que ocupa media baldosa y
+   * ensucia justo lo que se quería enseñar. Concentrado en el último quinto,
+   * oscurece lo que hay detrás del texto y desaparece mucho antes de llegar a
+   * la prenda.
+   */
+  background: linear-gradient(
+    to top,
+    rgba(12, 11, 8, 0.55) 0%,
+    rgba(12, 11, 8, 0.36) 18%,
+    rgba(12, 11, 8, 0.18) 44%,
+    rgba(12, 11, 8, 0.05) 72%,
+    rgba(12, 11, 8, 0) 100%
+  );
+}
+
+/*
+ * Y aun así el velo no basta por sí solo si se quiere que sea discreto: una
+ * sombra cortísima bajo el texto hace el resto del contraste sin oscurecer ni
+ * un píxel más de la foto.
+ */
+.tile-label {
+  text-shadow: 0 1px 3px rgba(12, 11, 8, 0.55);
+}
+
+
+/*
  * Hueco de foto.
  *
  * Mientras no hay imagen —o mientras carga— el sitio no se queda en blanco: se

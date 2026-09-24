@@ -7,8 +7,8 @@ import { describeGarment, LAYER_LABELS } from '@/lib/wardrobe/labels'
 import { layerOf, type Category, type Color, type Layer, type Season } from '@/lib/wardrobe/taxonomy'
 import { parseFilters, hasAnyFilter } from '@/lib/wardrobe/filters'
 import { WardrobeFilters } from '@/components/wardrobe/WardrobeFilters'
-import { TransitionLink } from '@/components/transitions/TransitionLink'
-import { Screen, PageTitle, EmptyState, Button, PhotoSlot } from '@/components/ui'
+import { GarmentTile } from '@/components/wardrobe/GarmentTile'
+import { Screen, PageTitle, EmptyState, Button } from '@/components/ui'
 
 export const dynamic = 'force-dynamic'
 
@@ -176,33 +176,39 @@ export default async function WardrobePage({
                 </div>
                 <div className="rule mb-3" />
 
-                <ul className="grid grid-cols-3 gap-[9px]">
-                  {items.map((item) => {
+                {/*
+                  Dos columnas, no tres.
+
+                  A tres, cada prenda ocupa unos cien píxeles y se convierte en
+                  un icono: se distingue el color y poco más. A dos caben los
+                  detalles por los que uno elige una prenda —el tejido, el
+                  cuello, cómo cae— y el armario se parece a lo que es.
+
+                  La primera de cada capa va a ancho completo. No es decoración:
+                  las prendas llegan de la más reciente a la más antigua, así
+                  que la que manda es la última que entró, y lo último que
+                  metiste es lo que menos memoria tienes de haber guardado.
+                */}
+                <ul className="grid grid-cols-2 gap-[10px]">
+                  {items.map((item, index) => {
                     const url = item.image_path ? signed.get(item.image_path) : null
                     const nombre = describeGarment(item)
+                    const hero = index === 0
                     return (
-                      <li key={item.id}>
-                        <TransitionLink
+                      <li key={item.id} className={hero ? 'col-span-2' : undefined}>
+                        <GarmentTile
                           href={`/armario/${item.id}`}
-                          sharedName="garment"
-                          className="block"
-                        >
-                          <PhotoSlot
-                            src={url ?? null}
-                            label={nombre}
-                            className="h-[118px] w-full rounded-[14px]"
-                          />
-                          <p className="mt-1.5 line-clamp-2 text-small leading-[1.3] text-ink">
-                            {nombre}
-                          </p>
-                          <p className="text-micro leading-[1.3] text-ink-faint">
-                            {!item.is_available
+                          src={url ?? null}
+                          name={nombre}
+                          hero={hero}
+                          meta={
+                            !item.is_available
                               ? 'guardada'
                               : item.times_worn === 0
                                 ? 'sin estrenar'
-                                : `${item.times_worn} ${item.times_worn === 1 ? 'uso' : 'usos'}`}
-                          </p>
-                        </TransitionLink>
+                                : `${item.times_worn} ${item.times_worn === 1 ? 'uso' : 'usos'}`
+                          }
+                        />
                       </li>
                     )
                   })}
