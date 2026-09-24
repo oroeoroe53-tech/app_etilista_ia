@@ -26,6 +26,19 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
   },
   formatDetection: { telephone: false },
+  /*
+   * El icono no estaba declarado: la pestaña enseñaba el de por defecto y el
+   * «Añadir a pantalla de inicio» de iOS se inventaba una miniatura de la
+   * página. Los archivos los genera `scripts/build-icons.mjs` a partir del
+   * logotipo, y ahí está explicado por qué son dos y no uno.
+   */
+  icons: {
+    icon: [
+      { url: '/favicon.png', type: 'image/png' },
+      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
 }
 
 export const viewport: Viewport = {
