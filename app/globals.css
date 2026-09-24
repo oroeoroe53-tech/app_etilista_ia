@@ -136,8 +136,35 @@ html {
 }
 
 body {
-  background: var(--surface);
   color: var(--ink);
+  background-color: var(--surface);
+
+  /*
+   * La atmósfera, en toda la aplicación.
+   *
+   * Va aquí y no en un envoltorio por pantalla porque así no hay ninguna que se
+   * pueda quedar fuera por olvido, ni dos criterios conviviendo.
+   *
+   * `fixed` es lo que la hace atmósfera y no imagen: la página se desliza por
+   * delante de una luz quieta. Si se moviera con el scroll se notaría enseguida
+   * que hay algo dibujado debajo.
+   *
+   * Los focos son grandes y se solapan. Una versión anterior los hacía del 30%
+   * de la pantalla y los aparcaba en las esquinas: los de arriba caían detrás
+   * del titular y el centro se quedaba desnudo, con lo que parecía un tinte de
+   * cabecera. Para que sea una atmósfera, cada foco tiene que pasar de la mitad.
+   *
+   * Las pantallas negras no se ven afectadas: `.on-dark` pinta su propio fondo
+   * encima.
+   */
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-image:
+    radial-gradient(90% 62% at 2% 0%, rgba(211, 168, 124, 0.5), transparent 74%),
+    radial-gradient(85% 58% at 100% 14%, rgba(182, 150, 160, 0.42), transparent 74%),
+    radial-gradient(95% 62% at 88% 64%, rgba(212, 194, 156, 0.44), transparent 76%),
+    radial-gradient(90% 60% at 0% 96%, rgba(190, 166, 146, 0.4), transparent 76%),
+    radial-gradient(75% 55% at 50% 44%, rgba(214, 196, 164, 0.26), transparent 80%);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
@@ -217,84 +244,6 @@ body {
 .bleed-row {
   margin-inline: calc(var(--screen-gutter) * -1);
   padding-inline: var(--screen-gutter);
-}
-
-/* ---------------------------------------------------------------------------
- * Luz de cabecera
- *
- * Una veladura de color muy diluida detrás del titular, sangrada a los dos
- * bordes de la pantalla y desvanecida hacia abajo.
- *
- * Es deliberadamente LUZ y no COLOR. La regla de la arcilla dice que ese tono
- * se usa con cuentagotas o deja de significar nada, y una cabecera teñida en
- * arcilla la gastaría en decoración. Aquí los tonos van a un tercio de
- * saturación y sin borde: se leen como una habitación con la persiana medio
- * abierta, no como un bloque de marca.
- *
- * Tres focos y no uno, porque un solo degradado radial se lee como un halo
- * centrado —parece un error de render— mientras que tres descolocados leen como
- * luz que entra por algún sitio.
- *
- * La máscara de abajo es lo que evita el canto: sin ella la veladura termina en
- * una línea recta a media pantalla y se ve el rectángulo.
- * ------------------------------------------------------------------------- */
-.header-light {
-  position: absolute;
-  top: -180px;
-  left: calc(var(--screen-gutter) * -1);
-  right: calc(var(--screen-gutter) * -1);
-  height: 460px;
-  pointer-events: none;
-  background:
-    radial-gradient(58% 48% at 14% 44%, rgba(211, 168, 124, 0.78), transparent 72%),
-    radial-gradient(52% 44% at 86% 36%, rgba(182, 150, 160, 0.55), transparent 72%),
-    radial-gradient(64% 52% at 52% 60%, rgba(212, 194, 156, 0.62), transparent 74%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%);
-}
-
-/*
- * Variante: la luz en toda la pantalla.
- *
- * Fija al viewport, así que no se mueve con el scroll: la página se desliza por
- * delante de una atmósfera quieta, en lugar de arrastrar un degradado consigo.
- * Lo segundo se nota enseguida y es lo que delata que hay una imagen debajo.
- *
- * Los focos están más separados y mucho más diluidos que en la cabecera: lo que
- * arriba puede ser un gesto, repetido por toda la pantalla y detrás de tarjetas
- * blancas se convierte en suciedad.
- */
-.page-light {
-  /*
-   * Va como fondo del contenedor y no como capa aparte. Una capa fija con
-   * z-index negativo se cuela DETRÁS del fondo del body y no se ve nada; subirla
-   * obliga a dar contexto de apilamiento a todo lo que lleve encima. Con
-   * `background-attachment: fixed` se consigue lo mismo —la página se desliza
-   * por delante de una atmósfera quieta— sin tocar el apilado de nadie.
-   */
-  min-height: 100vh;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  /*
-   * Los focos son grandes y se solapan. La primera versión los hacía del 30% de
-   * la pantalla y los aparcaba en las cuatro esquinas: los dos de arriba caían
-   * justo detrás del titular y el centro se quedaba desnudo, con lo que se leía
-   * exactamente igual que la luz de cabecera. Para que esto sea una atmósfera y
-   * no cuatro manchas, cada uno tiene que llegar más allá de la mitad.
-   */
-  background-image:
-    radial-gradient(90% 62% at 2% 0%, rgba(211, 168, 124, 0.5), transparent 74%),
-    radial-gradient(85% 58% at 100% 14%, rgba(182, 150, 160, 0.42), transparent 74%),
-    radial-gradient(95% 62% at 88% 64%, rgba(212, 194, 156, 0.44), transparent 76%),
-    radial-gradient(90% 60% at 0% 96%, rgba(190, 166, 146, 0.4), transparent 76%),
-    radial-gradient(75% 55% at 50% 44%, rgba(214, 196, 164, 0.26), transparent 80%);
-}
-
-/* Sobre negro la misma luz tiene que venir de dentro, no de fuera. */
-.on-dark .header-light {
-  background:
-    radial-gradient(58% 48% at 14% 44%, rgba(216, 180, 143, 0.16), transparent 72%),
-    radial-gradient(52% 44% at 86% 36%, rgba(188, 162, 168, 0.12), transparent 72%);
 }
 
 /* ---------------------------------------------------------------------------

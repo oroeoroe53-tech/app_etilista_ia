@@ -27,7 +27,6 @@ export default function DemoWardrobe() {
       <PageTitle
         eyebrow={`${wardrobe.length} prendas · ${capas.length} categorías`}
         title="Armario"
-        light={false}
       />
 
       <div className="space-y-7">

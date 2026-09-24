@@ -1,10 +1,8 @@
 import Link from 'next/link'
 import { cn } from '@/lib/utils/cn'
-import { HeaderLight } from './HeaderLight'
 
 export { Button } from './Button'
 export { Field, Select, TextInput, TextArea, ChipGroup, ScaleInput } from './Field'
-export { HeaderLight } from './HeaderLight'
 
 /**
  * Contenedor de página.
@@ -44,21 +42,15 @@ export function PageTitle({
   eyebrow,
   title,
   action,
-  light = true,
 }: {
   eyebrow?: string
   title: React.ReactNode
   action?: React.ReactNode
-  /** A false donde la luz ya la pone el fondo de la página: si no, se suman. */
-  light?: boolean
 }) {
   return (
-    <header className="relative pt-5 pb-5">
-      {/* La luz va aquí y no pantalla a pantalla: esta es la cabecera que
-          comparten Armario, Diario, Eventos y las demás. */}
-      {light ? <HeaderLight /> : null}
-      {eyebrow ? <p className="eyebrow relative mb-2.5">{eyebrow}</p> : null}
-      <div className="relative flex items-center justify-between gap-4">
+    <header className="pt-5 pb-5">
+      {eyebrow ? <p className="eyebrow mb-2.5">{eyebrow}</p> : null}
+      <div className="flex items-center justify-between gap-4">
         <h1 className="display text-display">{title}</h1>
         {action ? <div className="shrink-0">{action}</div> : null}
       </div>

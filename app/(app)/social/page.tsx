@@ -8,7 +8,7 @@ import { describeGarment } from '@/lib/wardrobe/labels'
 import { signMany } from '@/lib/storage/signed'
 import { BUCKETS } from '@/lib/storage/paths'
 import { Countdown } from '@/components/polls/Countdown'
-import { HeaderLight, PhotoSlot, QuietRow } from '@/components/ui'
+import { PhotoSlot, QuietRow } from '@/components/ui'
 import { cn } from '@/lib/utils/cn'
 
 export const dynamic = 'force-dynamic'
@@ -82,12 +82,11 @@ export default async function SocialPage() {
       style={{ paddingInline: 'var(--screen-gutter)' }}
     >
       {/* --- Cabecera ------------------------------------------------------- */}
-      <header className="relative pt-5 pb-5">
-        <HeaderLight />
-        <p className="relative mb-2.5 eyebrow">
+      <header className="pt-5 pb-5">
+        <p className="eyebrow mb-2.5">
           {new Date().toLocaleDateString('es-ES', { weekday: 'long' })} · tu círculo
         </p>
-        <h1 className="display relative text-display leading-[1.02]">
+        <h1 className="display text-display leading-[1.02]">
           {headline(summary.pendingVotes.length, summary.circleCount)}
         </h1>
       </header>
