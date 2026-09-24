@@ -53,7 +53,12 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
   const pendingRef = useRef<SwipeCard | null>(null)
 
   const card = initial[index]
-  const next = initial[index + 1]
+
+  /*
+   * Las tres siguientes, de la más cercana a la más lejana. Más de tres no se
+   * distinguen: el arco se satura y deja de decir cuánto queda.
+   */
+  const fan = initial.slice(index + 1, index + 4).reverse()
   const finished = index >= initial.length
 
   // Al terminar la baraja se recalcula el perfil una vez, para que el cambio se
@@ -201,12 +206,35 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
   return (
     <div className="select-none">
       {/*
-        La carta de atrás, girada dos grados.
-        Es el único adorno de la pantalla y hace un trabajo concreto: dice que
-        hay más detrás sin tener que escribirlo.
+        El abanico.
+
+        Antes eran dos cartas: la de delante y una girada dos grados detrás.
+        Ahora son hasta cuatro, abiertas en arco sobre un pivote que queda por
+        DEBAJO de ellas —no en su centro— que es lo que hace que se abran como
+        una mano de cartas en lugar de como un montón torcido.
+
+        No es decoración: el abanico dice cuánto queda. Con doce looks por
+        delante se ve lleno y con dos se ve casi agotado, sin tener que leer el
+        contador. Y al arrastrar gira entero, como una rueda, así que el gesto
+        mueve la baraja y no solo la carta de arriba.
+
+        Las de detrás se dibujan de la más lejana a la más cercana para que el
+        orden del DOM haga el apilado sin `z-index` negativos, que dentro de un
+        contenedor con transformaciones dan resultados distintos según el
+        navegador.
       */}
-      <div className="relative h-[330px]">
-        {next ? <CardFace card={next} behind /> : null}
+      <div className="relative h-[360px]">
+        <div
+          className="absolute inset-0"
+          style={{
+            transform: `rotate(${drag.x * 0.02}deg)`,
+            transition: drag.active ? 'none' : 'transform 280ms ease-out',
+          }}
+        >
+          {fan.map((c, i) => (
+            <CardFace key={c.key} card={c} depth={fan.length - i} />
+          ))}
+        </div>
 
         <div
           role="group"
@@ -231,7 +259,22 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
         </div>
       </div>
 
-      <h2 className="display mt-3.5 text-lead">{card.title}</h2>
+      {/*
+        El eje.
+
+        La rueda de la que sale esta idea lleva su rótulo en el centro del
+        anillo. Aquí el anillo es un arco, así que el centro cae justo debajo:
+        cuántas llevas y cómo se llama la que estás mirando, alineadas al eje
+        del abanico. Antes el título iba a la izquierda y el contador cinco
+        elementos más abajo, y no parecían la misma cosa.
+      */}
+      <div className="mt-4 text-center">
+        <p className="mono text-ink-faint">
+          {index + 1} / {initial.length}
+          {counts.saved > 0 ? ` · ${counts.saved} guardados` : ''}
+        </p>
+        <h2 className="display mt-1.5 text-title">{card.title}</h2>
+      </div>
 
       {error ? (
         <div className="mt-4">
@@ -259,11 +302,6 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
         </ActionButton>
       </div>
 
-      <p className="mt-4 text-center text-small text-ink-faint">
-        {index + 1} de {initial.length} · {counts.saved}{' '}
-        {counts.saved === 1 ? 'guardado' : 'guardados'}
-      </p>
-
       <div className="mt-5 rounded-[18px] border border-line px-4 py-3.5">
         <p className="text-small leading-[1.5] text-ink-soft">
           {counts.saved >= 2
@@ -279,16 +317,33 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
 
 // ---------------------------------------------------------------------------
 
-function CardFace({ card, behind }: { card: SwipeCard; behind?: boolean }) {
+/**
+ * Una carta.
+ *
+ * `depth` es cuántas hay por delante: 0 es la que se toca. El pivote en
+ * `50% 128%` cae fuera de la carta, por debajo, y es lo que convierte un giro
+ * en un abanico — girar sobre el propio centro solo las inclina unas encima de
+ * otras.
+ */
+function CardFace({ card, depth = 0 }: { card: SwipeCard; depth?: number }) {
   const items = card.items.slice(0, 4)
 
   return (
     <div
       className={cn(
-        'h-full w-full rounded-[22px] bg-raised p-2.5',
-        behind && 'absolute inset-0 rotate-2 scale-[0.98] opacity-70',
+        'lift-paper h-full w-full rounded-[22px] border border-line p-2.5',
+        depth > 0 && 'absolute inset-0',
       )}
-      aria-hidden={behind}
+      aria-hidden={depth > 0}
+      style={
+        depth > 0
+          ? {
+              transform: `rotate(${depth * 4.5}deg) translateY(${depth * -5}px) translateX(${depth * -3}px) scale(${1 - depth * 0.035})`,
+              transformOrigin: '50% 128%',
+              opacity: 1 - depth * 0.2,
+            }
+          : undefined
+      }
     >
       <div
         className={cn(
