@@ -116,7 +116,7 @@ export default async function TripResultPage({
           {ordered.length === 1 ? 'DÍA' : 'DÍAS'}
         </p>
         <h1 className="display text-[2rem]">La maleta</h1>
-        <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+        <p className="mt-3 text-small leading-relaxed text-ink-soft">
           {packed.length} prendas para {ordered.length}{' '}
           {ordered.length === 1 ? 'día' : 'días'}. Las que se repiten hacen el trabajo
           de varias.
@@ -131,7 +131,7 @@ export default async function TripResultPage({
           {LAYER_ORDER.filter((layer) => grouped.has(layer)).map((layer) => (
             <div key={layer}>
               <p className="folio mb-2">{(LAYER_LABELS[layer] ?? layer).toUpperCase()}</p>
-              <ul className="space-y-2">
+              <ul className="space-y-2.5">
                 {grouped.get(layer)!.map((item) => {
                   const url = item.image_path ? signed.get(item.image_path) : null
                   const veces = usage.get(item.id) ?? 1
@@ -139,7 +139,7 @@ export default async function TripResultPage({
                     <li key={item.id}>
                       <Link
                         href={`/armario/${item.id}`}
-                        className="flex items-center gap-3 border-b border-line pb-2"
+                        className="press sheen sheen-paper lift-paper flex items-center gap-3 rounded-[18px] border border-line p-2.5"
                       >
                         {url ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
@@ -152,7 +152,7 @@ export default async function TripResultPage({
                         ) : (
                           <span className="h-12 w-10 shrink-0 rounded-md bg-sunken" />
                         )}
-                        <span className="min-w-0 flex-1 truncate text-sm">
+                        <span className="min-w-0 flex-1 truncate text-small">
                           {describeGarment(item)}
                         </span>
                         {veces > 1 ? (
@@ -172,25 +172,36 @@ export default async function TripResultPage({
       <section>
         <h2 className="eyebrow mb-4">Día a día</h2>
 
-        <div className="space-y-8">
+        <div className="space-y-2.5">
           {ordered.map((outfit, index) => {
             const ids = byOutfit.get(outfit.id) ?? []
             const temp = outfit.context?.temperature_c
             const rain = outfit.context?.rain
 
             return (
-              <article key={outfit.id} className="border-b border-line pb-6 last:border-0">
+              /*
+                Cada día, una tarjeta.
+
+                La tira de prendas de dentro se sangra hasta el borde de la
+                tarjeta con márgenes negativos: recortada en el relleno parecería
+                que la fila se acaba ahí, cuando lo que dice al salirse es que
+                hay más y se puede arrastrar.
+              */
+              <article
+                key={outfit.id}
+                className="lift-paper rounded-[22px] border border-line p-3.5"
+              >
                 <div className="mb-3 flex items-baseline justify-between">
                   <span className="folio">
                     DÍA {String(index + 1).padStart(2, '0')}
                   </span>
-                  <span className="text-xs text-ink-faint">
+                  <span className="text-micro text-ink-faint">
                     {temp != null ? `${temp}°` : ''}
                     {rain ? ' · lluvia' : ''}
                   </span>
                 </div>
 
-                <ul className="flex gap-2 overflow-x-auto no-scrollbar">
+                <ul className="no-scrollbar -mx-3.5 flex gap-2 overflow-x-auto px-3.5">
                   {ids.map((id) => {
                     const item = items.get(id)
                     if (!item) return null

@@ -70,7 +70,7 @@ export function ItemActions({
         {shown ? 'Guardar por ahora' : 'Volver a tenerla disponible'}
       </Button>
 
-      <p className="px-2 text-xs leading-relaxed text-ink-faint">
+      <p className="px-2 text-micro leading-relaxed text-ink-faint">
         {shown
           ? 'Guardarla la deja fuera de las propuestas sin borrarla. Útil si está en la lavadora o prestada.'
           : 'Ahora mismo no la uso para proponerte looks.'}
@@ -81,7 +81,7 @@ export function ItemActions({
       <div className="pt-6">
         {confirming ? (
           <div className="space-y-3 rounded-[var(--radius-card)] border border-danger/30 p-4">
-            <p className="text-sm leading-relaxed">
+            <p className="text-small leading-relaxed">
               ¿Seguro que quieres borrar <strong>{name}</strong>? Dejará de aparecer en tu
               armario y en las propuestas.
             </p>
@@ -110,7 +110,7 @@ export function ItemActions({
           <button
             type="button"
             onClick={() => setConfirming(true)}
-            className="w-full text-center text-sm text-danger underline underline-offset-4"
+            className="w-full text-center text-small text-danger underline underline-offset-4"
           >
             Borrar prenda
           </button>

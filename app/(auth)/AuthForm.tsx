@@ -67,7 +67,7 @@ function Field({
       <span className="eyebrow mb-2 block">{label}</span>
       <input
         name={name}
-        className="h-12 w-full rounded-2xl border border-line bg-raised px-4 text-base
+        className="h-12 w-full rounded-2xl border border-line bg-raised px-4 text-body
                    text-ink outline-none focus:border-ink-soft"
         {...props}
       />

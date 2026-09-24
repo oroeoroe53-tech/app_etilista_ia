@@ -62,7 +62,7 @@ export function DuplicateReview({ questions }: { questions: DuplicateQuestion[] 
           {remaining} {remaining === 1 ? 'duda' : 'dudas'}
         </p>
         <h1 className="display text-display leading-[1.05]">¿Es la misma prenda?</h1>
-        <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+        <p className="mt-3 text-small leading-relaxed text-ink-soft">
           La he visto en varias fotos y no estoy seguro de si es una sola prenda o dos
           parecidas.
         </p>
@@ -92,7 +92,7 @@ export function DuplicateReview({ questions }: { questions: DuplicateQuestion[] 
         type="button"
         onClick={skip}
         disabled={isPending}
-        className="block w-full text-center text-sm text-ink-soft underline underline-offset-4"
+        className="block w-full text-center text-small text-ink-soft underline underline-offset-4"
       >
         Decidirlo más tarde
       </button>
@@ -119,13 +119,13 @@ function GarmentCard({
           className="garment-photo aspect-3/4 w-full rounded-2xl border border-line object-cover"
         />
       ) : (
-        <div className="flex aspect-3/4 w-full items-center justify-center rounded-2xl border border-line bg-sunken text-xs text-ink-faint">
+        <div className="flex aspect-3/4 w-full items-center justify-center rounded-2xl border border-line bg-sunken text-micro text-ink-faint">
           sin foto
         </div>
       )}
       <figcaption>
         <span className="eyebrow block">{caption}</span>
-        <span className="text-sm text-ink">{label}</span>
+        <span className="text-small text-ink">{label}</span>
       </figcaption>
     </figure>
   )

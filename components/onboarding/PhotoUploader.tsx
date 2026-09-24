@@ -181,7 +181,7 @@ export function PhotoUploader({ min, max }: PhotoUploaderProps) {
                 type="button"
                 onClick={() => inputRef.current?.click()}
                 className="flex aspect-3/4 w-full items-center justify-center rounded-xl
-                           border border-dashed border-line text-2xl text-ink-faint"
+                           border border-dashed border-line text-display-s text-ink-faint"
                 aria-label="Añadir más fotos"
               >
                 +
@@ -195,9 +195,9 @@ export function PhotoUploader({ min, max }: PhotoUploaderProps) {
           onClick={() => inputRef.current?.click()}
           className="flex h-44 w-full flex-col items-center justify-center gap-2
                      rounded-[var(--radius-card)] border border-dashed border-line
-                     text-sm text-ink-soft"
+                     text-small text-ink-soft"
         >
-          <span className="text-2xl text-ink-faint">+</span>
+          <span className="text-display-s text-ink-faint">+</span>
           Elegir fotos del carrete
         </button>
       )}
@@ -209,7 +209,7 @@ export function PhotoUploader({ min, max }: PhotoUploaderProps) {
           Subiendo {done} de {selected.length}…
         </Notice>
       ) : (
-        <p className="text-center text-xs text-ink-faint">
+        <p className="text-center text-micro text-ink-faint">
           {selected.length === 0
             ? `Necesito al menos ${min} fotos`
             : enough

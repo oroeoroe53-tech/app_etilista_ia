@@ -24,9 +24,9 @@ export function Field({
     <label className="block">
       <span className="eyebrow mb-2 block">{label}</span>
       {children}
-      {hint && !error ? <span className="mt-1.5 block text-xs text-ink-faint">{hint}</span> : null}
+      {hint && !error ? <span className="mt-1.5 block text-micro text-ink-faint">{hint}</span> : null}
       {error ? (
-        <span role="alert" className="mt-1.5 block text-xs text-danger">
+        <span role="alert" className="mt-1.5 block text-micro text-danger">
           {error}
         </span>
       ) : null}
@@ -35,7 +35,7 @@ export function Field({
 }
 
 const CONTROL =
-  'h-12 w-full rounded-2xl border border-line bg-raised px-4 text-base text-ink outline-none focus:border-ink-soft'
+  'h-12 w-full rounded-2xl border border-line bg-raised px-4 text-body text-ink outline-none focus:border-ink-soft'
 
 /**
  * Control "desnudo": sin caja, alineado a la derecha y en serif.
@@ -92,7 +92,7 @@ export function TextArea({
     <textarea
       rows={3}
       className={cn(
-        'w-full rounded-2xl border border-line bg-raised px-4 py-3 text-base text-ink outline-none focus:border-ink-soft',
+        'w-full rounded-2xl border border-line bg-raised px-4 py-3 text-body text-ink outline-none focus:border-ink-soft',
         className,
       )}
       {...props}
@@ -125,7 +125,7 @@ export function ChipGroup({
           key={option.value}
           className="cursor-pointer has-checked:border-accent has-checked:bg-accent
                      has-checked:text-accent-ink rounded-full border border-line bg-raised
-                     px-4 py-2 text-sm text-ink-soft transition-colors"
+                     px-4 py-2 text-small text-ink-soft transition-colors"
         >
           <input
             type="checkbox"
@@ -159,7 +159,7 @@ export function ScaleInput({
             key={n}
             className="flex-1 cursor-pointer has-checked:border-accent has-checked:bg-accent
                        has-checked:text-accent-ink rounded-xl border border-line bg-raised
-                       py-2.5 text-center text-sm text-ink-soft transition-colors"
+                       py-2.5 text-center text-small text-ink-soft transition-colors"
           >
             <input
               type="radio"
@@ -172,7 +172,7 @@ export function ScaleInput({
           </label>
         ))}
       </div>
-      <div className="mt-1.5 flex justify-between text-xs text-ink-faint">
+      <div className="mt-1.5 flex justify-between text-micro text-ink-faint">
         <span>{labels[1]}</span>
         <span>{labels[5]}</span>
       </div>

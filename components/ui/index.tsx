@@ -210,7 +210,7 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center gap-3 py-16 text-center">
-      <h2 className="display text-2xl">{title}</h2>
+      <h2 className="display text-display-s">{title}</h2>
       <p className="max-w-xs text-small leading-[1.5] text-ink-soft">{body}</p>
       {action ? <div className="w-full pt-4">{action}</div> : null}
     </div>

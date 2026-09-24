@@ -51,7 +51,7 @@ export function RecoverForm() {
           type="email"
           autoComplete="email"
           required
-          className="h-12 w-full rounded-2xl border border-line bg-raised px-4 text-base text-ink outline-none focus:border-ink-soft"
+          className="h-12 w-full rounded-2xl border border-line bg-raised px-4 text-body text-ink outline-none focus:border-ink-soft"
         />
       </label>
 

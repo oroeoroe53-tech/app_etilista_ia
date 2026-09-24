@@ -23,7 +23,7 @@ export function DeleteAccount({ email }: { email: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="w-full text-center text-sm text-danger underline underline-offset-4"
+        className="w-full text-center text-small text-danger underline underline-offset-4"
       >
         Eliminar mi cuenta
       </button>
@@ -34,11 +34,11 @@ export function DeleteAccount({ email }: { email: string }) {
     <div className="rounded-[var(--radius-card)] border border-danger/30 p-5">
       <p className="eyebrow mb-3">Eliminar cuenta</p>
 
-      <p className="mb-3 text-sm leading-relaxed text-ink-soft">
+      <p className="mb-3 text-small leading-relaxed text-ink-soft">
         Se borrará todo y no hay vuelta atrás:
       </p>
 
-      <ul className="mb-5 space-y-1.5 text-sm text-ink-soft">
+      <ul className="mb-5 space-y-1.5 text-small text-ink-soft">
         <Item>Tus fotos, las originales y los recortes</Item>
         <Item>Tu armario entero</Item>
         <Item>Tu perfil de estilo y tus preferencias</Item>

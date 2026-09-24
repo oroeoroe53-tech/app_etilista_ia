@@ -166,8 +166,8 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
   if (finished) {
     return (
       <div className="py-16 text-center">
-        <h2 className="display mb-3 text-3xl">Ya está</h2>
-        <p className="mx-auto mb-8 max-w-xs text-sm leading-relaxed text-ink-soft">
+        <h2 className="display mb-3 text-display">Ya está</h2>
+        <p className="mx-auto mb-8 max-w-xs text-small leading-relaxed text-ink-soft">
           {counts.rated === 0
             ? 'No has valorado ninguno. Cuando quieras, aquí sigo.'
             : `Has valorado ${counts.rated} ${counts.rated === 1 ? 'look' : 'looks'}. Con eso afino un poco más.`}
@@ -322,7 +322,7 @@ function Stamp({
     <span
       aria-hidden
       className={cn(
-        'pointer-events-none absolute top-6 rounded-full border-2 px-4 py-1.5 text-sm font-medium tracking-wide uppercase transition-opacity',
+        'pointer-events-none absolute top-6 rounded-full border-2 px-4 py-1.5 text-small font-medium tracking-wide uppercase transition-opacity',
         show ? 'opacity-100' : 'opacity-0',
         tone === 'like' && 'right-6 rotate-12 border-ink text-ink',
         tone === 'dislike' && 'left-6 -rotate-12 border-danger text-danger',
@@ -383,7 +383,7 @@ function ReasonSheet({ onPick }: { onPick: (reason: string | null) => void }) {
               <button
                 type="button"
                 onClick={() => onPick(reason.value)}
-                className="w-full rounded-2xl border border-line bg-raised px-4 py-3 text-left text-sm active:bg-sunken"
+                className="w-full rounded-2xl border border-line bg-raised px-4 py-3 text-left text-small active:bg-sunken"
               >
                 {reason.label}
               </button>
@@ -394,7 +394,7 @@ function ReasonSheet({ onPick }: { onPick: (reason: string | null) => void }) {
         <button
           type="button"
           onClick={() => onPick(null)}
-          className="w-full text-center text-sm text-ink-soft underline underline-offset-4"
+          className="w-full text-center text-small text-ink-soft underline underline-offset-4"
         >
           Prefiero no decirlo
         </button>

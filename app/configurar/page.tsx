@@ -12,11 +12,11 @@ export default function SetupPage() {
       <p className="eyebrow mb-3">Selyqo</p>
       <h1 className="display mb-4 text-4xl">Falta conectar Supabase</h1>
 
-      <p className="mb-8 text-sm leading-relaxed text-ink-soft">
+      <p className="mb-8 text-small leading-relaxed text-ink-soft">
         La aplicación está montada, pero todavía no sabe a qué base de datos hablar.
       </p>
 
-      <ol className="space-y-5 text-sm leading-relaxed text-ink-soft">
+      <ol className="space-y-5 text-small leading-relaxed text-ink-soft">
         <Step n={1}>
           Crea un proyecto gratuito en <Code>supabase.com</Code>.
         </Step>
@@ -36,7 +36,7 @@ export default function SetupPage() {
         <Step n={5}>Reinicia el servidor de desarrollo.</Step>
       </ol>
 
-      <p className="mt-10 text-xs leading-relaxed text-ink-faint">
+      <p className="mt-10 text-micro leading-relaxed text-ink-faint">
         Mientras tanto <Code>AI_MODE=mock</Code> mantiene la IA simulada: nada de lo que
         hagas al probar consume dinero.
       </p>
@@ -47,7 +47,7 @@ export default function SetupPage() {
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <li className="flex gap-4">
-      <span className="display shrink-0 text-xl text-ink-faint">{n}</span>
+      <span className="display shrink-0 text-title text-ink-faint">{n}</span>
       <span>{children}</span>
     </li>
   )

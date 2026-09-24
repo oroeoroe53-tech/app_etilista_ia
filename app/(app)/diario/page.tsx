@@ -111,22 +111,22 @@ export default async function DiaryPage({
       <nav className="mb-6 flex items-center justify-between">
         <Link
           href={`/diario?mes=${monthKey(prevMonth)}`}
-          className="px-2 py-1 text-sm text-ink-soft"
+          className="px-2 py-1 text-small text-ink-soft"
           aria-label="Mes anterior"
         >
           ←
         </Link>
-        <span className="display text-xl">
+        <span className="display text-title">
           {MONTHS[month]} {year !== today.getFullYear() ? year : ''}
         </span>
         {isCurrentMonth ? (
-          <span aria-hidden className="px-2 py-1 text-sm text-ink-faint/30">
+          <span aria-hidden className="px-2 py-1 text-small text-ink-faint/30">
             →
           </span>
         ) : (
           <Link
             href={`/diario?mes=${monthKey(nextMonth)}`}
-            className="px-2 py-1 text-sm text-ink-soft"
+            className="px-2 py-1 text-small text-ink-soft"
             aria-label="Mes siguiente"
           >
             →
@@ -208,7 +208,7 @@ export default async function DiaryPage({
             })}
           </ul>
 
-          <p className="mt-6 text-center text-sm text-ink-soft">
+          <p className="mt-6 text-center text-small text-ink-soft">
             {diasConRopa === 1
               ? 'Un día registrado este mes.'
               : `${diasConRopa} días registrados este mes.`}

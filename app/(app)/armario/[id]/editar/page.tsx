@@ -35,7 +35,7 @@ export default async function EditItemPage({ params }: { params: Promise<{ id: s
   return (
     <Screen>
       <div className="pt-6 pb-4">
-        <Link href={`/armario/${id}`} className="text-sm text-ink-soft">
+        <Link href={`/armario/${id}`} className="text-small text-ink-soft">
           ← {describeGarment(item)}
         </Link>
       </div>
@@ -43,7 +43,7 @@ export default async function EditItemPage({ params }: { params: Promise<{ id: s
       <header className="pb-6">
         <p className="eyebrow mb-2">Corregir</p>
         <h1 className="display text-display">Cómo es de verdad</h1>
-        <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+        <p className="mt-3 text-small leading-relaxed text-ink-soft">
           Lo que apunté puede no ser exacto. Cámbialo y aprenderé de ello.
         </p>
       </header>

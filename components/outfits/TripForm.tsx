@@ -30,7 +30,7 @@ export function TripForm() {
       <section>
         <div className="mb-3 flex items-baseline justify-between">
           <p className="eyebrow">Cuántos días</p>
-          <span className="display text-2xl">{days}</span>
+          <span className="display text-display-s">{days}</span>
         </div>
         <input
           type="range"
@@ -41,7 +41,7 @@ export function TripForm() {
           className="w-full accent-[var(--accent)]"
           aria-label="Número de días"
         />
-        <div className="mt-1 flex justify-between text-xs text-ink-faint">
+        <div className="mt-1 flex justify-between text-micro text-ink-faint">
           <span>1 día</span>
           <span>2 semanas</span>
         </div>
@@ -57,7 +57,7 @@ export function TripForm() {
               onClick={() => setFormality(formality === n ? null : n)}
               aria-pressed={formality === n}
               className={cn(
-                'flex-1 rounded-xl border py-2.5 text-sm transition-colors',
+                'flex-1 rounded-xl border py-2.5 text-small transition-colors',
                 formality === n
                   ? 'border-accent bg-accent text-accent-ink'
                   : 'border-line bg-raised text-ink-soft',
@@ -67,7 +67,7 @@ export function TripForm() {
             </button>
           ))}
         </div>
-        <div className="mt-1.5 flex justify-between text-xs text-ink-faint">
+        <div className="mt-1.5 flex justify-between text-micro text-ink-faint">
           <span>{FORMALITY_LABELS[1]}</span>
           <span>{FORMALITY_LABELS[5]}</span>
         </div>
@@ -77,7 +77,7 @@ export function TripForm() {
 
       <Submit days={days} />
 
-      <p className="text-center text-xs leading-relaxed text-ink-faint">
+      <p className="text-center text-micro leading-relaxed text-ink-faint">
         Buscaré repetir prendas entre días para que lleves la maleta más ligera.
       </p>
     </form>

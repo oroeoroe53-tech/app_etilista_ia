@@ -104,7 +104,7 @@ export function AnalysisProgress({ initialTotal }: { initialTotal: number }) {
         <Notice tone="error">
           {status?.error ?? 'Algo ha fallado durante el análisis.'}
         </Notice>
-        <p className="text-sm leading-relaxed text-ink-soft">
+        <p className="text-small leading-relaxed text-ink-soft">
           Tus fotos siguen guardadas. Puedes volver a intentarlo sin subirlas otra vez.
         </p>
         <Button fullWidth size="lg" disabled={reintentando} onClick={reintentar}>
@@ -135,13 +135,13 @@ export function AnalysisProgress({ initialTotal }: { initialTotal: number }) {
             style={{ width: `${Math.max(6, progreso)}%` }}
           />
         </div>
-        <p className="mt-3 text-xs text-ink-faint">
+        <p className="mt-3 text-micro text-ink-faint">
           {status?.counts.done ?? 0} de {total} {total === 1 ? 'foto' : 'fotos'}
           {status && status.itemCount > 0 ? ` · ${status.itemCount} prendas encontradas` : ''}
         </p>
       </div>
 
-      <p className="text-sm leading-relaxed text-ink-soft">
+      <p className="text-small leading-relaxed text-ink-soft">
         Estoy mirando las fotos juntas para reconocer qué prendas se repiten. Puede
         tardar medio minuto.
       </p>

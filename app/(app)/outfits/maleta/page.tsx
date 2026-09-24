@@ -42,7 +42,7 @@ export default async function TripPage() {
       <header className="pt-8 pb-8">
         <p className="eyebrow mb-2">Viajes</p>
         <h1 className="display text-[2rem]">La maleta</h1>
-        <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+        <p className="mt-3 text-small leading-relaxed text-ink-soft">
           Dime adónde vas y cuántos días. Te digo qué meter y qué te pones cada día.
         </p>
       </header>
