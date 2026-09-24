@@ -25,8 +25,8 @@ type Size = 'sm' | 'md' | 'lg'
  * por qué y por qué no es la variante de Tailwind.
  */
 const VARIANTS: Record<Variant, string> = {
-  primary: 'btn-solid btn-sheen bg-accent text-accent-ink',
-  secondary: 'bg-raised text-ink border border-line shadow-card-soft active:bg-sunken',
+  primary: 'lift-ink sheen sheen-ink bg-accent text-accent-ink',
+  secondary: 'lift-paper sheen sheen-paper text-ink border border-line',
   ghost: 'text-ink-soft active:bg-sunken',
   danger: 'bg-transparent text-danger border border-danger/40 active:bg-danger/10',
 }

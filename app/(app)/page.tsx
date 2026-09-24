@@ -269,18 +269,15 @@ export default async function HomePage() {
       )}
 
       {/* --- Sin prisa ---------------------------------------------------- */}
-      <Link
-        href="/outfits/swipe"
-        className="mt-3.5 flex items-center justify-between gap-4 rounded-[18px] border border-line px-4 py-[15px]"
-      >
-        <span className="min-w-0">
-          <span className="eyebrow block">Sin prisa</span>
-          <span className="display mt-1 block text-lead">¿Te pondrías esto?</span>
-        </span>
-        <span aria-hidden className="shrink-0 text-small text-ink-faint">
-          →
-        </span>
-      </Link>
+      <ul className="mt-3.5 grid grid-cols-6 gap-2.5">
+        <Tile
+          span={6}
+          href="/outfits/swipe"
+          eyebrow="Sin prisa"
+          title="¿Te pondrías esto?"
+          note="Di que sí o que no y te voy entendiendo"
+        />
+      </ul>
 
       {/* --- Lo que se te olvida ------------------------------------------
           No está en el diseño, y se queda igualmente: es una de las cosas que

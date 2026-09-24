@@ -14,6 +14,11 @@ import { cn } from '@/lib/utils/cn'
  *
  * El texto va abajo, como en las baldosas del armario, para que las dos
  * cuadrículas de la aplicación se lean con la misma gramática.
+ *
+ * Y son objetos, no zonas pulsables: llevan el mismo relieve y el mismo
+ * destello que los botones (`lift-*` y `sheen-*` en `globals.css`). Una pieza
+ * que se puede pulsar y no lo parece es peor que una fila, porque encima ocupa
+ * más sitio.
  */
 export function Tile({
   href,
@@ -44,10 +49,10 @@ export function Tile({
       <Link
         href={href}
         className={cn(
-          'press relative flex h-full min-h-[108px] flex-col justify-end overflow-hidden rounded-[22px] p-3.5',
-          tone === 'outline' && 'border border-line',
-          tone === 'raised' && 'bg-raised shadow-card-soft',
-          tone === 'ink' && 'bg-accent text-accent-ink',
+          'press sheen flex h-full min-h-[108px] flex-col justify-end rounded-[22px] p-3.5',
+          tone === 'ink'
+            ? 'lift-ink sheen-ink bg-accent text-accent-ink'
+            : 'lift-paper sheen-paper border border-line',
         )}
       >
         {eyebrow ? (

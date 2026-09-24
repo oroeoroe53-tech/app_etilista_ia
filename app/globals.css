@@ -416,32 +416,18 @@ body::after {
 }
 
 /* ---------------------------------------------------------------------------
- * El botón primario
+ * Superficies con relieve
  *
- * Un rectángulo de tinta plana se lee como un enlace grande. Lo que lo
- * convierte en un objeto es que tenga canto: una línea de luz arriba, donde
- * daría la luz, y una de sombra abajo, donde termina el material. Dos píxeles
- * de nada que cambian la sensación por completo.
+ * Lo que se pulsa tiene que parecer un objeto, no una zona pulsable. Y lo que
+ * lo consigue no son las sombras del borde —eso resultó ser de buen gusto e
+ * invisible— sino que la CARA no sea plana: más clara arriba, más oscura abajo,
+ * como una tecla que recibe luz desde arriba.
  *
- * Y un destello que cruza al pulsar. Es la idea del cristal líquido —luz que se
- * mueve por una superficie— pero hecha de luz sobre tinta, que es el material
- * de esta aplicación, y con un degradado que se desplaza. El efecto original
- * usaba un filtro SVG en `backdrop-filter`, que Safari no ejecuta: en el
- * iPhone, que es donde vive esto, no se habría visto nada.
- *
- * El destello se mueve con `transform`, que va en la GPU y no obliga al
- * navegador a recalcular el diseño.
+ * Hay dos materiales, y son los mismos dos de los que vive toda la aplicación:
+ * tinta y papel. El botón primario y la pieza negra del mosaico son tinta; las
+ * demás piezas y el botón secundario son papel levantado. No hay un tercero.
  * ------------------------------------------------------------------------- */
-.btn-solid {
-  /*
-   * La cara, además del canto.
-   *
-   * Una primera versión solo llevaba sombras y no se notaba: era de buen gusto
-   * y era invisible, que para un botón es el peor de los dos mundos. Lo que se
-   * ve de verdad es que la superficie NO sea plana —más clara arriba, más
-   * oscura abajo, como una tecla— y eso pide un degradado sobre el color, no
-   * solo luces en los bordes.
-   */
+.lift-ink {
   background-image: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0.16),
@@ -457,7 +443,7 @@ body::after {
 
 /* Sobre tinta el primario es crema: la luz de arriba tiene que ser mucho más
    marcada, y la sombra de abajo casi desaparece. */
-.on-dark .btn-solid {
+.on-dark .lift-ink {
   background-image: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0.5),
@@ -471,29 +457,88 @@ body::after {
     0 10px 24px rgba(0, 0, 0, 0.35);
 }
 
-.btn-sheen {
+/*
+ * Papel levantado.
+ *
+ * Mucho más contenido que la tinta, y a propósito: hay muchas piezas de papel
+ * en una pantalla y una sola de tinta. Si el papel pesara lo mismo, la pantalla
+ * sería un muestrario de botones y no habría manera de saber qué es lo
+ * principal.
+ */
+.lift-paper {
+  background-color: var(--surface-raised);
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0) 55%,
+    rgba(21, 20, 15, 0.035)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 1px 2px rgba(20, 18, 12, 0.07),
+    0 5px 14px rgba(20, 18, 12, 0.07);
+}
+
+.on-dark .lift-paper {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0) 55%,
+    rgba(0, 0, 0, 0.18)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------------------------------------------------------------------------
+ * El destello
+ *
+ * Una banda de luz que cruza al pulsar. Es la idea que traía el encargo del
+ * cristal líquido —luz moviéndose por una superficie— pero hecha del material
+ * de esta aplicación. El componente original la conseguía con un filtro SVG
+ * dentro de `backdrop-filter`, y Safari no ejecuta eso: en el iPhone, que es
+ * donde vive esto, no se habría visto nada.
+ *
+ * Se mueve con `transform`, que va en la GPU y no obliga a recalcular el
+ * diseño. Y hay dos: sobre tinta la banda es blanca, sobre papel tiene que ser
+ * oscura, porque una banda blanca sobre crema no existe.
+ * ------------------------------------------------------------------------- */
+.sheen {
   position: relative;
   overflow: hidden;
   /* Sin esto, el destello se sale de la cápsula en algunos navegadores. */
   isolation: isolate;
 }
 
-.btn-sheen::after {
+.sheen::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
+  transform: translateX(-120%);
+  opacity: 0;
+}
+
+.sheen-ink::after {
   background: linear-gradient(
     105deg,
     transparent 36%,
     rgba(255, 255, 255, 0.45) 50%,
     transparent 64%
   );
-  transform: translateX(-120%);
-  opacity: 0;
 }
 
-.btn-sheen:active::after {
+.sheen-paper::after {
+  background: linear-gradient(
+    105deg,
+    transparent 36%,
+    rgba(21, 20, 15, 0.09) 50%,
+    transparent 64%
+  );
+}
+
+.sheen:active::after {
   animation: sheen 620ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -512,7 +557,7 @@ body::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn-sheen:active::after {
+  .sheen:active::after {
     animation: none;
   }
 }

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/supabase/server'
 import { Screen, Meter } from '@/components/ui'
+import { Tile } from '@/components/social/Tile'
 import { checkEntitlement } from '@/lib/subscriptions/entitlements'
 import { PLAN_LABELS, formatPrice, type Feature } from '@/lib/subscriptions/plans'
 import { countIncoming } from '@/lib/loans/queries'
@@ -99,104 +100,76 @@ export default async function ProfilePage() {
         </div>
       ) : null}
 
-      {/* --- Ajustes -------------------------------------------------------- */}
-      <div className="mt-7">
+      {/* --- Lo que cuelga de aquí -------------------------------------------
+          Eran ocho filas iguales con flecha, el mismo problema que tenían la
+          portada y Social. Aquí además escondían lo único que esta pantalla
+          tiene que gritar: los préstamos sin contestar.
+
+          La instalación también desde aquí, no solo desde la pantalla de
+          entrar: mucha gente usa la web unos días antes de decidirse a
+          instalarla, y para entonces ya no vuelve a pasar por el login. */}
+      <ul className="mt-7 grid grid-cols-6 gap-2.5">
         {/*
-          La instalación también desde aquí, no solo desde la pantalla de entrar:
-          mucha gente usa la web unos días antes de decidirse a instalarla, y
-          para entonces ya no vuelve a pasar por el login.
+          Estilo cedió su pestaña a Social, así que su puerta está aquí. Sigue
+          entera: lo que cambió es cuánto se cruza uno con ella, no qué es. Por
+          eso va la primera y a media pantalla, y no perdida entre ajustes.
         */}
+        <Tile span={3} href="/estilo" title="Tu estilo" note="Lo que he aprendido de ti" />
+
         {/*
-          El círculo va el primero de estas filas: es lo único de aquí que tiene
-          consecuencias para otra gente, y lo único que alguien puede querer
-          revisar un martes cualquiera para comprobar quién ve su ropa.
+          El círculo, porque es lo único de aquí que tiene consecuencias para
+          otra gente y lo único que alguien puede querer revisar un martes
+          cualquiera para comprobar quién ve su ropa.
         */}
+        <Tile span={3} href="/circulo" title="Tu círculo" note="Y lo que ve cada una" />
+
         {/*
           Los préstamos, con el número de peticiones sin contestar.
 
           Esta aplicación no manda notificaciones ni correos, así que este
           número es el ÚNICO sitio donde alguien se entera de que una amiga le
           ha pedido algo. Sin él, la mitad de las peticiones morirían sin
-          respuesta y la función parecería rota cuando solo está callada.
+          respuesta y la función parecería rota cuando solo está callada. En una
+          fila cabía una pastilla diminuta; aquí ocupa media pantalla cuando hay
+          algo y un tercio cuando no.
         */}
-        {/*
-          Estilo cedió su pestaña a Social, así que su puerta está aquí. Sigue
-          entera: lo que cambió es cuánto se cruza uno con ella, no qué es.
-        */}
-        <Link
-          href="/estilo"
-          className="flex items-center justify-between gap-4 border-t border-line py-3.5"
-        >
-          <span className="text-small leading-[1.35] text-ink">Tu estilo</span>
-          <span aria-hidden className="shrink-0 text-small text-ink-faint">
-            →
-          </span>
-        </Link>
-
-        <Link
-          href="/vestir"
-          className="flex items-center justify-between gap-4 border-t border-line py-3.5"
-        >
-          <span className="text-small leading-[1.35] text-ink">Looks que te han montado</span>
-          <span aria-hidden className="shrink-0 text-small text-ink-faint">
-            →
-          </span>
-        </Link>
-
-        <Link
-          href="/eventos"
-          className="flex items-center justify-between gap-4 border-t border-line py-3.5"
-        >
-          <span className="text-small leading-[1.35] text-ink">Eventos</span>
-          <span aria-hidden className="shrink-0 text-small text-ink-faint">
-            →
-          </span>
-        </Link>
-
-        <Link
+        <Tile
+          span={pendingLoans > 0 ? 3 : 2}
           href="/prestamos"
-          className="flex items-center justify-between gap-4 border-t border-line py-3.5"
-        >
-          <span className="text-small leading-[1.35] text-ink">Préstamos</span>
-          <span className="flex shrink-0 items-center gap-2">
-            {pendingLoans > 0 ? (
-              <span className="mono rounded-full bg-clay px-2 py-[3px] text-micro text-[#f7f4ee]">
-                {pendingLoans} sin contestar
-              </span>
-            ) : null}
-            <span aria-hidden className="text-small text-ink-faint">
-              →
-            </span>
-          </span>
-        </Link>
+          title="Préstamos"
+          note={pendingLoans > 0 ? 'Esperando tu respuesta' : 'Quién tiene qué'}
+          badge={pendingLoans > 0 ? pendingLoans : undefined}
+        />
 
-        <Link
-          href="/circulo"
-          className="flex items-center justify-between gap-4 border-t border-line py-3.5"
-        >
-          <span className="text-small leading-[1.35] text-ink">
-            Tu círculo y lo que ve cada una
-          </span>
-          <span aria-hidden className="shrink-0 text-small text-ink-faint">
-            →
-          </span>
-        </Link>
+        <Tile
+          span={pendingLoans > 0 ? 3 : 2}
+          href="/vestir"
+          title="Te han vestido"
+          note="Looks que te han montado"
+        />
 
-        <Link
+        <Tile span={pendingLoans > 0 ? 3 : 2} href="/eventos" title="Eventos" note="Sin ir iguales" />
+
+        {/* Se estira cuando los préstamos encogen: si no, la fila queda a medias. */}
+        <Tile
+          span={pendingLoans > 0 ? 3 : 6}
           href="/instalar"
-          className="flex items-center justify-between gap-4 border-t border-line py-3.5"
-        >
-          <span className="text-small leading-[1.35] text-ink">Ponerla en tu móvil</span>
-          <span aria-hidden className="shrink-0 text-small text-ink-faint">
-            →
-          </span>
-        </Link>
+          title="En tu móvil"
+          note="Ponerla en la pantalla de inicio"
+        />
+      </ul>
 
+      {/*
+        Cerrar sesión y la privacidad no son destinos que se visiten: son lo que
+        se busca cuando hace falta. En piezas con relieve competirían con lo de
+        arriba y darían ganas de pulsarlas sin querer.
+      */}
+      <div className="mt-7">
         <Link
           href="/privacidad"
           className="flex items-center justify-between gap-4 border-t border-line py-3.5"
         >
-          <span className="text-small leading-[1.35] text-ink">Qué hago con tus datos</span>
+          <span className="text-small leading-[1.35] text-ink-soft">Qué hago con tus datos</span>
           <span aria-hidden className="shrink-0 text-small text-ink-faint">
             →
           </span>
@@ -205,9 +178,9 @@ export default async function ProfilePage() {
         <form action={signOut}>
           <button
             type="submit"
-            className="flex w-full items-center justify-between gap-4 border-t border-line py-3.5 text-left last:border-b"
+            className="flex w-full items-center justify-between gap-4 border-t border-b border-line py-3.5 text-left"
           >
-            <span className="text-small leading-[1.35] text-ink">Cerrar sesión</span>
+            <span className="text-small leading-[1.35] text-ink-soft">Cerrar sesión</span>
             <span aria-hidden className="shrink-0 text-small text-ink-faint">
               →
             </span>
