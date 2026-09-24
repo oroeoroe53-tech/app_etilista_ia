@@ -5,7 +5,7 @@ import { seasonOf } from '@/lib/outfits/filters'
 import { nameOutfit, explainFromHighlights } from '@/lib/outfits/name'
 import { describeGarment } from '@/lib/wardrobe/labels'
 import { TodayLook } from '@/components/home/TodayLook'
-import { PhotoSlot } from '@/components/ui'
+import { HeaderLight, PhotoSlot } from '@/components/ui'
 import Link from 'next/link'
 import { track } from '@/lib/observability/funnel'
 
@@ -50,8 +50,9 @@ export default function DemoHome() {
       className="mx-auto w-full max-w-[30rem]"
       style={{ paddingInline: 'var(--screen-gutter)' }}
     >
-      <header className="flex items-start justify-between gap-4 pt-5">
-        <div className="min-w-0">
+      <header className="relative flex items-start justify-between gap-4 pt-5">
+        <HeaderLight />
+        <div className="relative min-w-0">
           <p className="eyebrow">
             {fecha} · {DEMO_WEATHER.city}
           </p>
@@ -62,7 +63,7 @@ export default function DemoHome() {
             </span>
           </h1>
         </div>
-        <p className="shrink-0 pt-1 text-right text-small leading-[1.5] text-ink-soft">
+        <p className="relative shrink-0 pt-1 text-right text-small leading-[1.5] text-ink-soft">
           {DEMO_WEATHER.temperatureC}°
           <span className="block">{DEMO_WEATHER.description}</span>
         </p>

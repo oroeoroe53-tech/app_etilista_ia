@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils/cn'
 
 export { Button } from './Button'
 export { Field, Select, TextInput, TextArea, ChipGroup, ScaleInput } from './Field'
+export { HeaderLight } from './HeaderLight'
 
 /**
  * Contenedor de página.

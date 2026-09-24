@@ -14,7 +14,7 @@ import {
   DailyWeather,
 } from '@/components/home/DailyHeadline'
 import { Countdown } from '@/components/polls/Countdown'
-import { PhotoSlot, QuietRow } from '@/components/ui'
+import { HeaderLight, PhotoSlot, QuietRow } from '@/components/ui'
 
 /**
  * Portada.
@@ -126,8 +126,13 @@ export default async function HomePage() {
       style={{ paddingInline: 'var(--screen-gutter)' }}
     >
       {/* --- Cabecera ---------------------------------------------------- */}
-      <header className="flex items-start justify-between gap-4 pt-5">
-        <div className="min-w-0">
+      {/*
+        La cabecera lleva la luz detrás. `relative` es lo que la sostiene, y el
+        contenido va con `relative` propio para quedar por delante de ella.
+      */}
+      <header className="relative flex items-start justify-between gap-4 pt-5">
+        <HeaderLight />
+        <div className="relative min-w-0">
           <p className="eyebrow">
             {fecha}
             {lugar}
@@ -149,9 +154,11 @@ export default async function HomePage() {
           </h1>
         </div>
 
-        <Suspense fallback={null}>
-          <DailyWeather userId={userId} />
-        </Suspense>
+        <div className="relative">
+          <Suspense fallback={null}>
+            <DailyWeather userId={userId} />
+          </Suspense>
+        </div>
       </header>
 
       {/* --- El look de hoy ---------------------------------------------- */}
