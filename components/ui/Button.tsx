@@ -11,15 +11,22 @@ type Size = 'sm' | 'md' | 'lg'
  * cuesta lo mismo y el conjunto se parece más a una etiqueta de ropa que a un
  * formulario.
  *
- * El secundario no lleva fondo propio. Sobre crema y sobre negro funciona
- * igual, que es lo que permite reutilizarlo tal cual dentro de "Descubre".
+ * El primario tiene canto: una línea de luz arriba y una de sombra abajo, y un
+ * destello que lo cruza al pulsarlo. Está en `globals.css`, junto con el motivo
+ * de que no sea el cristal líquido que pedía el encargo.
+ *
+ * El secundario sí lleva fondo, y es un cambio: antes era una cápsula
+ * transparente con un filete, y sobre crema eso no es un botón, es un texto con
+ * un marco. Ahora es papel levantado —tarjeta y sombra baja— así que los dos se
+ * leen como objetos, uno de tinta y otro de papel. Sigue funcionando dentro de
+ * "Descubre" porque las dos superficies son variables del tema.
  *
  * Al pulsar se hunde: la clase `press` de `globals.css`, donde está explicado
  * por qué y por qué no es la variante de Tailwind.
  */
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-accent text-accent-ink active:opacity-85',
-  secondary: 'bg-transparent text-ink border border-[color-mix(in_srgb,var(--ink)_18%,transparent)] active:bg-sunken',
+  primary: 'btn-solid btn-sheen bg-accent text-accent-ink',
+  secondary: 'bg-raised text-ink border border-line shadow-card-soft active:bg-sunken',
   ghost: 'text-ink-soft active:bg-sunken',
   danger: 'bg-transparent text-danger border border-danger/40 active:bg-danger/10',
 }
