@@ -38,14 +38,13 @@ const TABS: readonly Tab[] = [
   { href: '/perfil', label: 'Perfil', icon: 'perfil' },
 ] as const
 
-/**
- * Pantallas oscuras.
+/*
+ * Aquí había una lista de rutas oscuras: la barra vive fuera de la página, no
+ * heredaba el subárbol `.on-dark` y tenía que reconocerlas por su cuenta.
  *
- * La barra vive fuera de la página, así que no hereda el subárbol `.on-dark`:
- * tiene que reconocer la ruta por su cuenta. Es una lista, no una heurística,
- * para que añadir una pantalla negra sea una decisión y no un accidente.
+ * Ya no hace falta ninguna. La aplicación sigue el modo del teléfono, así que
+ * los tokens cambian solos y la barra se oscurece con todo lo demás.
  */
-const DARK_ROUTES = ['/outfits/swipe']
 
 /** El diario es historial de lo que te pusiste: pertenece a Outfits. */
 function activeTab(pathname: string): string {
@@ -64,22 +63,13 @@ function activeTab(pathname: string): string {
 
 export function BottomNav() {
   const pathname = usePathname()
-  const dark = DARK_ROUTES.some((route) => pathname.startsWith(route))
   const current = activeTab(pathname)
 
   return (
     <nav
       aria-label="Navegación principal"
-      className={cn('fixed inset-x-0 bottom-0 z-40', dark && 'on-dark')}
-      style={{
-        paddingBottom: 'calc(14px + env(safe-area-inset-bottom))',
-        /*
-         * `.on-dark` redefine las variables Y pinta el fondo. Lo segundo aquí
-         * dibujaría una banda negra a lo ancho detrás de la cápsula, que es
-         * justo lo que esta barra deja de ser. Solo queremos las variables.
-         */
-        background: 'transparent',
-      }}
+      className="fixed inset-x-0 bottom-0 z-40"
+      style={{ paddingBottom: 'calc(14px + env(safe-area-inset-bottom))' }}
     >
       <ul
         className={cn(

@@ -14,24 +14,13 @@ export const metadata = { title: 'Descubre · Selyqo' }
 export const dynamic = 'force-dynamic'
 
 /*
- * La única pantalla negra.
+ * Esta era la única pantalla negra de la aplicación, a propósito: marcaba que
+ * aquí no se decide qué ponerse, se mira sin prisa.
  *
- * El color de la barra del sistema se declara por ruta para que el teléfono se
- * oscurezca con ella; si no, quedaría una franja crema arriba delatando que el
- * negro es solo un div.
+ * Deja de serlo porque ahora la aplicación entera sigue el modo del teléfono.
+ * Con eso, una pantalla negra sobre una aplicación ya negra no marca nada, y
+ * sobre una clara era la única que no acompañaba al resto.
  */
-export const viewport = { themeColor: '#15140f' }
-
-/**
- * Envoltorio oscuro.
- *
- * `on-dark` redefine las variables de color para todo el subárbol: ni un solo
- * componente de dentro sabe que está sobre negro. `min-h-dvh` es lo que evita
- * que el fondo se corte si la baraja es corta.
- */
-function Dark({ children }: { children: React.ReactNode }) {
-  return <div className="on-dark min-h-dvh">{children}</div>
-}
 
 interface ItemRow {
   id: string
@@ -55,8 +44,7 @@ export default async function SwipePage() {
 
   if (!permiso.allowed) {
     return (
-      <Dark>
-        <Screen>
+      <Screen>
           <BackLink href="/outfits">outfits</BackLink>
           <header className="pt-4 pb-6">
             <p className="eyebrow mb-2.5">Descubre</p>
@@ -73,7 +61,6 @@ export default async function SwipePage() {
             </Link>
           </div>
         </Screen>
-      </Dark>
     )
   }
 
@@ -81,8 +68,7 @@ export default async function SwipePage() {
 
   if (deck.cards.length === 0) {
     return (
-      <Dark>
-        <Screen>
+      <Screen>
           <BackLink href="/outfits">outfits</BackLink>
           <header className="pt-4 pb-6">
             <p className="eyebrow mb-2.5">Descubre</p>
@@ -98,7 +84,6 @@ export default async function SwipePage() {
             }
           />
         </Screen>
-      </Dark>
     )
   }
 
@@ -134,7 +119,7 @@ export default async function SwipePage() {
   }))
 
   return (
-    <Dark>
+    
       <Screen>
         <BackLink href="/outfits">outfits</BackLink>
 
@@ -157,6 +142,6 @@ export default async function SwipePage() {
 
         <SwipeDeck cards={cards} />
       </Screen>
-    </Dark>
+    
   )
 }

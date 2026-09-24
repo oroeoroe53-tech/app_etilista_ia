@@ -40,6 +40,52 @@
   --danger: #a4483a;
   --love: #8a6a4f;
 
+  /*
+   * Materiales, como tokens y no como reglas gemelas.
+   *
+   * Antes cada uno tenía su `.on-dark .lo-que-sea` al lado. Con el modo oscuro
+   * del sistema eso se convertía en tres copias de lo mismo —clara, subárbol
+   * oscuro y preferencia del sistema— y la tercera que alguien olvidara
+   * actualizar sería un fallo invisible. Ahora la regla es una y lo que cambia
+   * es el token.
+   */
+  --lift-ink-face: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.16),
+    rgba(255, 255, 255, 0.02) 52%,
+    rgba(0, 0, 0, 0.16)
+  );
+  --lift-ink-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+    0 2px 4px rgba(20, 18, 12, 0.26), 0 10px 24px rgba(20, 18, 12, 0.2);
+
+  --lift-paper-face: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0) 55%,
+    rgba(21, 20, 15, 0.035)
+  );
+  --lift-paper-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 2px rgba(20, 18, 12, 0.07),
+    0 5px 14px rgba(20, 18, 12, 0.07);
+
+  --shadow-card: 0 2px 18px rgba(20, 18, 12, 0.07);
+  --shadow-card-soft: 0 2px 14px rgba(20, 18, 12, 0.055);
+
+  --photo-slot-stripes: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.05) 0 5px,
+    rgba(0, 0, 0, 0.014) 5px 10px
+  );
+
+  /* La atmósfera del fondo. Sobre negro tiene que bajar mucho o mancha. */
+  --page-light:
+    radial-gradient(90% 62% at 2% 0%, rgba(211, 168, 124, 0.5), transparent 74%),
+    radial-gradient(85% 58% at 100% 14%, rgba(182, 150, 160, 0.42), transparent 74%),
+    radial-gradient(95% 62% at 88% 64%, rgba(212, 194, 156, 0.44), transparent 76%),
+    radial-gradient(90% 60% at 0% 96%, rgba(190, 166, 146, 0.4), transparent 76%),
+    radial-gradient(75% 55% at 50% 44%, rgba(214, 196, 164, 0.26), transparent 80%);
+
   /* Margen lateral de pantalla. Una sola fuente para que las tiras que se
      sangran a pantalla completa vuelvan exactamente a la misma alineación. */
   --screen-gutter: 1.625rem; /* 26px */
@@ -52,6 +98,16 @@
  * marca que ahí no se decide qué ponerse, se mira sin prisa. Redefinir las
  * variables basta para que Button, Card, Chip y todo lo demás se inviertan
  * solos, sin una sola variante nueva.
+ */
+/*
+ * La paleta oscura.
+ *
+ * Se aplica desde dos sitios: la clase `.on-dark`, que oscurece un subárbol
+ * suelto, y la preferencia del sistema operativo más abajo. Las dos listas de
+ * asignaciones están duplicadas porque CSS no permite compartir un bloque entre
+ * un selector y una media query — pero no hay ninguna regla de componente
+ * duplicada, que es lo que de verdad se desajusta con el tiempo: aquí solo
+ * cambian tokens, y las reglas que los usan son las mismas para los dos modos.
  */
 .on-dark {
   --surface: #15140f;
@@ -66,8 +122,117 @@
   --accent: #f7f4ee;
   --accent-ink: #15140f;
 
+  /* La arcilla se aclara: sobre negro, la de la paleta clara se apaga y deja
+     de leerse como un aviso. */
+  --clay: #c9a178;
+  --clay-soft: #8a6a4f;
+  --danger: #d07b6c;
+  --love: #c9a178;
+
+  /* El primario es crema sobre tinta: la luz de arriba tiene que ser mucho más
+     marcada y la sombra de abajo casi desaparece. */
+  --lift-ink-face: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0) 52%,
+    rgba(0, 0, 0, 0.07)
+  );
+  --lift-ink-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.5), 0 10px 24px rgba(0, 0, 0, 0.35);
+
+  --lift-paper-face: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0) 55%,
+    rgba(0, 0, 0, 0.18)
+  );
+  --lift-paper-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 1px 2px rgba(0, 0, 0, 0.3);
+
+  /* Sobre negro una sombra proyectada no se ve; lo que da relieve es el borde. */
+  --shadow-card: none;
+  --shadow-card-soft: none;
+
+  --photo-slot-stripes: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.07) 0 5px,
+    rgba(255, 255, 255, 0.02) 5px 10px
+  );
+
+  --page-light:
+    radial-gradient(90% 62% at 2% 0%, rgba(211, 168, 124, 0.1), transparent 74%),
+    radial-gradient(85% 58% at 100% 14%, rgba(182, 150, 160, 0.08), transparent 74%),
+    radial-gradient(95% 62% at 88% 64%, rgba(212, 194, 156, 0.07), transparent 76%);
+
   color: var(--ink);
   background: var(--surface);
+}
+
+/*
+ * Y lo mismo cuando el teléfono está en modo oscuro.
+ *
+ * No hay interruptor dentro de la aplicación a propósito: quien pone el móvil
+ * en oscuro lo quiere en todo, y una aplicación que obliga a repetir esa
+ * decisión en sus ajustes está haciendo perder el tiempo.
+ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #15140f;
+      --surface-raised: #1d1b18;
+      --surface-sunken: #221f1b;
+
+      --ink: #f7f4ee;
+      --ink-soft: rgba(247, 244, 238, 0.55);
+      --ink-faint: rgba(247, 244, 238, 0.42);
+      --line: rgba(247, 244, 238, 0.14);
+
+      --accent: #f7f4ee;
+      --accent-ink: #15140f;
+
+    /* La arcilla se aclara: sobre negro, la de la paleta clara se apaga y deja
+       de leerse como un aviso. */
+      --clay: #c9a178;
+      --clay-soft: #8a6a4f;
+      --danger: #d07b6c;
+      --love: #c9a178;
+
+    /* El primario es crema sobre tinta: la luz de arriba tiene que ser mucho más
+       marcada y la sombra de abajo casi desaparece. */
+      --lift-ink-face: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0) 52%,
+      rgba(0, 0, 0, 0.07)
+    );
+      --lift-ink-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+      0 2px 4px rgba(0, 0, 0, 0.5), 0 10px 24px rgba(0, 0, 0, 0.35);
+
+      --lift-paper-face: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0) 55%,
+      rgba(0, 0, 0, 0.18)
+    );
+      --lift-paper-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 1px 2px rgba(0, 0, 0, 0.3);
+
+    /* Sobre negro una sombra proyectada no se ve; lo que da relieve es el borde. */
+      --shadow-card: none;
+      --shadow-card-soft: none;
+
+      --photo-slot-stripes: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.07) 0 5px,
+      rgba(255, 255, 255, 0.02) 5px 10px
+    );
+
+      --page-light:
+      radial-gradient(90% 62% at 2% 0%, rgba(211, 168, 124, 0.1), transparent 74%),
+      radial-gradient(85% 58% at 100% 14%, rgba(182, 150, 160, 0.08), transparent 74%),
+      radial-gradient(95% 62% at 88% 64%, rgba(212, 194, 156, 0.07), transparent 76%);
+  }
 }
 
 @theme inline {
@@ -159,12 +324,7 @@ body {
    */
   background-attachment: fixed;
   background-repeat: no-repeat;
-  background-image:
-    radial-gradient(90% 62% at 2% 0%, rgba(211, 168, 124, 0.5), transparent 74%),
-    radial-gradient(85% 58% at 100% 14%, rgba(182, 150, 160, 0.42), transparent 74%),
-    radial-gradient(95% 62% at 88% 64%, rgba(212, 194, 156, 0.44), transparent 76%),
-    radial-gradient(90% 60% at 0% 96%, rgba(190, 166, 146, 0.4), transparent 76%),
-    radial-gradient(75% 55% at 50% 44%, rgba(214, 196, 164, 0.26), transparent 80%);
+  background-image: var(--page-light);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
@@ -360,19 +520,7 @@ body::after {
  */
 .photo-slot {
   background-color: var(--surface-sunken);
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(0, 0, 0, 0.05) 0 5px,
-    rgba(0, 0, 0, 0.014) 5px 10px
-  );
-}
-
-.on-dark .photo-slot {
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0.07) 0 5px,
-    rgba(255, 255, 255, 0.02) 5px 10px
-  );
+  background-image: var(--photo-slot-stripes);
 }
 
 /* ---------------------------------------------------------------------------
@@ -381,11 +529,11 @@ body::after {
  * Dos, y muy bajas. Una tarjeta que flota demasiado deja de parecer papel.
  * ------------------------------------------------------------------------- */
 .shadow-card {
-  box-shadow: 0 2px 18px rgba(20, 18, 12, 0.07);
+  box-shadow: var(--shadow-card);
 }
 
 .shadow-card-soft {
-  box-shadow: 0 2px 14px rgba(20, 18, 12, 0.055);
+  box-shadow: var(--shadow-card-soft);
 }
 
 /*
@@ -407,12 +555,6 @@ body::after {
   box-shadow:
     0 2px 6px rgba(20, 18, 12, 0.18),
     0 10px 24px rgba(20, 18, 12, 0.22);
-}
-
-.on-dark .shadow-card,
-.on-dark .shadow-card-soft {
-  /* Sobre negro una sombra no se ve; lo que da relieve es el borde. */
-  box-shadow: none;
 }
 
 /* ---------------------------------------------------------------------------
@@ -472,35 +614,12 @@ body::after {
  * demás piezas y el botón secundario son papel levantado. No hay un tercero.
  * ------------------------------------------------------------------------- */
 .lift-ink {
-  background-image: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.16),
-    rgba(255, 255, 255, 0.02) 52%,
-    rgba(0, 0, 0, 0.16)
-  );
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.4),
-    0 2px 4px rgba(20, 18, 12, 0.26),
-    0 10px 24px rgba(20, 18, 12, 0.2);
+  background-image: var(--lift-ink-face);
+  box-shadow: var(--lift-ink-shadow);
 }
 
 /* Sobre tinta el primario es crema: la luz de arriba tiene que ser mucho más
    marcada, y la sombra de abajo casi desaparece. */
-.on-dark .lift-ink {
-  background-image: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.5),
-    rgba(255, 255, 255, 0) 52%,
-    rgba(0, 0, 0, 0.07)
-  );
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1),
-    0 2px 4px rgba(0, 0, 0, 0.5),
-    0 10px 24px rgba(0, 0, 0, 0.35);
-}
-
 /*
  * Papel levantado.
  *
@@ -511,28 +630,8 @@ body::after {
  */
 .lift-paper {
   background-color: var(--surface-raised);
-  background-image: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.9),
-    rgba(255, 255, 255, 0) 55%,
-    rgba(21, 20, 15, 0.035)
-  );
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    0 1px 2px rgba(20, 18, 12, 0.07),
-    0 5px 14px rgba(20, 18, 12, 0.07);
-}
-
-.on-dark .lift-paper {
-  background-image: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0) 55%,
-    rgba(0, 0, 0, 0.18)
-  );
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.09),
-    0 1px 2px rgba(0, 0, 0, 0.3);
+  background-image: var(--lift-paper-face);
+  box-shadow: var(--lift-paper-shadow);
 }
 
 /* ---------------------------------------------------------------------------
