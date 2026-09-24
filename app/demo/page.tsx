@@ -5,7 +5,7 @@ import { seasonOf } from '@/lib/outfits/filters'
 import { nameOutfit, explainFromHighlights } from '@/lib/outfits/name'
 import { describeGarment } from '@/lib/wardrobe/labels'
 import { TodayLook } from '@/components/home/TodayLook'
-import { HeaderLight, PhotoSlot } from '@/components/ui'
+import { PhotoSlot } from '@/components/ui'
 import Link from 'next/link'
 import { track } from '@/lib/observability/funnel'
 
@@ -51,7 +51,6 @@ export default function DemoHome() {
       style={{ paddingInline: 'var(--screen-gutter)' }}
     >
       <header className="relative flex items-start justify-between gap-4 pt-5">
-        <HeaderLight />
         <div className="relative min-w-0">
           <p className="eyebrow">
             {fecha} · {DEMO_WEATHER.city}

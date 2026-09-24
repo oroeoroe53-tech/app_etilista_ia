@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { cn } from '@/lib/utils/cn'
+import { HeaderLight } from './HeaderLight'
 
 export { Button } from './Button'
 export { Field, Select, TextInput, TextArea, ChipGroup, ScaleInput } from './Field'
@@ -49,10 +50,13 @@ export function PageTitle({
   action?: React.ReactNode
 }) {
   return (
-    <header className="pt-5 pb-5">
-      {eyebrow ? <p className="eyebrow mb-2.5">{eyebrow}</p> : null}
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="display text-[2rem]">{title}</h1>
+    <header className="relative pt-5 pb-5">
+      {/* La luz va aquí y no pantalla a pantalla: esta es la cabecera que
+          comparten Armario, Diario, Eventos y las demás. */}
+      <HeaderLight />
+      {eyebrow ? <p className="eyebrow relative mb-2.5">{eyebrow}</p> : null}
+      <div className="relative flex items-center justify-between gap-4">
+        <h1 className="display text-display">{title}</h1>
         {action ? <div className="shrink-0">{action}</div> : null}
       </div>
     </header>

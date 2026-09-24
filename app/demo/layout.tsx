@@ -16,7 +16,7 @@ export const metadata = {
  */
 export default function DemoLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="pb-[9.5rem]">
+    <div className="page-light pb-[10.5rem]">
       {/*
         Decir que es una demostración, y decirlo arriba.
         Enseñar ropa que no es tuya sin avisar de que no es tuya sería el tipo

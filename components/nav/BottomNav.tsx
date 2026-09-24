@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils/cn'
+import { NavIcon, type NavIconName } from './icons'
 
 /**
  * Navegación principal.
@@ -24,49 +25,17 @@ import { cn } from '@/lib/utils/cn'
 type Tab = {
   href: string
   label: string
-  /** Trazado del icono, sobre una caja de 24×24. */
-  path: string
+  icon: NavIconName
   /** El disco oscuro del centro. Solo uno. */
   primary?: boolean
 }
 
-/*
- * Los trazados son de línea, todos con el mismo grosor y la misma caja, para
- * que ninguno pese más que otro salvo el que debe.
- */
 const TABS: readonly Tab[] = [
-  {
-    href: '/',
-    label: 'Inicio',
-    path: 'M3 10.2 12 3.5l9 6.7V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
-  },
-  {
-    // Una percha: el único objeto que significa "armario" sin ambigüedad.
-    href: '/armario',
-    label: 'Armario',
-    path: 'M12 4.5a2 2 0 0 0-2 2c0 1 .8 1.7 2 2v2m0 0L3.6 16.1a1 1 0 0 0 .6 1.8h15.6a1 1 0 0 0 .6-1.8L12 10.5z',
-  },
-  {
-    /*
-     * Una chispa. No describe un outfit —nada lo hace en 24 píxeles— pero sí
-     * describe lo que pasa al pulsar, que es lo que importa en el botón que
-     * carga el gesto principal.
-     */
-    href: '/outfits',
-    label: 'Outfits',
-    path: 'M12 3.2l1.9 4.9 4.9 1.9-4.9 1.9L12 16.8l-1.9-4.9L5.2 10l4.9-1.9zM18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z',
-    primary: true,
-  },
-  {
-    href: '/social',
-    label: 'Social',
-    path: 'M9 11a3.4 3.4 0 1 0 0-6.8A3.4 3.4 0 0 0 9 11m7.2-.4a2.8 2.8 0 1 0 0-5.6M2.8 19.4c0-2.7 2.8-4.3 6.2-4.3s6.2 1.6 6.2 4.3M17 15.4c2.6.3 4.2 1.6 4.2 3.6',
-  },
-  {
-    href: '/perfil',
-    label: 'Perfil',
-    path: 'M12 11.8a3.9 3.9 0 1 0 0-7.8 3.9 3.9 0 0 0 0 7.8M4.8 20.4c0-3.2 3.2-5.2 7.2-5.2s7.2 2 7.2 5.2',
-  },
+  { href: '/', label: 'Inicio', icon: 'inicio' },
+  { href: '/armario', label: 'Armario', icon: 'armario' },
+  { href: '/outfits', label: 'Outfits', icon: 'outfits', primary: true },
+  { href: '/social', label: 'Social', icon: 'social' },
+  { href: '/perfil', label: 'Perfil', icon: 'perfil' },
 ] as const
 
 /**
@@ -92,22 +61,6 @@ function activeTab(pathname: string): string {
   return ''
 }
 
-function Icon({ path }: { path: string }) {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="h-[21px] w-[21px]"
-    >
-      <path d={path} />
-    </svg>
-  )
-}
 
 export function BottomNav() {
   const pathname = usePathname()
@@ -136,7 +89,7 @@ export function BottomNav() {
           'relative',
         )}
       >
-        {TABS.map(({ href, label, path, primary }) => {
+        {TABS.map(({ href, label, icon, primary }) => {
           const active = current === href
 
           if (primary) {
@@ -151,7 +104,7 @@ export function BottomNav() {
                     'press bg-accent text-accent-ink shadow-float-strong',
                   )}
                 >
-                  <Icon path={path} />
+                  <NavIcon name={icon} />
                 </Link>
               </li>
             )
@@ -169,7 +122,7 @@ export function BottomNav() {
                   active ? 'bg-sunken text-ink' : 'text-ink-faint',
                 )}
               >
-                <Icon path={path} />
+                <NavIcon name={icon} />
               </Link>
             </li>
           )

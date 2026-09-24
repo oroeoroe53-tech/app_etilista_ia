@@ -3,77 +3,73 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils/cn'
+import { NavIcon, type NavIconName } from '@/components/nav/icons'
 
 /**
  * Pie de la demostración.
  *
- * Dos franjas. Arriba la llamada, que es lo que esta pantalla existe para
- * conseguir. Debajo tres pestañas con la misma forma que las de la aplicación
- * de verdad, para que lo que se está viendo se lea como la aplicación y no
- * como un folleto sobre la aplicación.
+ * Dos piezas apiladas y las dos flotando: arriba la llamada, que es lo que esta
+ * pantalla existe para conseguir, y debajo la misma cápsula que lleva la
+ * aplicación de verdad, con los mismos iconos importados del mismo sitio.
+ *
+ * Eso último es el motivo de que esto exista. Quien está mirando sin cuenta
+ * tiene que estar viendo la aplicación, no un folleto sobre la aplicación; en
+ * cuanto las dos barras se parecen solo "de memoria", la primera se queda
+ * antigua y la demostración empieza a enseñar algo que ya no es verdad.
  *
  * La llamada dice "con tu ropa" y no "registrarse": lo que se ofrece es un
  * armario propio, no un formulario.
  */
-const TABS = [
-  { href: '/demo', label: 'Hoy' },
-  { href: '/demo/armario', label: 'Armario' },
-  { href: '/demo/looks', label: 'Looks' },
+const TABS: readonly { href: string; label: string; icon: NavIconName }[] = [
+  { href: '/demo', label: 'Hoy', icon: 'inicio' },
+  { href: '/demo/armario', label: 'Armario', icon: 'armario' },
+  { href: '/demo/looks', label: 'Looks', icon: 'outfits' },
 ] as const
 
 export function DemoBar() {
   const pathname = usePathname()
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40">
-      <Link
-        href="/register"
-        className="block bg-accent px-6 py-3.5 text-center text-accent-ink"
-      >
-        <span className="text-small font-medium tracking-[0.03em]">
-          Hacer esto con tu ropa
-        </span>
-        <span aria-hidden className="ml-2 text-small">
-          →
-        </span>
-      </Link>
+    <div
+      className="fixed inset-x-0 bottom-0 z-40"
+      style={{ paddingBottom: 'calc(14px + env(safe-area-inset-bottom))' }}
+    >
+      <div className="mx-auto flex w-[min(23rem,calc(100%-2rem))] flex-col gap-2.5">
+        <Link
+          href="/register"
+          className="press flex items-center justify-center rounded-full bg-accent px-6 py-3.5 text-accent-ink shadow-float-strong"
+        >
+          <span className="text-small font-medium tracking-[0.03em]">
+            Hacer esto con tu ropa
+          </span>
+          <span aria-hidden className="ml-2 text-small">
+            →
+          </span>
+        </Link>
 
-      <nav
-        aria-label="Demostración"
-        className="border-t border-line bg-surface"
-        style={{ paddingBottom: 'calc(20px + env(safe-area-inset-bottom))' }}
-      >
-        <ul className="mx-auto flex w-full max-w-[30rem] items-stretch px-6 pt-3">
-          {TABS.map(({ href, label }) => {
-            const active = pathname === href
-            return (
-              <li key={href} className="flex-1">
-                <Link
-                  href={href}
-                  aria-current={active ? 'page' : undefined}
-                  className="flex flex-col items-center gap-[5px] py-1"
-                >
-                  <span
-                    aria-hidden
+        <nav aria-label="Demostración">
+          <ul className="flex items-center justify-around rounded-full border border-line bg-raised px-2.5 py-2 shadow-float">
+            {TABS.map(({ href, label, icon }) => {
+              const active = pathname === href
+              return (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    aria-label={label}
+                    aria-current={active ? 'page' : undefined}
                     className={cn(
-                      'h-[5px] w-[5px] rounded-full',
-                      active ? 'bg-ink' : 'bg-transparent',
-                    )}
-                  />
-                  <span
-                    className={cn(
-                      'text-micro leading-none',
-                      active ? 'font-medium text-ink' : 'text-ink-faint',
+                      'flex h-[42px] w-[46px] items-center justify-center rounded-full transition-colors duration-200',
+                      active ? 'bg-sunken text-ink' : 'text-ink-faint',
                     )}
                   >
-                    {label}
-                  </span>
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-      </nav>
+                    <NavIcon name={icon} />
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </nav>
+      </div>
     </div>
   )
 }

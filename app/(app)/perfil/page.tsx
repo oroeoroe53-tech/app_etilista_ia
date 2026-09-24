@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/supabase/server'
-import { Screen, Meter } from '@/components/ui'
+import { HeaderLight, Screen, Meter } from '@/components/ui'
 import { checkEntitlement } from '@/lib/subscriptions/entitlements'
 import { PLAN_LABELS, formatPrice, type Feature } from '@/lib/subscriptions/plans'
 import { countIncoming } from '@/lib/loans/queries'
@@ -41,9 +41,10 @@ export default async function ProfilePage() {
 
   return (
     <Screen>
-      <header className="pt-5 pb-5">
-        <p className="eyebrow mb-2.5">Tu cuenta</p>
-        <div className="flex items-start justify-between gap-4">
+      <header className="relative pt-5 pb-5">
+        <HeaderLight />
+        <p className="eyebrow relative mb-2.5">Tu cuenta</p>
+        <div className="relative flex items-start justify-between gap-4">
           {/*
             El logotipo, que aquí es la única vez que la aplicación dice su
             propio nombre. En el resto de pantallas no hace falta: quien la
