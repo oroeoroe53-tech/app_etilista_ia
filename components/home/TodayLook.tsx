@@ -67,7 +67,7 @@ export function TodayLook({
     <article className="mt-5 rounded-[var(--radius-card)] bg-raised p-4 shadow-card">
       <div className="mb-3 flex items-baseline justify-between gap-3">
         <p className="eyebrow">Look de hoy</p>
-        <p className="text-[11px] whitespace-nowrap text-ink-faint">
+        <p className="text-small whitespace-nowrap text-ink-faint">
           {look.items.length} {look.items.length === 1 ? 'prenda' : 'prendas'}
           {look.match > 0 ? ` · ${look.match}%` : ''}
         </p>
@@ -97,10 +97,10 @@ export function TodayLook({
         ))}
       </div>
 
-      <h2 className="display mt-3.5 text-[20px] leading-[1.2]">{look.title}</h2>
+      <h2 className="display mt-3.5 text-lead leading-[1.2]">{look.title}</h2>
 
       {look.explanation ? (
-        <p className="mt-1.5 text-[11.5px] leading-[1.5] text-ink-soft">{look.explanation}</p>
+        <p className="mt-1.5 text-small leading-[1.5] text-ink-soft">{look.explanation}</p>
       ) : null}
 
       {/*
@@ -174,7 +174,7 @@ export function TodayLook({
       ) : null}
 
       {error ? (
-        <p role="alert" className="mt-2.5 text-[11px] text-danger">
+        <p role="alert" className="mt-2.5 text-small text-danger">
           No he podido apuntarlo. Inténtalo otra vez.
         </p>
       ) : null}

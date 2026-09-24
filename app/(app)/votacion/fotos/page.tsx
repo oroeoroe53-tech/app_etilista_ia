@@ -20,11 +20,11 @@ export default function NewPollPage() {
 
       <header className="pt-2 pb-6">
         <p className="eyebrow mb-2.5">Con fotos tuyas</p>
-        <h1 className="display text-[31px] leading-[1.06]">
+        <h1 className="display text-display leading-[1.06]">
           ¿Cuál
           <span className="display-italic"> me pongo?</span>
         </h1>
-        <p className="mt-3 text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="mt-3 text-small leading-[1.5] text-ink-soft">
           Para lo que tienes en la mano y el armario no conoce. Haz una foto de
           cada opción; quien la vea vota en dos toques.
         </p>

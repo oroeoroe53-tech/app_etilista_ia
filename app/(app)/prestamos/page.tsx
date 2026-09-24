@@ -39,7 +39,7 @@ export default async function LoansPage() {
 
       <header className="pt-2 pb-7">
         <p className="eyebrow mb-2.5">Entre vosotras</p>
-        <h1 className="display text-[31px] leading-[1.06]">
+        <h1 className="display text-display leading-[1.06]">
           Quién tiene
           <span className="display-italic block">qué</span>
         </h1>
@@ -61,7 +61,7 @@ export default async function LoansPage() {
                     type="submit"
                     name="decision"
                     value="accept"
-                    className="rounded-full bg-accent px-4 py-[9px] text-[11.5px] text-accent-ink"
+                    className="rounded-full bg-accent px-4 py-[9px] text-small text-accent-ink"
                   >
                     Se la dejo
                   </button>
@@ -72,7 +72,7 @@ export default async function LoansPage() {
                     type="submit"
                     name="decision"
                     value="decline"
-                    className="rounded-full border border-[color-mix(in_srgb,var(--ink)_16%,transparent)] px-4 py-[9px] text-[11.5px] text-ink-soft"
+                    className="rounded-full border border-[color-mix(in_srgb,var(--ink)_16%,transparent)] px-4 py-[9px] text-small text-ink-soft"
                   >
                     Ahora no
                   </button>
@@ -87,7 +87,7 @@ export default async function LoansPage() {
                 <input type="hidden" name="loanId" value={loan.id} />
                 <button
                   type="submit"
-                  className="rounded-full border border-[color-mix(in_srgb,var(--ink)_16%,transparent)] px-4 py-[9px] text-[11.5px] text-ink-soft"
+                  className="rounded-full border border-[color-mix(in_srgb,var(--ink)_16%,transparent)] px-4 py-[9px] text-small text-ink-soft"
                 >
                   Ya se la he devuelto
                 </button>
@@ -99,7 +99,7 @@ export default async function LoansPage() {
             {(loan) => (
               <form action={cancelLoan} className="mt-2">
                 <input type="hidden" name="loanId" value={loan.id} />
-                <button type="submit" className="py-1 text-[10.5px] text-ink-faint">
+                <button type="submit" className="py-1 text-micro text-ink-faint">
                   cancelar la petición
                 </button>
               </form>
@@ -112,7 +112,7 @@ export default async function LoansPage() {
                 <input type="hidden" name="loanId" value={loan.id} />
                 <button
                   type="submit"
-                  className="rounded-full border border-[color-mix(in_srgb,var(--ink)_16%,transparent)] px-4 py-[9px] text-[11.5px] text-ink-soft"
+                  className="rounded-full border border-[color-mix(in_srgb,var(--ink)_16%,transparent)] px-4 py-[9px] text-small text-ink-soft"
                 >
                   Ya me la ha devuelto
                 </button>
@@ -122,7 +122,7 @@ export default async function LoansPage() {
         </>
       )}
 
-      <p className="mt-10 border-t border-line pt-6 text-[10.5px] leading-[1.6] text-ink-faint">
+      <p className="mt-10 border-t border-line pt-6 text-micro leading-[1.6] text-ink-faint">
         Mientras una prenda tuya está prestada, no te la propongo: no puedes
         ponerte lo que no tienes en casa. Al volver queda como estaba.
       </p>
@@ -154,12 +154,12 @@ function Section({
               className="h-[74px] w-[58px] shrink-0 rounded-2xl"
             />
             <div className="min-w-0 flex-1">
-              <p className="display truncate text-[17px]">
+              <p className="display truncate text-lead">
                 {describeGarment(loan.itemLabel)}
               </p>
               <p className="mono mt-0.5 truncate text-ink-faint">{loan.otherName.toLowerCase()}</p>
               {loan.message ? (
-                <p className="mt-1 truncate text-[11px] text-ink-soft">«{loan.message}»</p>
+                <p className="mt-1 truncate text-small text-ink-soft">«{loan.message}»</p>
               ) : null}
               {children(loan)}
             </div>

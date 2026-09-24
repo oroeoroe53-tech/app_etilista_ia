@@ -55,14 +55,14 @@ export default function DemoHome() {
           <p className="eyebrow">
             {fecha} · {DEMO_WEATHER.city}
           </p>
-          <h1 className="display mt-2.5 text-[33px] leading-[1.05]">
+          <h1 className="display mt-2.5 text-display leading-[1.05]">
             Hoy te veo
             <span className="display-italic mt-0.5 block">
               {title ? `en ${title.charAt(0).toLowerCase()}${title.slice(1)}` : 'como tú quieras'}
             </span>
           </h1>
         </div>
-        <p className="shrink-0 pt-1 text-right text-[11px] leading-[1.5] text-ink-soft">
+        <p className="shrink-0 pt-1 text-right text-small leading-[1.5] text-ink-soft">
           {DEMO_WEATHER.temperatureC}°
           <span className="block">{DEMO_WEATHER.description}</span>
         </p>
@@ -91,17 +91,17 @@ export default function DemoHome() {
       >
         <span className="min-w-0">
           <span className="eyebrow block">Sin prisa</span>
-          <span className="display mt-1 block text-[18px]">Ver otras tres opciones</span>
+          <span className="display mt-1 block text-lead">Ver otras tres opciones</span>
         </span>
-        <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+        <span aria-hidden className="shrink-0 text-small text-ink-faint">
           →
         </span>
       </Link>
 
       <section className="mt-6">
         <div className="mb-3 flex items-baseline justify-between gap-4">
-          <h2 className="display text-[15px]">Este armario · {wardrobe.length}</h2>
-          <Link href="/demo/armario" className="text-[10.5px] whitespace-nowrap text-ink-faint">
+          <h2 className="display text-body">Este armario · {wardrobe.length}</h2>
+          <Link href="/demo/armario" className="text-micro whitespace-nowrap text-ink-faint">
             ver todo
           </Link>
         </div>
@@ -119,7 +119,7 @@ export default function DemoHome() {
         </ul>
       </section>
 
-      <p className="mt-7 border-l-2 border-line pl-3.5 text-[11.5px] leading-[1.5] text-ink-soft">
+      <p className="mt-7 border-l-2 border-line pl-3.5 text-small leading-[1.5] text-ink-soft">
         Este look no está elegido a mano: lo ha compuesto el mismo motor que usa
         la aplicación, con las prendas de este armario, para hoy y para 18 grados.
       </p>

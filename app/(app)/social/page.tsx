@@ -94,11 +94,11 @@ export default async function SocialPage() {
       {/* --- La racha -------------------------------------------------------- */}
       <section className="flex items-center gap-4 rounded-[var(--radius-card)] bg-raised p-4 shadow-card">
         <div className="text-center">
-          <p className="display text-[44px] leading-[0.9] tabular-nums">{streak}</p>
+          <p className="display text-display-l leading-[0.9] tabular-nums">{streak}</p>
           <p className="eyebrow mt-1.5">{streak === 1 ? 'día' : 'días'}</p>
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[12.5px] leading-[1.45]">
+          <p className="text-small leading-[1.45]">
             {streak === 0
               ? 'Ponte hoy lo que te proponga y empieza la cuenta.'
               : 'Poniéndote lo que te propongo.'}{' '}
@@ -135,8 +135,8 @@ export default async function SocialPage() {
                 className="w-[158px] shrink-0 rounded-[24px] bg-raised p-3 shadow-card-soft"
               >
                 <div className="photo-slot h-[92px] rounded-[14px]" />
-                <p className="display mt-2.5 text-[17px] leading-[1.15]">{poll.ownerName}</p>
-                <p className="mt-1 truncate text-[10.5px] text-ink-soft">
+                <p className="display mt-2.5 text-lead leading-[1.15]">{poll.ownerName}</p>
+                <p className="mt-1 truncate text-micro text-ink-soft">
                   {poll.question ?? `${poll.options} opciones`}
                 </p>
                 <Countdown closesAt={poll.closesAt} onZeroRefresh={false} className="mt-2 block" />
@@ -161,10 +161,10 @@ export default async function SocialPage() {
               className="h-[86px] w-[68px] shrink-0 rounded-2xl"
             />
             <span className="min-w-0 flex-1 self-center">
-              <span className="display block truncate text-[19px]">
+              <span className="display block truncate text-lead">
                 {describeGarment(olvidada)}
               </span>
-              <span className="mt-1 block text-[11px] leading-[1.45] text-ink-soft">
+              <span className="mt-1 block text-small leading-[1.45] text-ink-soft">
                 {neglectMessage(olvidada, describeGarment(olvidada))}
               </span>
             </span>

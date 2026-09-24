@@ -101,7 +101,7 @@ export function WardrobeFilters({
       {hasAnyFilter(filters) ? (
         <Link
           href={pathname}
-          className="inline-block pt-1 text-[10.5px] text-ink-faint underline underline-offset-4"
+          className="inline-block pt-1 text-micro text-ink-faint underline underline-offset-4"
         >
           Quitar filtros
         </Link>
@@ -137,7 +137,7 @@ function Chip({
       aria-current={active ? 'true' : undefined}
       className={cn(
         'inline-flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-[9px]',
-        'text-[11.5px] font-medium whitespace-nowrap transition-colors',
+        'text-small font-medium whitespace-nowrap transition-colors',
         active
           ? 'border-accent bg-accent text-accent-ink'
           : 'border-[color-mix(in_srgb,var(--ink)_16%,transparent)] text-ink-soft',

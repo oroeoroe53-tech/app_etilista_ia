@@ -182,14 +182,14 @@ export default async function DiaryPage({
                     />
                   ) : null}
                   <span
-                    className={`absolute top-0.5 left-1 text-[9px] tabular-nums ${
+                    className={`absolute top-0.5 left-1 text-micro tabular-nums ${
                       url ? 'text-white/90 drop-shadow' : 'text-ink-faint'
                     }`}
                   >
                     {day}
                   </span>
                   {worn && worn.length > 1 ? (
-                    <span className="absolute right-1 bottom-0.5 text-[9px] text-white/90 drop-shadow">
+                    <span className="absolute right-1 bottom-0.5 text-micro text-white/90 drop-shadow">
                       +{worn.length - 1}
                     </span>
                   ) : null}

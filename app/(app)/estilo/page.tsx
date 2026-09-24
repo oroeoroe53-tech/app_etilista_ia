@@ -102,7 +102,7 @@ export default async function StylePage() {
                   style={{ backgroundColor: COLOR_SWATCHES[color] ?? '#999' }}
                   aria-hidden
                 />
-                <span className="text-[10px] text-ink-faint">{colorLabel(color)}</span>
+                <span className="text-micro text-ink-faint">{colorLabel(color)}</span>
               </li>
             ))}
           </ul>
@@ -110,14 +110,14 @@ export default async function StylePage() {
 
         <div className="space-y-1">
           {portrait.lines.map((line) => (
-            <p key={line} className="text-[13px] leading-[1.7] text-ink-soft">
+            <p key={line} className="text-small leading-[1.7] text-ink-soft">
               {line}
             </p>
           ))}
         </div>
 
         {portrait.caveat ? (
-          <p className="mt-5 border-l-2 border-line pl-3.5 text-[11.5px] leading-[1.5] text-ink-soft">
+          <p className="mt-5 border-l-2 border-line pl-3.5 text-small leading-[1.5] text-ink-soft">
             {portrait.caveat}
           </p>
         ) : null}
@@ -126,7 +126,7 @@ export default async function StylePage() {
       {level !== 'established' ? (
         <section className="mb-9">
           <p className="eyebrow mb-3">Cómo afinarlo</p>
-          <ul className="space-y-2.5 text-[11.5px] leading-[1.5] text-ink-soft">
+          <ul className="space-y-2.5 text-small leading-[1.5] text-ink-soft">
             <Tip href="/onboarding">Analiza más fotos de looks que ya lleves.</Tip>
             <Tip href="/armario">Corrige las prendas que no describí bien.</Tip>
             <Tip href="/outfits/swipe">Valora combinaciones y dime cuáles no van contigo.</Tip>
@@ -138,7 +138,7 @@ export default async function StylePage() {
       {gaps.length > 0 ? (
         <section className="mb-9">
           <p className="eyebrow mb-3">Lo que te falta</p>
-          <p className="mb-4 text-[11.5px] leading-[1.5] text-ink-soft">
+          <p className="mb-4 text-small leading-[1.5] text-ink-soft">
             No es una lista de la compra: son las piezas que impiden que lo que ya
             tienes funcione del todo.
           </p>
@@ -149,8 +149,8 @@ export default async function StylePage() {
                 key={`${gap.kind}-${gap.title}`}
                 className="rounded-[20px] border border-line p-4"
               >
-                <p className="display text-[17px]">{gap.title}</p>
-                <p className="mt-1.5 mb-3 text-[11.5px] leading-[1.5] text-ink-soft">
+                <p className="display text-lead">{gap.title}</p>
+                <p className="mt-1.5 mb-3 text-small leading-[1.5] text-ink-soft">
                   {gap.detail}
                 </p>
                 <Meter
@@ -168,7 +168,7 @@ export default async function StylePage() {
       {/* --- Colores que no me pongo ---------------------------------------- */}
       <section>
         <p className="eyebrow mb-3">Colores que no me pongo</p>
-        <p className="mb-4 text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="mb-4 text-small leading-[1.5] text-ink-soft">
           Esto manda sobre lo que yo deduzca. Si marcas un color aquí, no te lo propondré
           aunque lo tengas en el armario.
         </p>

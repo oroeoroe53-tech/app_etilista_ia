@@ -21,11 +21,11 @@ export default function NewPollPage() {
 
       <header className="pt-2 pb-7">
         <p className="eyebrow mb-2.5">Lo monta tu estilista</p>
-        <h1 className="display text-[32px] leading-[1.02]">
+        <h1 className="display text-display leading-[1.02]">
           ¿Cuál
           <span className="display-italic"> me pongo?</span>
         </h1>
-        <p className="mt-3 text-[12px] leading-[1.5] text-ink-soft">
+        <p className="mt-3 text-small leading-[1.5] text-ink-soft">
           Tres looks con tu ropa de verdad, para el tiempo que hace hoy. Tú solo
           eliges para qué es y cuánto tiempo tienes.
         </p>

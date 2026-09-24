@@ -80,8 +80,8 @@ export default async function OutfitsPage() {
       <Link href="/outfits/que-me-pongo" className="block">
         <div className="rounded-[24px] bg-accent p-5 text-accent-ink">
           <p className="eyebrow text-accent-ink/55">Ahora mismo</p>
-          <p className="display mt-2 text-[26px]">¿Qué me pongo?</p>
-          <p className="mt-2 text-[11.5px] leading-[1.5] opacity-70">
+          <p className="display mt-2 text-display-s">¿Qué me pongo?</p>
+          <p className="mt-2 text-small leading-[1.5] opacity-70">
             Dime la ocasión y el tiempo. Yo pongo el resto.
           </p>
         </div>
@@ -90,8 +90,8 @@ export default async function OutfitsPage() {
       <Link href="/outfits/swipe" className="mt-3.5 block">
         <div className="rounded-[24px] border border-line p-5">
           <p className="eyebrow">Sin prisa</p>
-          <p className="display mt-2 text-[26px]">¿Te pondrías esto?</p>
-          <p className="mt-2 text-[11.5px] leading-[1.5] text-ink-soft">
+          <p className="display mt-2 text-display-s">¿Te pondrías esto?</p>
+          <p className="mt-2 text-small leading-[1.5] text-ink-soft">
             Valora combinaciones y aprendo qué va contigo.
           </p>
         </div>
@@ -122,7 +122,7 @@ export default async function OutfitsPage() {
           }
         />
       ) : history.length === 0 ? (
-        <p className="py-10 text-center text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="py-10 text-center text-small leading-[1.5] text-ink-soft">
           Todavía no te he propuesto nada. Pulsa arriba y vemos qué te pones.
         </p>
       ) : (
@@ -145,17 +145,17 @@ export default async function OutfitsPage() {
                       className="h-16 w-[52px] shrink-0 rounded-[10px]"
                     />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[13px] text-ink">
+                      <span className="block truncate text-small text-ink">
                         {formatDate(row.created_at)}
                         {row.context?.temperature_c != null
                           ? ` · ${Math.round(row.context.temperature_c)}°`
                           : ''}
                       </span>
-                      <span className="mt-0.5 block truncate text-[11px] text-ink-soft">
+                      <span className="mt-0.5 block truncate text-small text-ink-soft">
                         {row.context?.title ?? row.explanation ?? 'Tres opciones'}
                       </span>
                     </span>
-                    <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+                    <span aria-hidden className="shrink-0 text-small text-ink-faint">
                       →
                     </span>
                   </Link>

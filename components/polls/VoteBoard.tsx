@@ -77,7 +77,7 @@ export function VoteBoard({
                 {showResults ? (
                   <span className="min-w-0 flex-1 self-center">
                     <span className="flex items-baseline justify-between gap-3">
-                      <span className="display truncate text-[19px]">
+                      <span className="display truncate text-lead">
                         {option.name ?? option.label ?? `Opción ${option.position}`}
                       </span>
                       <span className="mono tabular-nums text-ink">{option.share}%</span>
@@ -92,7 +92,7 @@ export function VoteBoard({
                       />
                     </span>
 
-                    <span className="mt-1.5 block truncate text-[10.5px] text-ink-soft">
+                    <span className="mt-1.5 block truncate text-micro text-ink-soft">
                       {option.votes === 0
                         ? 'sin votos'
                         : option.voters.join(', ')}
@@ -102,12 +102,12 @@ export function VoteBoard({
                 ) : (
                   <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-2.5">
                     <span className="min-w-0">
-                      <span className="mono inline-block rounded-full bg-[rgba(21,20,15,.55)] px-2 py-1 text-[9px] text-[#f7f4ee]">
+                      <span className="mono inline-block rounded-full bg-[rgba(21,20,15,.55)] px-2 py-1 text-micro text-[#f7f4ee]">
                         {option.name ?? option.label ?? String(option.position)}
                       </span>
                     </span>
                     {chosen ? (
-                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-[12px] text-accent-ink">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-small text-accent-ink">
                         ✓
                       </span>
                     ) : null}
@@ -130,7 +130,7 @@ export function VoteBoard({
         <ul className="mt-4 space-y-1.5">
           {poll.options.map((option) =>
             option.why ? (
-              <li key={option.id} className="flex gap-2 text-[11px] leading-[1.45] text-ink-soft">
+              <li key={option.id} className="flex gap-2 text-small leading-[1.45] text-ink-soft">
                 <span className="mono shrink-0 text-ink-faint">{option.position}</span>
                 <span className="min-w-0">{option.why}</span>
               </li>
@@ -144,7 +144,7 @@ export function VoteBoard({
         <ul className="mt-6">
           {poll.comments.map((comment, index) => (
             <li key={index} className="border-t border-line py-3 last:border-b">
-              <p className="text-[12px] leading-[1.5]">{comment.text}</p>
+              <p className="text-small leading-[1.5]">{comment.text}</p>
               <p className="mono mt-1 text-ink-faint">
                 {comment.name.toLowerCase()} · opción {comment.optionPosition}
               </p>
@@ -161,7 +161,7 @@ export function VoteBoard({
               Crear cuenta y votar
             </Button>
           </Link>
-          <p className="mt-3 text-center text-[10.5px] leading-[1.6] text-ink-faint">
+          <p className="mt-3 text-center text-micro leading-[1.6] text-ink-faint">
             Hace falta cuenta para que cada persona vote una vez. Al terminar
             vuelves aquí.
           </p>
@@ -198,7 +198,7 @@ export function VoteBoard({
         <button
           type="button"
           onClick={() => setChanging(true)}
-          className="mt-6 w-full py-2 text-center text-[11.5px] text-ink-soft underline underline-offset-4"
+          className="mt-6 w-full py-2 text-center text-small text-ink-soft underline underline-offset-4"
         >
           Cambiar mi voto
         </button>

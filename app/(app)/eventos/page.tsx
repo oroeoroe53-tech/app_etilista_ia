@@ -33,7 +33,7 @@ export default async function EventsPage() {
 
       <header className="pt-2 pb-7">
         <p className="eyebrow mb-2.5">Con gente</p>
-        <h1 className="display text-[31px] leading-[1.06]">
+        <h1 className="display text-display leading-[1.06]">
           Eventos
           <span className="display-italic block">y quién va de qué</span>
         </h1>
@@ -61,7 +61,7 @@ export default async function EventsPage() {
                   className="flex items-center justify-between gap-4 border-t border-line py-4 last:border-b"
                 >
                   <span className="min-w-0">
-                    <span className="display block truncate text-[19px]">{event.title}</span>
+                    <span className="display block truncate text-lead">{event.title}</span>
                     <span className="mono mt-1 block truncate text-ink-faint">
                       {formatEventDate(event.heldOn)}
                       {event.place ? ` · ${event.place}` : ''} · {event.guests}{' '}
@@ -70,11 +70,11 @@ export default async function EventsPage() {
                   </span>
 
                   {event.pendingOutfit ? (
-                    <span className="mono shrink-0 rounded-full bg-clay px-2 py-[3px] text-[9px] text-[#f7f4ee]">
+                    <span className="mono shrink-0 rounded-full bg-clay px-2 py-[3px] text-micro text-[#f7f4ee]">
                       falta lo tuyo
                     </span>
                   ) : (
-                    <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+                    <span aria-hidden className="shrink-0 text-small text-ink-faint">
                       →
                     </span>
                   )}

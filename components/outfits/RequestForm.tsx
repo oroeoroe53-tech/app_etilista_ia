@@ -71,8 +71,8 @@ export function RequestForm({ weather, hasLocation }: RequestFormProps) {
         {useAuto && weather ? (
           <div className="flex items-center justify-between rounded-[22px] bg-raised p-4 shadow-card-soft">
             <div>
-              <p className="display text-[20px]">{Math.round(weather.temperatureC)}°</p>
-              <p className="mt-0.5 text-[11.5px] text-ink-soft">
+              <p className="display text-lead">{Math.round(weather.temperatureC)}°</p>
+              <p className="mt-0.5 text-small text-ink-soft">
                 {weather.description.toLowerCase()}
                 {weather.city ? ` · ${weather.city}` : ''}
               </p>
@@ -80,7 +80,7 @@ export function RequestForm({ weather, hasLocation }: RequestFormProps) {
             <button
               type="button"
               onClick={() => setEditingWeather(true)}
-              className="text-[11.5px] text-ink-soft underline underline-offset-4"
+              className="text-small text-ink-soft underline underline-offset-4"
             >
               Cambiar
             </button>
@@ -91,8 +91,8 @@ export function RequestForm({ weather, hasLocation }: RequestFormProps) {
 
             <div>
               <div className="mb-1.5 flex items-baseline justify-between">
-                <span className="text-[12px] text-ink-soft">Temperatura</span>
-                <span className="display text-[20px]">{manualTemp}°</span>
+                <span className="text-small text-ink-soft">Temperatura</span>
+                <span className="display text-lead">{manualTemp}°</span>
               </div>
               <input
                 type="range"
@@ -106,7 +106,7 @@ export function RequestForm({ weather, hasLocation }: RequestFormProps) {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-[12px] text-ink-soft">Está lloviendo</span>
+              <span className="text-small text-ink-soft">Está lloviendo</span>
               <Toggle
                 checked={manualRain}
                 onChange={setManualRain}
@@ -118,7 +118,7 @@ export function RequestForm({ weather, hasLocation }: RequestFormProps) {
               <button
                 type="button"
                 onClick={() => setEditingWeather(false)}
-                className="text-[11.5px] text-ink-soft underline underline-offset-4"
+                className="text-small text-ink-soft underline underline-offset-4"
               >
                 Usar el tiempo real ({Math.round(weather.temperatureC)}°)
               </button>
@@ -139,7 +139,7 @@ export function RequestForm({ weather, hasLocation }: RequestFormProps) {
               aria-pressed={formality === n}
               aria-label={FORMALITY_LABELS[n]}
               className={cn(
-                'display flex-1 rounded-[14px] border py-2.5 text-[17px] transition-colors',
+                'display flex-1 rounded-[14px] border py-2.5 text-lead transition-colors',
                 formality === n
                   ? 'border-accent bg-accent text-accent-ink'
                   : 'border-line text-ink-soft',
@@ -149,7 +149,7 @@ export function RequestForm({ weather, hasLocation }: RequestFormProps) {
             </button>
           ))}
         </div>
-        <div className="mt-2 flex justify-between text-[10.5px] text-ink-faint">
+        <div className="mt-2 flex justify-between text-micro text-ink-faint">
           <span>{FORMALITY_LABELS[1]}</span>
           <span>{FORMALITY_LABELS[5]}</span>
         </div>
@@ -234,13 +234,13 @@ function LocationSetup() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Madrid, Valencia…"
           aria-label="Tu ciudad"
-          className="h-10 min-w-0 flex-1 rounded-full border border-line bg-transparent px-4 text-[13px] text-ink outline-none placeholder:text-ink-faint focus:border-ink-soft"
+          className="h-10 min-w-0 flex-1 rounded-full border border-line bg-transparent px-4 text-small text-ink outline-none placeholder:text-ink-faint focus:border-ink-soft"
         />
         <Button type="button" variant="secondary" size="sm" disabled={busy} onClick={save}>
           {busy ? '…' : 'Guardar'}
         </Button>
       </div>
-      <p className="mt-2 text-[10.5px] text-ink-faint">
+      <p className="mt-2 text-micro text-ink-faint">
         {status ?? 'Para no tener que preguntarte el tiempo cada vez.'}
       </p>
     </div>

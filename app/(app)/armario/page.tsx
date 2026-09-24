@@ -145,7 +145,7 @@ export default async function WardrobePage({
       />
 
       {porRevisar > 0 && !hasAnyFilter(filters) ? (
-        <p className="mb-5 rounded-[18px] border border-line px-4 py-3 text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="mb-5 rounded-[18px] border border-line px-4 py-3 text-small leading-[1.5] text-ink-soft">
           {porRevisar === 1
             ? 'Hay una prenda que no vi con claridad. Échale un vistazo cuando puedas.'
             : `Hay ${porRevisar} prendas que no vi con claridad. Échales un vistazo cuando puedas.`}
@@ -170,7 +170,7 @@ export default async function WardrobePage({
               <section key={layer}>
                 <div className="mb-2.5 flex items-baseline justify-between gap-4">
                   <h2 className="eyebrow">{LAYER_LABELS[layer] ?? layer}</h2>
-                  <span className="text-[11px] text-ink-faint">
+                  <span className="text-small text-ink-faint">
                     {items.length} {items.length === 1 ? 'prenda' : 'prendas'}
                   </span>
                 </div>
@@ -192,10 +192,10 @@ export default async function WardrobePage({
                             label={nombre}
                             className="h-[118px] w-full rounded-[14px]"
                           />
-                          <p className="mt-1.5 truncate text-[11px] leading-[1.3] text-ink">
+                          <p className="mt-1.5 line-clamp-2 text-small leading-[1.3] text-ink">
                             {nombre}
                           </p>
-                          <p className="text-[10px] leading-[1.3] text-ink-faint">
+                          <p className="text-micro leading-[1.3] text-ink-faint">
                             {!item.is_available
                               ? 'guardada'
                               : item.times_worn === 0

@@ -13,7 +13,7 @@ export default function NewEventPage() {
 
       <header className="pt-2 pb-7">
         <p className="eyebrow mb-2.5">Que no vayáis iguales</p>
-        <h1 className="display text-[31px] leading-[1.06]">
+        <h1 className="display text-display leading-[1.06]">
           Un evento
           <span className="display-italic block">con las que van</span>
         </h1>

@@ -35,7 +35,7 @@ export default function DemoWardrobe() {
             <section key={layer}>
               <div className="mb-2.5 flex items-baseline justify-between gap-4">
                 <h2 className="eyebrow">{LAYER_LABELS[layer] ?? layer}</h2>
-                <span className="text-[11px] text-ink-faint">
+                <span className="text-small text-ink-faint">
                   {items.length} {items.length === 1 ? 'prenda' : 'prendas'}
                 </span>
               </div>
@@ -51,10 +51,10 @@ export default function DemoWardrobe() {
                         label={nombre}
                         className="h-[118px] w-full rounded-[14px]"
                       />
-                      <p className="mt-1.5 truncate text-[11px] leading-[1.3] text-ink">
+                      <p className="mt-1.5 line-clamp-2 text-small leading-[1.3] text-ink">
                         {nombre}
                       </p>
-                      <p className="text-[10px] leading-[1.3] text-ink-faint">
+                      <p className="text-micro leading-[1.3] text-ink-faint">
                         {item.times_worn === 0
                           ? 'sin estrenar'
                           : `${item.times_worn} ${item.times_worn === 1 ? 'uso' : 'usos'}`}
@@ -68,7 +68,7 @@ export default function DemoWardrobe() {
         })}
       </div>
 
-      <p className="mt-8 border-l-2 border-line pl-3.5 text-[11.5px] leading-[1.5] text-ink-soft">
+      <p className="mt-8 border-l-2 border-line pl-3.5 text-small leading-[1.5] text-ink-soft">
         Un armario así no se teclea prenda a prenda: sale de cinco o seis fotos de
         looks que ya llevas puestos. De eso se encarga la aplicación.
       </p>

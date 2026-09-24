@@ -44,7 +44,7 @@ export function OutfitCard({ outfit, index }: { outfit: OutfitView; index: numbe
       <div className="mb-3 flex items-baseline justify-between gap-3">
         <p className="eyebrow">Look {index + 1}</p>
         {outfit.match > 0 ? (
-          <p className="text-[11px] whitespace-nowrap text-ink-faint">{outfit.match}% match</p>
+          <p className="text-small whitespace-nowrap text-ink-faint">{outfit.match}% match</p>
         ) : null}
       </div>
 
@@ -60,10 +60,10 @@ export function OutfitCard({ outfit, index }: { outfit: OutfitView; index: numbe
         ))}
       </div>
 
-      <h2 className="display mt-3.5 text-[19px] leading-[1.2]">{outfit.title}</h2>
+      <h2 className="display mt-3.5 text-lead leading-[1.2]">{outfit.title}</h2>
 
       {outfit.explanation ? (
-        <p className="mt-1.5 text-[11.5px] leading-[1.5] text-ink-soft">{outfit.explanation}</p>
+        <p className="mt-1.5 text-small leading-[1.5] text-ink-soft">{outfit.explanation}</p>
       ) : null}
 
       <div className="mt-4 flex gap-2.5">

@@ -31,11 +31,11 @@ export default async function DuelsPage() {
 
       <header className="pt-2 pb-7">
         <p className="eyebrow mb-2.5">A ciegas</p>
-        <h1 className="display text-[31px] leading-[1.06]">
+        <h1 className="display text-display leading-[1.06]">
           Duelo de
           <span className="display-italic block">armarios</span>
         </h1>
-        <p className="mt-3 text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="mt-3 text-small leading-[1.5] text-ink-soft">
           Tu estilista monta un look con tu ropa, ella con la suya, y vuestro
           círculo vota sin saber cuál es de quién.
         </p>
@@ -52,7 +52,7 @@ export default async function DuelsPage() {
                   className="flex items-center justify-between gap-4 border-t border-line py-3.5 last:border-b"
                 >
                   <span className="min-w-0">
-                    <span className="display block truncate text-[17px]">
+                    <span className="display block truncate text-lead">
                       {duel.otherName}
                     </span>
                     <span className="mono mt-0.5 block truncate text-ink-faint">
@@ -60,11 +60,11 @@ export default async function DuelsPage() {
                     </span>
                   </span>
                   {duel.needsAnswer ? (
-                    <span className="mono shrink-0 rounded-full bg-clay px-2 py-[3px] text-[9px] text-[#f7f4ee]">
+                    <span className="mono shrink-0 rounded-full bg-clay px-2 py-[3px] text-micro text-[#f7f4ee]">
                       te retan
                     </span>
                   ) : (
-                    <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+                    <span aria-hidden className="shrink-0 text-small text-ink-faint">
                       →
                     </span>
                   )}

@@ -41,7 +41,7 @@ export default async function SharedWardrobePage({
 
       <header className="pt-2 pb-6">
         <p className="eyebrow mb-2.5">Te deja verlo</p>
-        <h1 className="display text-[31px] leading-[1.06]">
+        <h1 className="display text-display leading-[1.06]">
           El armario
           <span className="display-italic block">de {wardrobe.ownerName}</span>
         </h1>
@@ -51,7 +51,7 @@ export default async function SharedWardrobePage({
       </header>
 
       {wardrobe.items.length === 0 ? (
-        <p className="py-16 text-center text-[11.5px] text-ink-soft">
+        <p className="py-16 text-center text-small text-ink-soft">
           Su armario todavía está vacío.
         </p>
       ) : (
@@ -70,7 +70,7 @@ export default async function SharedWardrobePage({
                     label={label}
                     className="aspect-[3/4] rounded-[var(--radius-card)]"
                   />
-                  <p className="mt-1.5 truncate text-[11.5px]">{label}</p>
+                  <p className="mt-1.5 truncate text-small">{label}</p>
                   <p className="mono mt-0.5 truncate text-ink-faint">
                     {item.onLoan
                       ? 'prestada ahora'
@@ -85,7 +85,7 @@ export default async function SharedWardrobePage({
         </ul>
       )}
 
-      <p className="mt-10 border-t border-line pt-6 text-[10.5px] leading-[1.6] text-ink-faint">
+      <p className="mt-10 border-t border-line pt-6 text-micro leading-[1.6] text-ink-faint">
         Ves su armario porque te ha dado permiso, y lo verás mientras quiera.
         Nada de esto entra en el tuyo ni cambia lo que te propongo a ti.
       </p>

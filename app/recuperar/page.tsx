@@ -18,18 +18,18 @@ export default function RecoverPage() {
     >
       <header className="mb-9">
         <p className="eyebrow mb-3">Estilista</p>
-        <h1 className="display text-[33px] leading-[1.05]">
+        <h1 className="display text-display leading-[1.05]">
           No pasa nada
           <span className="display-italic block">te mando un enlace</span>
         </h1>
-        <p className="mt-3.5 text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="mt-3.5 text-small leading-[1.5] text-ink-soft">
           Tu armario sigue donde estaba. Solo hay que poner una contraseña nueva.
         </p>
       </header>
 
       <RecoverForm />
 
-      <p className="mt-7 text-center text-[11.5px] text-ink-soft">
+      <p className="mt-7 text-center text-small text-ink-soft">
         <Link href="/login" className="underline underline-offset-4">
           Me he acordado, quiero entrar
         </Link>

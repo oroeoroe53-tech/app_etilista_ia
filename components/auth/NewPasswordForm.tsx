@@ -38,7 +38,7 @@ export function NewPasswordForm() {
         />
       </label>
 
-      <p className="text-[10.5px] leading-[1.5] text-ink-faint">
+      <p className="text-micro leading-[1.5] text-ink-faint">
         Ocho caracteres como mínimo. Al guardarla entras directamente.
       </p>
 

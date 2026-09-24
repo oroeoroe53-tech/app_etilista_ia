@@ -23,12 +23,12 @@ export function RecoverForm() {
     return (
       <div className="rounded-[22px] bg-raised p-5 shadow-card-soft">
         <p className="eyebrow mb-2">Enviado</p>
-        <p className="display text-[20px]">Revisa tu correo</p>
-        <p className="mt-2 text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="display text-lead">Revisa tu correo</p>
+        <p className="mt-2 text-small leading-[1.5] text-ink-soft">
           Si esa dirección tiene cuenta, acaba de salir un enlace para poner una
           contraseña nueva. Caduca en una hora.
         </p>
-        <p className="mt-3 text-[10.5px] leading-[1.5] text-ink-faint">
+        <p className="mt-3 text-micro leading-[1.5] text-ink-faint">
           Si no llega en unos minutos, mira en spam antes de volver a pedirlo.
         </p>
         <div className="mt-5">

@@ -38,11 +38,11 @@ export default async function OnboardingPage() {
     >
       <header className="pt-12 pb-7">
         <p className="eyebrow mb-3">Primer paso</p>
-        <h1 className="display mb-4 text-[33px] leading-[1.05]">
+        <h1 className="display mb-4 text-display leading-[1.05]">
           Enséñame
           <span className="display-italic block">cómo vistes</span>
         </h1>
-        <p className="text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="text-small leading-[1.5] text-ink-soft">
           Sube entre {min} y {max} fotos de looks que ya hayas llevado. Valen las del
           espejo, las de un viaje o las de hace dos años. No tienen que ser buenas fotos.
         </p>
@@ -50,7 +50,7 @@ export default async function OnboardingPage() {
 
       <PhotoUploader min={min} max={max} />
 
-      <ul className="mt-9 space-y-2.5 text-[11.5px] leading-[1.5] text-ink-soft">
+      <ul className="mt-9 space-y-2.5 text-small leading-[1.5] text-ink-soft">
         <Point>Identificaré las prendas que aparecen.</Point>
         <Point>Agruparé las que se repitan entre fotos.</Point>
         <Point>Con eso montaré tu armario inicial.</Point>
@@ -60,7 +60,7 @@ export default async function OnboardingPage() {
         El momento exacto en el que alguien duda. Decirle aquí que las fotos se
         borran solas vale más que decírselo en cualquier otra pantalla.
       */}
-      <p className="mt-7 text-[10.5px] leading-[1.6] text-ink-faint">
+      <p className="mt-7 text-micro leading-[1.6] text-ink-faint">
         Tus fotos son privadas y no se comparten con nadie. En cuanto termino de
         leerlas, <span className="text-ink-soft">el original se borra solo</span>:
         me quedo con el recorte de cada prenda, no con la foto.{' '}
@@ -71,7 +71,7 @@ export default async function OnboardingPage() {
 
       <Link
         href="/"
-        className="mt-7 block text-center text-[11.5px] text-ink-soft underline underline-offset-4"
+        className="mt-7 block text-center text-small text-ink-soft underline underline-offset-4"
       >
         Ahora no
       </Link>

@@ -206,7 +206,7 @@ export default async function TripResultPage({
                             className="garment-photo aspect-3/4 w-full rounded-lg border border-line object-cover"
                           />
                         ) : (
-                          <div className="flex aspect-3/4 w-full items-center justify-center rounded-lg border border-line bg-sunken px-1 text-center text-[9px] leading-tight text-ink-faint">
+                          <div className="flex aspect-3/4 w-full items-center justify-center rounded-lg border border-line bg-sunken px-1 text-center text-micro leading-tight text-ink-faint">
                             {describeGarment(item)}
                           </div>
                         )}

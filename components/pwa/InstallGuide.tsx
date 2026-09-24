@@ -165,8 +165,8 @@ export function InstallGuide() {
     return (
       <div className="rounded-[22px] bg-raised p-5 shadow-card-soft">
         <p className="eyebrow mb-2">Ya está</p>
-        <p className="display text-[20px]">La tienes instalada</p>
-        <p className="mt-2 text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="display text-lead">La tienes instalada</p>
+        <p className="mt-2 text-small leading-[1.5] text-ink-soft">
           Búscala en tu pantalla de inicio y ábrela desde ahí: se abre a pantalla
           completa, sin la barra del navegador.
         </p>
@@ -198,7 +198,7 @@ export function InstallGuide() {
           <Button size="lg" fullWidth disabled={busy} onClick={install}>
             {busy ? 'Instalando…' : 'Instalar en este dispositivo'}
           </Button>
-          <p className="mt-2.5 text-center text-[10.5px] text-ink-faint">
+          <p className="mt-2.5 text-center text-micro text-ink-faint">
             No descarga nada de ninguna tienda. Es esta misma web, con su icono.
           </p>
         </div>
@@ -230,13 +230,13 @@ export function InstallGuide() {
               <span className="folio mt-[3px] shrink-0 tabular-nums">
                 {String(index + 1).padStart(2, '0')}
               </span>
-              <span className="text-[12.5px] leading-[1.5] text-ink">{step}</span>
+              <span className="text-small leading-[1.5] text-ink">{step}</span>
             </li>
           ))}
         </ol>
 
         {guide.note ? (
-          <p className="mt-5 border-l-2 border-line pl-3.5 text-[11.5px] leading-[1.5] text-ink-soft">
+          <p className="mt-5 border-l-2 border-line pl-3.5 text-small leading-[1.5] text-ink-soft">
             {guide.note}
           </p>
         ) : null}

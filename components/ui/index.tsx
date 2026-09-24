@@ -62,7 +62,7 @@ export function PageTitle({
 export function BackLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <div className="pt-5 pb-1">
-      <Link href={href} className="inline-block py-1 text-[12px] text-ink-soft">
+      <Link href={href} className="inline-block py-1 text-small text-ink-soft">
         ← {children}
       </Link>
     </div>
@@ -91,10 +91,10 @@ export function QuietRow({
       className="flex items-center justify-between gap-4 border-t border-line py-3.5 last:border-b"
     >
       <span className="min-w-0">
-        <span className="display block text-[17px]">{title}</span>
-        <span className="mt-0.5 block truncate text-[11px] text-ink-soft">{children}</span>
+        <span className="display block text-lead">{title}</span>
+        <span className="mt-0.5 block truncate text-small text-ink-soft">{children}</span>
       </span>
-      <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+      <span aria-hidden className="shrink-0 text-small text-ink-faint">
         →
       </span>
     </Link>
@@ -215,7 +215,7 @@ export function Chip({
       type="button"
       aria-pressed={selected}
       className={cn(
-        'shrink-0 rounded-full border px-3.5 py-[9px] text-[11.5px] font-medium whitespace-nowrap transition-colors',
+        'shrink-0 rounded-full border px-3.5 py-[9px] text-small font-medium whitespace-nowrap transition-colors',
         selected
           ? 'border-accent bg-accent text-accent-ink'
           : 'border-[color-mix(in_srgb,var(--ink)_16%,transparent)] bg-transparent text-ink-soft',
@@ -243,7 +243,7 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center gap-3 py-16 text-center">
       <h2 className="display text-2xl">{title}</h2>
-      <p className="max-w-xs text-[11.5px] leading-[1.5] text-ink-soft">{body}</p>
+      <p className="max-w-xs text-small leading-[1.5] text-ink-soft">{body}</p>
       {action ? <div className="w-full pt-4">{action}</div> : null}
     </div>
   )
@@ -261,7 +261,7 @@ export function Notice({
     <p
       role={tone === 'error' ? 'alert' : undefined}
       className={cn(
-        'rounded-[18px] px-4 py-3 text-[11.5px] leading-[1.5]',
+        'rounded-[18px] px-4 py-3 text-small leading-[1.5]',
         tone === 'error' ? 'bg-danger/10 text-danger' : 'border border-line text-ink-soft',
       )}
     >

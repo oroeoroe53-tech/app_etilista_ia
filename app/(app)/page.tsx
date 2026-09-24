@@ -132,7 +132,7 @@ export default async function HomePage() {
             {fecha}
             {lugar}
           </p>
-          <h1 className="display mt-2.5 text-[33px] leading-[1.05]">
+          <h1 className="display mt-2.5 text-display leading-[1.05]">
             {prendas === 0 ? 'Enséñame' : 'Hoy te veo'}
             {/*
               La segunda línea depende del look, y el look tarda. Se transmite
@@ -178,8 +178,8 @@ export default async function HomePage() {
           className="mt-5 block rounded-[var(--radius-card)] bg-accent p-5 text-accent-ink"
         >
           <span className="eyebrow block text-accent-ink/55">Primer paso</span>
-          <span className="display mt-2 block text-[26px]">Enséñame cómo vistes</span>
-          <span className="mt-2 block text-[11.5px] leading-[1.5] opacity-70">
+          <span className="display mt-2 block text-display-s">Enséñame cómo vistes</span>
+          <span className="mt-2 block text-small leading-[1.5] opacity-70">
             Cinco o seis fotos de looks que ya lleves. Valen las del espejo.
           </span>
         </Link>
@@ -192,9 +192,9 @@ export default async function HomePage() {
       >
         <span className="min-w-0">
           <span className="eyebrow block">Sin prisa</span>
-          <span className="display mt-1 block text-[18px]">¿Te pondrías esto?</span>
+          <span className="display mt-1 block text-lead">¿Te pondrías esto?</span>
         </span>
-        <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+        <span aria-hidden className="shrink-0 text-small text-ink-faint">
           →
         </span>
       </Link>
@@ -209,7 +209,7 @@ export default async function HomePage() {
           className="mt-3.5 block border-l-2 border-clay py-1.5 pl-3.5"
         >
           <span className="eyebrow block">Se te olvida</span>
-          <span className="mt-1 block text-[11.5px] leading-[1.5] text-ink-soft">
+          <span className="mt-1 block text-small leading-[1.5] text-ink-soft">
             {neglectMessage(olvidada, describeGarment(olvidada))}
           </span>
         </Link>
@@ -221,7 +221,7 @@ export default async function HomePage() {
           className="mt-3.5 block border-l-2 border-line py-1.5 pl-3.5"
         >
           <span className="eyebrow block">Sin terminar</span>
-          <span className="mt-1 block text-[11.5px] leading-[1.5] text-ink-soft">
+          <span className="mt-1 block text-small leading-[1.5] text-ink-soft">
             Quedaron fotos por analizar. Cuantas más vea, mejor te entiendo.
           </span>
         </Link>
@@ -230,8 +230,8 @@ export default async function HomePage() {
       {/* --- Tu armario --------------------------------------------------- */}
       <section className="mt-6">
         <div className="mb-3 flex items-baseline justify-between gap-4">
-          <h2 className="display text-[15px]">Tu armario · {prendas}</h2>
-          <Link href="/armario" className="text-[10.5px] whitespace-nowrap text-ink-faint">
+          <h2 className="display text-body">Tu armario · {prendas}</h2>
+          <Link href="/armario" className="text-micro whitespace-nowrap text-ink-faint">
             ver todo
           </Link>
         </div>
@@ -289,14 +289,14 @@ export default async function HomePage() {
             className="flex items-center justify-between gap-4 border-t border-line py-3.5"
           >
             <span className="min-w-0">
-              <span className="display block text-[17px]">Te han vestido</span>
-              <span className="mt-0.5 block truncate text-[11px] text-ink-soft">
+              <span className="display block text-lead">Te han vestido</span>
+              <span className="mt-0.5 block truncate text-small text-ink-soft">
                 {summary.unseenLooks === 1
                   ? 'Alguien te ha montado un look con tu ropa'
                   : `${summary.unseenLooks} looks montados con tu ropa`}
               </span>
             </span>
-            <span className="mono shrink-0 rounded-full bg-clay px-2 py-[3px] text-[9px] text-[#f7f4ee]">
+            <span className="mono shrink-0 rounded-full bg-clay px-2 py-[3px] text-micro text-[#f7f4ee]">
               nuevo
             </span>
           </Link>
@@ -316,8 +316,8 @@ export default async function HomePage() {
             className="flex items-center justify-between gap-4 border-t border-line py-3.5"
           >
             <span className="min-w-0">
-              <span className="display block text-[17px]">Tu votación</span>
-              <span className="mt-0.5 block truncate text-[11px] text-ink-soft">
+              <span className="display block text-lead">Tu votación</span>
+              <span className="mt-0.5 block truncate text-small text-ink-soft">
                 {openPoll.votes === 0
                   ? 'Todavía no ha votado nadie'
                   : openPoll.votes === 1
@@ -325,7 +325,7 @@ export default async function HomePage() {
                     : `${openPoll.votes} votos`}
               </span>
             </span>
-            <Countdown closesAt={openPoll.closesAt} onZeroRefresh={false} className="shrink-0 text-[13px]" />
+            <Countdown closesAt={openPoll.closesAt} onZeroRefresh={false} className="shrink-0 text-small" />
           </Link>
         ) : (
           <QuietRow href="/votacion/nueva" title="¿Cuál me pongo?">

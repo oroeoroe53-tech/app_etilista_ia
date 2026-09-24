@@ -79,7 +79,7 @@ export function LookPollForm() {
 
       <div className="mt-8">
         <Submit />
-        <p className="mt-3 text-center text-[10.5px] leading-[1.5] text-ink-faint">
+        <p className="mt-3 text-center text-micro leading-[1.5] text-ink-faint">
           Se cierra sola al acabar la cuenta atrás. Nadie ve tu armario: solo
           estos tres looks.
         </p>
@@ -93,7 +93,7 @@ export function LookPollForm() {
       <div className="mt-9 border-t border-line pt-6 text-center">
         <Link
           href="/votacion/fotos"
-          className="text-[11.5px] text-ink-soft underline underline-offset-4"
+          className="text-small text-ink-soft underline underline-offset-4"
         >
           Prefiero hacer fotos de lo que dudo
         </Link>

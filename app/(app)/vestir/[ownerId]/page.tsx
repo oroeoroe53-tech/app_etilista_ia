@@ -39,18 +39,18 @@ export default async function StylePage({
 
       <header className="pt-2 pb-6">
         <p className="eyebrow mb-2.5">Te deja vestirla</p>
-        <h1 className="display text-[31px] leading-[1.06]">
+        <h1 className="display text-display leading-[1.06]">
           Móntale algo
           <span className="display-italic block">a {wardrobe.ownerName}</span>
         </h1>
-        <p className="mt-3 text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="mt-3 text-small leading-[1.5] text-ink-soft">
           Con su ropa de verdad. Toca las prendas en el orden en que se las
           pondría.
         </p>
       </header>
 
       {wardrobe.items.length === 0 ? (
-        <p className="py-16 text-center text-[11.5px] text-ink-soft">
+        <p className="py-16 text-center text-small text-ink-soft">
           Su armario todavía está vacío.
         </p>
       ) : (

@@ -75,7 +75,7 @@ export function DuelForm({ friends }: { friends: { id: string; name: string }[] 
 
       <div className="mt-8">
         <Submit />
-        <p className="mt-3 text-center text-[10.5px] leading-[1.5] text-ink-faint">
+        <p className="mt-3 text-center text-micro leading-[1.5] text-ink-faint">
           Su look no se compone hasta que acepte. Vuestro círculo vota sin saber
           cuál es de quién.
         </p>

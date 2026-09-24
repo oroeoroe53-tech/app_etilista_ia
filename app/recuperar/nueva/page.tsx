@@ -23,7 +23,7 @@ export default async function NewPasswordPage() {
     >
       <header className="mb-9">
         <p className="eyebrow mb-3">Estilista</p>
-        <h1 className="display text-[33px] leading-[1.05]">
+        <h1 className="display text-display leading-[1.05]">
           Elige una
           <span className="display-italic block">contraseña nueva</span>
         </h1>

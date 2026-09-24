@@ -25,7 +25,7 @@ export default function PrivacyPage() {
     >
       <header className="pt-7 pb-6">
         <p className="eyebrow mb-2.5">Sin letra pequeña</p>
-        <h1 className="display text-[33px] leading-[1.05]">
+        <h1 className="display text-display leading-[1.05]">
           Qué hago
           <span className="display-italic block">con tus datos</span>
         </h1>
@@ -144,7 +144,7 @@ export default function PrivacyPage() {
       </Block>
 
       <div className="mt-10 border-t border-line pt-6 text-center">
-        <Link href="/" className="text-[11.5px] text-ink-soft underline underline-offset-4">
+        <Link href="/" className="text-small text-ink-soft underline underline-offset-4">
           Volver
         </Link>
       </div>
@@ -155,8 +155,8 @@ export default function PrivacyPage() {
 function Block({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="border-t border-line py-5 last:border-b">
-      <h2 className="display text-[19px]">{title}</h2>
-      <p className="mt-2 text-[12.5px] leading-[1.6] text-ink-soft">{children}</p>
+      <h2 className="display text-lead">{title}</h2>
+      <p className="mt-2 text-small leading-[1.6] text-ink-soft">{children}</p>
     </section>
   )
 }

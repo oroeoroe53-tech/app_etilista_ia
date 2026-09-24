@@ -40,19 +40,19 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
     >
       <p className="eyebrow mb-2.5">Una invitación</p>
 
-      <h1 className="display text-[32px] leading-[1.06]">
+      <h1 className="display text-display leading-[1.06]">
         {invite.inviterName}
         <span className="display-italic block">te abre su círculo</span>
       </h1>
 
       {invite.state === 'open' ? (
         <>
-          <p className="mt-4 text-[12px] leading-[1.55] text-ink-soft">
+          <p className="mt-4 text-small leading-[1.55] text-ink-soft">
             El círculo sirve para preguntaros qué poneros, prestaros ropa y no
             ir iguales a la misma boda.
           </p>
 
-          <p className="mt-3 text-[11.5px] leading-[1.55] text-ink-faint">
+          <p className="mt-3 text-small leading-[1.55] text-ink-faint">
             Aceptar no enseña tu armario ni el suyo. Eso se da después, cada una
             por su lado, y se quita cuando quieras.
           </p>
@@ -72,7 +72,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
                     Crear cuenta y entrar
                   </Button>
                 </Link>
-                <p className="mt-3.5 text-center text-[11px] text-ink-soft">
+                <p className="mt-3.5 text-center text-small text-ink-soft">
                   ¿Ya tienes cuenta?{' '}
                   <Link
                     href={`/login?next=${next}`}
@@ -92,7 +92,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
           veces más.
         */
         <>
-          <p className="mt-4 text-[12px] leading-[1.55] text-ink-soft">
+          <p className="mt-4 text-small leading-[1.55] text-ink-soft">
             {invite.state === 'spent'
               ? 'Esta invitación ya se ha usado. Cada una vale para una persona: pídele otra.'
               : invite.state === 'expired'
@@ -113,7 +113,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
       )}
 
       <footer className="mt-12 border-t border-line pt-6 text-center">
-        <p className="text-[11px] leading-[1.6] text-ink-faint">
+        <p className="text-small leading-[1.6] text-ink-faint">
           Esto es <span className="display text-ink">Estilista</span>: te propone
           qué ponerte con la ropa que ya tienes.
         </p>

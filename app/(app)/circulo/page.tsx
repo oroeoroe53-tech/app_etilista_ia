@@ -43,7 +43,7 @@ export default async function CirclePage() {
         <p className="eyebrow mb-2.5">
           Círculo{circle.length > 0 ? ` · ${circle.length} ${circle.length === 1 ? 'persona' : 'personas'}` : ''}
         </p>
-        <h1 className="display text-[31px] leading-[1.06]">
+        <h1 className="display text-display leading-[1.06]">
           Tu círculo
           <span className="display-italic block">y lo que ve cada una</span>
         </h1>
@@ -73,7 +73,7 @@ export default async function CirclePage() {
         </>
       )}
 
-      <p className="mt-10 border-t border-line pt-6 text-[10.5px] leading-[1.6] text-ink-faint">
+      <p className="mt-10 border-t border-line pt-6 text-micro leading-[1.6] text-ink-faint">
         Estar en tu círculo no deja ver tu ropa. Eso se da aquí, persona a
         persona, y se quita cuando quieras: quien lo pierde deja de ver tu
         armario al instante y no recibe ningún aviso.
@@ -107,13 +107,13 @@ function MemberRow({ member }: { member: CircleMember }) {
         */}
         <span
           aria-hidden
-          className="display flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sunken text-[17px]"
+          className="display flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sunken text-lead"
         >
           {member.name.trim().charAt(0).toUpperCase()}
         </span>
 
         <span className="min-w-0 flex-1">
-          <span className="display block truncate text-[19px]">{member.name}</span>
+          <span className="display block truncate text-lead">{member.name}</span>
           <span className="mono mt-0.5 block truncate text-ink-faint">
             {member.theyGive === 'style'
               ? 'te deja ver su ropa y vestirla'
@@ -130,7 +130,7 @@ function MemberRow({ member }: { member: CircleMember }) {
         */}
         <span
           className={cn(
-            'mono shrink-0 rounded-full px-2.5 py-1 text-[9px]',
+            'mono shrink-0 rounded-full px-2.5 py-1 text-micro',
             member.iGive
               ? 'bg-accent text-accent-ink'
               : 'border border-line text-ink-faint',

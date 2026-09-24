@@ -30,10 +30,10 @@ export function DemoBar() {
         href="/register"
         className="block bg-accent px-6 py-3.5 text-center text-accent-ink"
       >
-        <span className="text-[13px] font-medium tracking-[0.03em]">
+        <span className="text-small font-medium tracking-[0.03em]">
           Hacer esto con tu ropa
         </span>
-        <span aria-hidden className="ml-2 text-[13px]">
+        <span aria-hidden className="ml-2 text-small">
           →
         </span>
       </Link>
@@ -62,7 +62,7 @@ export function DemoBar() {
                   />
                   <span
                     className={cn(
-                      'text-[10px] leading-none',
+                      'text-micro leading-none',
                       active ? 'font-medium text-ink' : 'text-ink-faint',
                     )}
                   >

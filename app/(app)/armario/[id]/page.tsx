@@ -111,7 +111,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
         <div className="absolute top-0 left-0 pt-safe">
           <Link
             href="/armario"
-            className="m-4 inline-block rounded-full bg-[rgba(255,253,248,0.9)] px-3.5 py-2 text-[11.5px] text-ink backdrop-blur-sm"
+            className="m-4 inline-block rounded-full bg-[rgba(255,253,248,0.9)] px-3.5 py-2 text-small text-ink backdrop-blur-sm"
           >
             ← armario
           </Link>
@@ -126,9 +126,9 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
         <p className="eyebrow">
           {capa} · {colorLabel(item.primary_color)}
         </p>
-        <h1 className="display mt-2 text-[30px]">{nombre}</h1>
+        <h1 className="display mt-2 text-display">{nombre}</h1>
         {item.subcategory ? (
-          <p className="mt-1 text-[11.5px] text-ink-soft">{item.subcategory}</p>
+          <p className="mt-1 text-small text-ink-soft">{item.subcategory}</p>
         ) : null}
 
         {tags.length > 0 ? (
@@ -136,7 +136,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
             {tags.map((tag) => (
               <li
                 key={tag}
-                className="rounded-full border border-line px-3 py-[7px] text-[11px] text-ink-soft"
+                className="rounded-full border border-line px-3 py-[7px] text-small text-ink-soft"
               >
                 {tag.toLowerCase()}
               </li>
@@ -145,13 +145,13 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
         ) : null}
 
         {!item.is_available ? (
-          <p className="mt-3.5 inline-block rounded-full border border-line px-3 py-[7px] text-[11px] text-ink-soft">
+          <p className="mt-3.5 inline-block rounded-full border border-line px-3 py-[7px] text-small text-ink-soft">
             Guardada · no la uso en las propuestas
           </p>
         ) : null}
 
         {dudosa ? (
-          <p className="mt-4 rounded-[18px] border border-line px-4 py-3 text-[11.5px] leading-[1.5] text-ink-soft">
+          <p className="mt-4 rounded-[18px] border border-line px-4 py-3 text-small leading-[1.5] text-ink-soft">
             Esta no la vi con claridad en tu foto. Échale un ojo y corrígeme si hace falta.
           </p>
         ) : null}
@@ -190,7 +190,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
                         showLabel={false}
                         className="h-20 w-16 rounded-xl"
                       />
-                      <p className="mt-1.5 w-16 truncate text-[10px] text-ink-faint">
+                      <p className="mt-1.5 w-16 truncate text-micro text-ink-faint">
                         {otherName}
                       </p>
                     </Link>
@@ -204,7 +204,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
         {item.notes ? (
           <div className="mt-7">
             <p className="eyebrow mb-2">Notas</p>
-            <p className="text-[11.5px] leading-[1.5] text-ink-soft">{item.notes}</p>
+            <p className="text-small leading-[1.5] text-ink-soft">{item.notes}</p>
           </div>
         ) : null}
 
@@ -238,8 +238,8 @@ function Stat({
 }) {
   return (
     <div className="flex-1 rounded-[18px] border border-line p-3.5">
-      <p className={`display ${small ? 'text-[17px]' : 'text-[26px]'} leading-none`}>{value}</p>
-      <p className="mt-2 text-[10.5px] leading-[1.35] text-ink-faint">{caption}</p>
+      <p className={`display ${small ? 'text-lead' : 'text-display-s'} leading-none`}>{value}</p>
+      <p className="mt-2 text-micro leading-[1.35] text-ink-faint">{caption}</p>
     </div>
   )
 }

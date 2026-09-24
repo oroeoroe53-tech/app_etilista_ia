@@ -38,7 +38,7 @@ export async function DailyWeather({ userId }: { userId: string }) {
   if (!weather) return null
 
   return (
-    <p className="shrink-0 pt-1 text-right text-[11px] leading-[1.5] text-ink-soft">
+    <p className="shrink-0 pt-1 text-right text-small leading-[1.5] text-ink-soft">
       {Math.round(weather.temperatureC)}°
       <span className="block">{weather.description.toLowerCase()}</span>
     </p>

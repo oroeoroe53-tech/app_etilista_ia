@@ -47,7 +47,7 @@ export function EventForm() {
         <Submit />
       </div>
 
-      <p className="mt-3 text-center text-[10.5px] leading-[1.5] text-ink-faint">
+      <p className="mt-3 text-center text-micro leading-[1.5] text-ink-faint">
         Después te damos el enlace para invitar. Todo se borra solo una semana
         después del evento, fotos incluidas.
       </p>

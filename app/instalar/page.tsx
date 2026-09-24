@@ -34,11 +34,11 @@ export default function InstallPage() {
     >
       <header className="pt-7 pb-6">
         <p className="eyebrow mb-2.5">Llévatela contigo</p>
-        <h1 className="display text-[33px] leading-[1.05]">
+        <h1 className="display text-display leading-[1.05]">
           Ponla en tu móvil
           <span className="display-italic block">como una aplicación</span>
         </h1>
-        <p className="mt-3.5 text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="mt-3.5 text-small leading-[1.5] text-ink-soft">
           No hay que descargar nada de ninguna tienda, no ocupa sitio y no pide
           permisos. Es esta misma web, con su icono en la pantalla de inicio.
         </p>
@@ -60,7 +60,7 @@ export default function InstallPage() {
             Y con la pantalla de la percha en lugar de un destello en blanco.
           </Gain>
         </ul>
-        <p className="mt-5 text-[10.5px] leading-[1.5] text-ink-faint">
+        <p className="mt-5 text-micro leading-[1.5] text-ink-faint">
           Lo que no cambia: el armario y las propuestas viven en el servidor, así
           que sigue haciendo falta conexión. Sin ella te lo dirá, en vez de
           enseñarte datos viejos.
@@ -70,7 +70,7 @@ export default function InstallPage() {
       <div className="mt-10 border-t border-line pt-6 text-center">
         <Link
           href="/"
-          className="text-[11.5px] text-ink-soft underline underline-offset-4"
+          className="text-small text-ink-soft underline underline-offset-4"
         >
           Volver a la aplicación
         </Link>
@@ -82,8 +82,8 @@ export default function InstallPage() {
 function Gain({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <li className="border-t border-line py-3.5 last:border-b">
-      <p className="display text-[17px]">{title}</p>
-      <p className="mt-1 text-[11.5px] leading-[1.5] text-ink-soft">{children}</p>
+      <p className="display text-lead">{title}</p>
+      <p className="mt-1 text-small leading-[1.5] text-ink-soft">{children}</p>
     </li>
   )
 }

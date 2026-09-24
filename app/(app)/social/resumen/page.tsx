@@ -73,7 +73,7 @@ export default async function RecapPage() {
 
       <header className="pt-2 pb-7">
         <p className="eyebrow mb-2.5">Tu {monthName(now)} · estilista</p>
-        <h1 className="display text-[34px] leading-[1.02]">
+        <h1 className="display text-display leading-[1.02]">
           {recap.days} {recap.days === 1 ? 'día' : 'días'}
           <span className="display-italic block">sin pensar qué ponerte</span>
         </h1>
@@ -95,8 +95,8 @@ export default async function RecapPage() {
             <section className="mt-8">
               <p className="eyebrow mb-3">Tu prenda estrella</p>
               <div className="rounded-[var(--radius-card)] border border-line p-4">
-                <p className="display text-[23px]">{recap.star.name}</p>
-                <p className="mt-1.5 text-[11.5px] leading-[1.5] text-ink-soft">
+                <p className="display text-title">{recap.star.name}</p>
+                <p className="mt-1.5 text-small leading-[1.5] text-ink-soft">
                   Puesta {recap.star.times} veces este mes. La que más.
                 </p>
               </div>
@@ -112,7 +112,7 @@ export default async function RecapPage() {
               es mejor que fingirlo: lo que se comparte es texto, y no lleva tu
               nombre ni tus fotos a ninguna parte.
             */}
-            <p className="mt-3 text-center text-[10.5px] leading-[1.5] text-ink-faint">
+            <p className="mt-3 text-center text-micro leading-[1.5] text-ink-faint">
               Se comparte como texto. No sale tu nombre ni ninguna foto tuya.
             </p>
           </section>
@@ -125,7 +125,7 @@ export default async function RecapPage() {
 function Figure({ value, label }: { value: number; label: string }) {
   return (
     <div className="rounded-[var(--radius-card)] bg-raised p-4 text-center shadow-card-soft">
-      <p className="display text-[40px] leading-[0.95] tabular-nums">{value}</p>
+      <p className="display text-display-l leading-[0.95] tabular-nums">{value}</p>
       <p className="eyebrow mt-2">{label}</p>
     </div>
   )

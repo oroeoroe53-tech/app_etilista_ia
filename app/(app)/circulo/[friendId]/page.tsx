@@ -52,13 +52,13 @@ export default async function FriendPage({
       <header className="flex items-center gap-3.5 pt-3 pb-1">
         <span
           aria-hidden
-          className="display flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-sunken text-[24px]"
+          className="display flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-sunken text-title"
         >
           {member.name.trim().charAt(0).toUpperCase()}
         </span>
         <div className="min-w-0">
-          <h1 className="display truncate text-[26px]">{member.name}</h1>
-          <p className="mt-1 text-[10.5px] text-ink-soft">
+          <h1 className="display truncate text-display-s">{member.name}</h1>
+          <p className="mt-1 text-micro text-ink-soft">
             {wardrobe
               ? `Armario compartido contigo · ${wardrobe.items.length} ${
                   wardrobe.items.length === 1 ? 'prenda' : 'prendas'
@@ -95,8 +95,8 @@ export default async function FriendPage({
             ) : null}
           </div>
 
-          <p className="display mt-3.5 text-[21px]">{look.name}</p>
-          <p className="mt-1.5 text-[11.5px] leading-[1.5] text-ink-soft">
+          <p className="display mt-3.5 text-title">{look.name}</p>
+          <p className="mt-1.5 text-small leading-[1.5] text-ink-soft">
             {/*
               La frase dice de quién es la ropa y de quién es el gusto, porque
               es lo que hace que la propuesta se entienda: no es «lo que tiene
@@ -111,13 +111,13 @@ export default async function FriendPage({
             <div className="mt-3.5 flex gap-2.5">
               <Link
                 href={`/armario/de/${friendId}/${look.hero.id}`}
-                className="flex h-[46px] flex-1 items-center justify-center rounded-full bg-accent px-5 text-[12px] font-medium text-accent-ink"
+                className="flex h-[46px] flex-1 items-center justify-center rounded-full bg-accent px-5 text-small font-medium text-accent-ink"
               >
                 Pedirle {look.hero.label.toLowerCase()}
               </Link>
               <Link
                 href={`/armario/de/${friendId}`}
-                className="flex h-[46px] shrink-0 items-center justify-center rounded-full border border-line px-[18px] text-[12px] font-medium"
+                className="flex h-[46px] shrink-0 items-center justify-center rounded-full border border-line px-[18px] text-small font-medium"
               >
                 Otro
               </Link>
@@ -177,7 +177,7 @@ export default async function FriendPage({
                 value={level.value}
                 aria-pressed={current === level.value}
                 className={cn(
-                  'rounded-full border px-3.5 py-[9px] text-[11.5px] transition-colors',
+                  'rounded-full border px-3.5 py-[9px] text-small transition-colors',
                   current === level.value
                     ? 'border-accent bg-accent text-accent-ink'
                     : 'border-[color-mix(in_srgb,var(--ink)_16%,transparent)] text-ink-soft',
@@ -189,7 +189,7 @@ export default async function FriendPage({
           })}
         </form>
 
-        <p className="mt-3 text-[10.5px] leading-[1.6] text-ink-faint">
+        <p className="mt-3 text-micro leading-[1.6] text-ink-faint">
           {member.iGive === 'style'
             ? `${member.name} ve tu armario y puede montarte looks con tu ropa.`
             : member.iGive === 'view'
@@ -212,7 +212,7 @@ export default async function FriendPage({
 
       <form action={removeFriend} className="mt-8">
         <input type="hidden" name="friendId" value={member.id} />
-        <button type="submit" className="w-full py-2 text-[11px] text-ink-faint">
+        <button type="submit" className="w-full py-2 text-small text-ink-faint">
           Quitar a {member.name} de mi círculo
         </button>
       </form>

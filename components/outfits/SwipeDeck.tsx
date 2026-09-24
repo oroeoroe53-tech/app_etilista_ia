@@ -231,7 +231,7 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
         </div>
       </div>
 
-      <h2 className="display mt-3.5 text-[18px]">{card.title}</h2>
+      <h2 className="display mt-3.5 text-lead">{card.title}</h2>
 
       {error ? (
         <div className="mt-4">
@@ -252,20 +252,20 @@ export function SwipeDeck({ cards: initial }: { cards: SwipeCard[] }) {
           <IconSkip />
         </ActionButton>
         <ActionButton label="Me gusta" tone="yes" onClick={() => react('like')}>
-          <span className="text-[13px] font-medium">sí</span>
+          <span className="text-small font-medium">sí</span>
         </ActionButton>
         <ActionButton label="Me encanta" tone="love" onClick={() => react('love')}>
           <IconHeart />
         </ActionButton>
       </div>
 
-      <p className="mt-4 text-center text-[11px] text-ink-faint">
+      <p className="mt-4 text-center text-small text-ink-faint">
         {index + 1} de {initial.length} · {counts.saved}{' '}
         {counts.saved === 1 ? 'guardado' : 'guardados'}
       </p>
 
       <div className="mt-5 rounded-[18px] border border-line px-4 py-3.5">
-        <p className="text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="text-small leading-[1.5] text-ink-soft">
           {counts.saved >= 2
             ? 'Ya voy viendo por dónde vas. Lo que guardes pesa en lo que te proponga mañana.'
             : 'Cuanto más valores, menos te propongo cosas que no te pondrías.'}

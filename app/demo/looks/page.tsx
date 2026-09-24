@@ -37,7 +37,7 @@ export default function DemoLooks() {
           <article key={index} className="rounded-[24px] bg-raised p-4 shadow-card-soft">
             <div className="mb-3 flex items-baseline justify-between gap-3">
               <p className="eyebrow">Look {index + 1}</p>
-              <p className="text-[11px] whitespace-nowrap text-ink-faint">
+              <p className="text-small whitespace-nowrap text-ink-faint">
                 {Math.round(outfit.score * 100)}% match
               </p>
             </div>
@@ -53,17 +53,17 @@ export default function DemoLooks() {
               ))}
             </div>
 
-            <h2 className="display mt-3.5 text-[19px] leading-[1.2]">
+            <h2 className="display mt-3.5 text-lead leading-[1.2]">
               {nameOutfit(outfit.items)}
             </h2>
-            <p className="mt-1.5 text-[11.5px] leading-[1.5] text-ink-soft">
+            <p className="mt-1.5 text-small leading-[1.5] text-ink-soft">
               {explainFromHighlights(outfit.highlights) ?? 'Compuesto con lo que hay disponible.'}
             </p>
           </article>
         ))}
       </div>
 
-      <p className="mt-7 border-l-2 border-line pl-3.5 text-[11.5px] leading-[1.5] text-ink-soft">
+      <p className="mt-7 border-l-2 border-line pl-3.5 text-small leading-[1.5] text-ink-soft">
         Las tres salen del mismo armario y se parecen lo justo: el motor busca
         que sean distintas entre sí, no tres variantes de la misma idea.
       </p>

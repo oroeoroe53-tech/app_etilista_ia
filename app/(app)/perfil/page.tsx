@@ -49,8 +49,8 @@ export default async function ProfilePage() {
             propio nombre. En el resto de pantallas no hace falta: quien la
             abre ya sabe dónde está.
           */}
-          <h1 className="display text-[40px] leading-none">Estilista</h1>
-          <p className="shrink-0 pt-1 text-right text-[11px] leading-[1.5] text-ink-soft">
+          <h1 className="display text-display-l leading-none">Estilista</h1>
+          <p className="shrink-0 pt-1 text-right text-small leading-[1.5] text-ink-soft">
             {user.email}
             {desde ? <span className="block">desde {desde}</span> : null}
           </p>
@@ -61,7 +61,7 @@ export default async function ProfilePage() {
       <div className="rounded-[24px] bg-raised p-4 shadow-card">
         <div className="mb-4 flex items-baseline justify-between">
           <p className="eyebrow">Plan</p>
-          <span className="display text-[22px]">{PLAN_LABELS[plan]}</span>
+          <span className="display text-title">{PLAN_LABELS[plan]}</span>
         </div>
 
         <ul className="space-y-3.5">
@@ -73,10 +73,10 @@ export default async function ProfilePage() {
             return (
               <li key={entry.feature}>
                 <div className="mb-1.5 flex items-baseline justify-between gap-4">
-                  <span className="min-w-0 text-[12px] leading-[1.35] text-ink">
+                  <span className="min-w-0 text-small leading-[1.35] text-ink">
                     {entry.label} <span className="text-ink-faint">{entry.period}</span>
                   </span>
-                  <span className="shrink-0 text-[12px] tabular-nums whitespace-nowrap text-ink">
+                  <span className="shrink-0 text-small tabular-nums whitespace-nowrap text-ink">
                     {check.used}
                     <span className="text-ink-faint"> / {check.limit}</span>
                   </span>
@@ -87,7 +87,7 @@ export default async function ProfilePage() {
           })}
         </ul>
 
-        <p className="mt-4 text-[10.5px] leading-[1.4] text-ink-faint">
+        <p className="mt-4 text-micro leading-[1.4] text-ink-faint">
           Los contadores diarios se reinician a medianoche.
         </p>
       </div>
@@ -127,8 +127,8 @@ export default async function ProfilePage() {
           href="/estilo"
           className="flex items-center justify-between gap-4 border-t border-line py-3.5"
         >
-          <span className="text-[12.5px] leading-[1.35] text-ink">Tu estilo</span>
-          <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+          <span className="text-small leading-[1.35] text-ink">Tu estilo</span>
+          <span aria-hidden className="shrink-0 text-small text-ink-faint">
             →
           </span>
         </Link>
@@ -137,8 +137,8 @@ export default async function ProfilePage() {
           href="/vestir"
           className="flex items-center justify-between gap-4 border-t border-line py-3.5"
         >
-          <span className="text-[12.5px] leading-[1.35] text-ink">Looks que te han montado</span>
-          <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+          <span className="text-small leading-[1.35] text-ink">Looks que te han montado</span>
+          <span aria-hidden className="shrink-0 text-small text-ink-faint">
             →
           </span>
         </Link>
@@ -147,8 +147,8 @@ export default async function ProfilePage() {
           href="/eventos"
           className="flex items-center justify-between gap-4 border-t border-line py-3.5"
         >
-          <span className="text-[12.5px] leading-[1.35] text-ink">Eventos</span>
-          <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+          <span className="text-small leading-[1.35] text-ink">Eventos</span>
+          <span aria-hidden className="shrink-0 text-small text-ink-faint">
             →
           </span>
         </Link>
@@ -157,14 +157,14 @@ export default async function ProfilePage() {
           href="/prestamos"
           className="flex items-center justify-between gap-4 border-t border-line py-3.5"
         >
-          <span className="text-[12.5px] leading-[1.35] text-ink">Préstamos</span>
+          <span className="text-small leading-[1.35] text-ink">Préstamos</span>
           <span className="flex shrink-0 items-center gap-2">
             {pendingLoans > 0 ? (
-              <span className="mono rounded-full bg-clay px-2 py-[3px] text-[9px] text-[#f7f4ee]">
+              <span className="mono rounded-full bg-clay px-2 py-[3px] text-micro text-[#f7f4ee]">
                 {pendingLoans} sin contestar
               </span>
             ) : null}
-            <span aria-hidden className="text-[13px] text-ink-faint">
+            <span aria-hidden className="text-small text-ink-faint">
               →
             </span>
           </span>
@@ -174,10 +174,10 @@ export default async function ProfilePage() {
           href="/circulo"
           className="flex items-center justify-between gap-4 border-t border-line py-3.5"
         >
-          <span className="text-[12.5px] leading-[1.35] text-ink">
+          <span className="text-small leading-[1.35] text-ink">
             Tu círculo y lo que ve cada una
           </span>
-          <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+          <span aria-hidden className="shrink-0 text-small text-ink-faint">
             →
           </span>
         </Link>
@@ -186,8 +186,8 @@ export default async function ProfilePage() {
           href="/instalar"
           className="flex items-center justify-between gap-4 border-t border-line py-3.5"
         >
-          <span className="text-[12.5px] leading-[1.35] text-ink">Ponerla en tu móvil</span>
-          <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+          <span className="text-small leading-[1.35] text-ink">Ponerla en tu móvil</span>
+          <span aria-hidden className="shrink-0 text-small text-ink-faint">
             →
           </span>
         </Link>
@@ -196,8 +196,8 @@ export default async function ProfilePage() {
           href="/privacidad"
           className="flex items-center justify-between gap-4 border-t border-line py-3.5"
         >
-          <span className="text-[12.5px] leading-[1.35] text-ink">Qué hago con tus datos</span>
-          <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+          <span className="text-small leading-[1.35] text-ink">Qué hago con tus datos</span>
+          <span aria-hidden className="shrink-0 text-small text-ink-faint">
             →
           </span>
         </Link>
@@ -207,8 +207,8 @@ export default async function ProfilePage() {
             type="submit"
             className="flex w-full items-center justify-between gap-4 border-t border-line py-3.5 text-left last:border-b"
           >
-            <span className="text-[12.5px] leading-[1.35] text-ink">Cerrar sesión</span>
-            <span aria-hidden className="shrink-0 text-[13px] text-ink-faint">
+            <span className="text-small leading-[1.35] text-ink">Cerrar sesión</span>
+            <span aria-hidden className="shrink-0 text-small text-ink-faint">
               →
             </span>
           </button>

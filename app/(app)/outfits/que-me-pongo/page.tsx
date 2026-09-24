@@ -59,7 +59,7 @@ export default async function WhatToWearPage() {
       <header className="pt-4 pb-6">
         <p className="eyebrow mb-2.5">Ahora mismo</p>
         <h1 className="display text-[2rem]">¿Qué me pongo?</h1>
-        <p className="mt-2.5 text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="mt-2.5 text-small leading-[1.5] text-ink-soft">
           Todo es opcional. Si no me dices nada, me apaño.
         </p>
       </header>
@@ -69,7 +69,7 @@ export default async function WhatToWearPage() {
           <Notice tone="error">
             Has llegado al límite de hoy: {permiso.used} de {permiso.limit} propuestas.
           </Notice>
-          <p className="text-[11.5px] leading-[1.5] text-ink-soft">
+          <p className="text-small leading-[1.5] text-ink-soft">
             Mañana vuelve a empezar de cero.
           </p>
           <Link href="/outfits" className="block">
@@ -95,7 +95,7 @@ export default async function WhatToWearPage() {
           />
 
           {permiso.remaining <= 3 ? (
-            <p className="mt-5 text-center text-[10.5px] text-ink-faint">
+            <p className="mt-5 text-center text-micro text-ink-faint">
               Te quedan {permiso.remaining} propuestas hoy.
             </p>
           ) : null}

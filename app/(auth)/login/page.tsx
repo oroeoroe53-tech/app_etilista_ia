@@ -18,7 +18,7 @@ export default async function LoginPage({
     <>
       <header className="mb-9">
         <p className="eyebrow mb-3">Estilista</p>
-        <h1 className="display text-[33px] leading-[1.05]">
+        <h1 className="display text-display leading-[1.05]">
           Hola
           <span className="display-italic block">otra vez</span>
         </h1>
@@ -27,7 +27,7 @@ export default async function LoginPage({
           le dice por qué está viendo esta pantalla, o parecerá un peaje.
         */}
         {voting ? (
-          <p className="mt-3.5 text-[11.5px] leading-[1.5] text-ink-soft">
+          <p className="mt-3.5 text-small leading-[1.5] text-ink-soft">
             Entra y te devolvemos a la votación, con tu voto puesto.
           </p>
         ) : null}
@@ -35,13 +35,13 @@ export default async function LoginPage({
 
       <AuthForm action={signIn} submitLabel="Entrar" next={next} />
 
-      <p className="mt-4 text-center text-[11.5px] text-ink-soft">
+      <p className="mt-4 text-center text-small text-ink-soft">
         <Link href="/recuperar" className="underline underline-offset-4">
           He olvidado la contraseña
         </Link>
       </p>
 
-      <p className="mt-7 text-center text-[11.5px] text-ink-soft">
+      <p className="mt-7 text-center text-small text-ink-soft">
         ¿Aún no tienes cuenta?{' '}
         <Link href={`/register${query}`} className="text-ink underline underline-offset-4">
           Crear una
@@ -53,7 +53,7 @@ export default async function LoginPage({
         aplicación sin dar nada, y llevársela al móvil. Discretas, porque la
         tarea de esta pantalla es entrar.
       */}
-      <p className="mt-5 text-center text-[10.5px] leading-[1.8] text-ink-faint">
+      <p className="mt-5 text-center text-micro leading-[1.8] text-ink-faint">
         <Link href="/demo" className="text-ink-soft underline underline-offset-4">
           Ver cómo funciona sin registrarse
         </Link>

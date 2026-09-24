@@ -65,7 +65,7 @@ export function InviteButton() {
           {copied ? 'enlace copiado' : url.replace(/^https?:\/\//, '')}
         </p>
       ) : (
-        <p className="mt-3 text-center text-[10.5px] leading-[1.5] text-ink-faint">
+        <p className="mt-3 text-center text-micro leading-[1.5] text-ink-faint">
           Cada invitación vale para una persona y caduca en una semana.
         </p>
       )}

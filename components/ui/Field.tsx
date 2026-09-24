@@ -46,7 +46,7 @@ const CONTROL =
  * nativo del teléfono.
  */
 const BARE =
-  'w-full cursor-pointer appearance-none bg-transparent text-right text-[16px] text-ink outline-none focus-visible:underline focus-visible:underline-offset-4 [font-family:var(--font-display)]'
+  'w-full cursor-pointer appearance-none bg-transparent text-right text-body text-ink outline-none focus-visible:underline focus-visible:underline-offset-4 [font-family:var(--font-display)]'
 
 export function Select({
   options,

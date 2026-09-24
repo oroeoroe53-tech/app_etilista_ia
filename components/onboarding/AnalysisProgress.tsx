@@ -100,7 +100,7 @@ export function AnalysisProgress({ initialTotal }: { initialTotal: number }) {
   if (fallado) {
     return (
       <div className="space-y-5">
-        <h1 className="display text-[30px]">No hemos podido analizarlas</h1>
+        <h1 className="display text-display">No hemos podido analizarlas</h1>
         <Notice tone="error">
           {status?.error ?? 'Algo ha fallado durante el análisis.'}
         </Notice>
@@ -118,7 +118,7 @@ export function AnalysisProgress({ initialTotal }: { initialTotal: number }) {
     <div className="space-y-8">
       <div>
         <p className="eyebrow mb-4">Un momento</p>
-        <h1 className="display text-[33px] leading-[1.05]">{MENSAJES[mensaje]}</h1>
+        <h1 className="display text-display leading-[1.05]">{MENSAJES[mensaje]}</h1>
       </div>
 
       <div>

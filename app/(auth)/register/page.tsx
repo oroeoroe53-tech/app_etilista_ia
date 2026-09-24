@@ -27,17 +27,17 @@ export default async function RegisterPage({
         <p className="eyebrow mb-3">Estilista</p>
         {voting ? (
           <>
-            <h1 className="display text-[33px] leading-[1.05]">
+            <h1 className="display text-display leading-[1.05]">
               Crea tu cuenta
               <span className="display-italic block">y vota</span>
             </h1>
-            <p className="mt-3.5 text-[11.5px] leading-[1.5] text-ink-soft">
+            <p className="mt-3.5 text-small leading-[1.5] text-ink-soft">
               Son treinta segundos y vuelves a la votación donde lo dejaste. Tu
               voto se cuenta al llegar.
             </p>
           </>
         ) : (
-          <h1 className="display text-[33px] leading-[1.05]">
+          <h1 className="display text-display leading-[1.05]">
             Enséñale cómo vistes
             <span className="display-italic block">y aprenderá a vestirte</span>
           </h1>
@@ -46,7 +46,7 @@ export default async function RegisterPage({
 
       <AuthForm action={signUp} submitLabel="Crear cuenta" withName next={next} />
 
-      <p className="mt-7 text-center text-[11.5px] text-ink-soft">
+      <p className="mt-7 text-center text-small text-ink-soft">
         ¿Ya tienes cuenta?{' '}
         <Link href={`/login${query}`} className="text-ink underline underline-offset-4">
           Entrar
@@ -58,7 +58,7 @@ export default async function RegisterPage({
         aplicación sin dar nada, y llevársela al móvil. Discretas, porque la
         tarea de esta pantalla es entrar.
       */}
-      <p className="mt-5 text-center text-[10.5px] leading-[1.8] text-ink-faint">
+      <p className="mt-5 text-center text-micro leading-[1.8] text-ink-faint">
         <Link href="/demo" className="text-ink-soft underline underline-offset-4">
           Ver cómo funciona sin registrarse
         </Link>

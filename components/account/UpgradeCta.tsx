@@ -20,13 +20,13 @@ export function UpgradeCta({ label }: { label: string }) {
       <button
         type="button"
         onClick={() => setAsked(true)}
-        className="h-[54px] w-full rounded-full bg-accent text-[13px] font-medium tracking-[0.03em] text-accent-ink active:opacity-85"
+        className="h-[54px] w-full rounded-full bg-accent text-small font-medium tracking-[0.03em] text-accent-ink active:opacity-85"
       >
         {label}
       </button>
 
       {asked ? (
-        <p role="status" className="mt-2.5 text-center text-[11px] leading-[1.5] text-ink-soft">
+        <p role="status" className="mt-2.5 text-center text-small leading-[1.5] text-ink-soft">
           Todavía no se puede pagar: el cobro no está montado. Mientras tanto tienes
           el plan gratuito entero, sin recortes.
         </p>

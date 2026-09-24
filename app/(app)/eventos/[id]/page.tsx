@@ -73,7 +73,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
           {formatEventDate(event.heldOn)}
           {event.place ? ` · ${event.place}` : ''}
         </p>
-        <h1 className="display text-[31px] leading-[1.06]">{event.title}</h1>
+        <h1 className="display text-display leading-[1.06]">{event.title}</h1>
       </header>
 
       {/* --- Lo único que importa de verdad ---------------------------------- */}
@@ -91,7 +91,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
             ropa que se tenga en casa.
           */}
           {free.length > 0 ? (
-            <p className="px-4 text-[10.5px] leading-[1.6] text-ink-faint">
+            <p className="px-4 text-micro leading-[1.6] text-ink-faint">
               Nadie va de{' '}
               {free.map((color) => colorLabel(color).toLowerCase()).join(', ')}, y
               tú tienes.
@@ -113,7 +113,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
               label={guest.note ?? guest.name}
               className="aspect-[3/4] rounded-[var(--radius-card)]"
             />
-            <p className="mt-1.5 truncate text-[12px]">
+            <p className="mt-1.5 truncate text-small">
               {guest.isMe ? 'Tú' : guest.name}
             </p>
             <p className="mono mt-0.5 flex items-center gap-1.5 truncate text-ink-faint">
@@ -137,11 +137,11 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
       </ul>
 
       {pending.length === 1 && pending[0] ? (
-        <p className="mt-4 text-[10.5px] leading-[1.5] text-ink-faint">
+        <p className="mt-4 text-micro leading-[1.5] text-ink-faint">
           Falta que {pending[0].isMe ? 'tú digas' : `${pending[0].name} diga`} de qué va.
         </p>
       ) : pending.length > 1 ? (
-        <p className="mt-4 text-[10.5px] leading-[1.5] text-ink-faint">
+        <p className="mt-4 text-micro leading-[1.5] text-ink-faint">
           Faltan {pending.length} por decir de qué van.
         </p>
       ) : null}
@@ -166,14 +166,14 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
           <input type="hidden" name="eventId" value={event.id} />
           <button
             type="submit"
-            className="w-full py-2 text-center text-[11px] text-ink-faint underline underline-offset-4"
+            className="w-full py-2 text-center text-small text-ink-faint underline underline-offset-4"
           >
             {event.isOwner ? 'Cancelar el evento' : 'Salirme del evento'}
           </button>
         </form>
       </section>
 
-      <p className="mt-9 border-t border-line pt-6 text-[10.5px] leading-[1.6] text-ink-faint">
+      <p className="mt-9 border-t border-line pt-6 text-micro leading-[1.6] text-ink-faint">
         Lo que se sube aquí solo lo ven quienes están en este evento, y se borra
         entero —fotos incluidas— una semana después del día señalado.
       </p>

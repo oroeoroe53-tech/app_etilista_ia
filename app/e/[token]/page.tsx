@@ -47,18 +47,18 @@ export default async function EventInvitePage({
         {invite.place ? ` · ${invite.place}` : ''}
       </p>
 
-      <h1 className="display text-[32px] leading-[1.06]">
+      <h1 className="display text-display leading-[1.06]">
         {invite.title}
         <span className="display-italic block">de {invite.ownerName}</span>
       </h1>
 
       {invite.state === 'open' ? (
         <>
-          <p className="mt-4 text-[12px] leading-[1.55] text-ink-soft">
+          <p className="mt-4 text-small leading-[1.55] text-ink-soft">
             Apúntate y di qué piensas ponerte. Así veis todas de qué va cada
             una y nadie repite vestido.
           </p>
-          <p className="mt-3 text-[11.5px] leading-[1.55] text-ink-faint">
+          <p className="mt-3 text-small leading-[1.55] text-ink-faint">
             Solo lo ven las personas de este evento, y se borra entero una
             semana después.
           </p>
@@ -78,7 +78,7 @@ export default async function EventInvitePage({
                     Crear cuenta y apuntarme
                   </Button>
                 </Link>
-                <p className="mt-3.5 text-center text-[11px] text-ink-soft">
+                <p className="mt-3.5 text-center text-small text-ink-soft">
                   ¿Ya tienes cuenta?{' '}
                   <Link
                     href={`/login?next=${next}`}
@@ -93,7 +93,7 @@ export default async function EventInvitePage({
         </>
       ) : (
         <>
-          <p className="mt-4 text-[12px] leading-[1.55] text-ink-soft">
+          <p className="mt-4 text-small leading-[1.55] text-ink-soft">
             {invite.state === 'expired'
               ? 'Este evento ya pasó y se ha borrado.'
               : 'Ya estás apuntada a este evento.'}
@@ -113,7 +113,7 @@ export default async function EventInvitePage({
       )}
 
       <footer className="mt-12 border-t border-line pt-6 text-center">
-        <p className="text-[11px] leading-[1.6] text-ink-faint">
+        <p className="text-small leading-[1.6] text-ink-faint">
           Esto es <span className="display text-ink">Estilista</span>: te propone
           qué ponerte con la ropa que ya tienes.
         </p>

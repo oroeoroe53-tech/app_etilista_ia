@@ -39,7 +39,7 @@ export default async function FeedPage() {
 
       <header className="pt-2 pb-7">
         <p className="eyebrow mb-2.5">Inspiración</p>
-        <h1 className="display text-[31px] leading-[1.06]">
+        <h1 className="display text-display leading-[1.06]">
           Lo que se pone
           <span className="display-italic block">tu gente</span>
         </h1>
@@ -71,11 +71,11 @@ function Entry({ entry }: { entry: FeedEntry }) {
       <div className="mb-2.5 flex items-center gap-2.5">
         <span
           aria-hidden
-          className="display flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sunken text-[14px]"
+          className="display flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sunken text-body"
         >
           {entry.name.trim().charAt(0).toUpperCase()}
         </span>
-        <p className="min-w-0 flex-1 truncate text-[12.5px]">
+        <p className="min-w-0 flex-1 truncate text-small">
           <span className="font-medium">{entry.name}</span>
           <span className="text-ink-soft">
             {' · '}
@@ -86,7 +86,7 @@ function Entry({ entry }: { entry: FeedEntry }) {
         {entry.isMine ? (
           <form action={unshareDailyLook}>
             <input type="hidden" name="shareId" value={entry.id} />
-            <button type="submit" className="shrink-0 py-1 text-[10.5px] text-ink-faint">
+            <button type="submit" className="shrink-0 py-1 text-micro text-ink-faint">
               quitar
             </button>
           </form>
@@ -115,11 +115,11 @@ function Entry({ entry }: { entry: FeedEntry }) {
         ) : null}
       </div>
 
-      {entry.lookName ? <p className="display mt-3 text-[21px]">{entry.lookName}</p> : null}
+      {entry.lookName ? <p className="display mt-3 text-title">{entry.lookName}</p> : null}
       {entry.note ? (
-        <p className="mt-1.5 text-[12px] leading-[1.5]">«{entry.note}»</p>
+        <p className="mt-1.5 text-small leading-[1.5]">«{entry.note}»</p>
       ) : entry.why ? (
-        <p className="mt-1.5 text-[11.5px] leading-[1.5] text-ink-soft">{entry.why}</p>
+        <p className="mt-1.5 text-small leading-[1.5] text-ink-soft">{entry.why}</p>
       ) : null}
 
       {/*

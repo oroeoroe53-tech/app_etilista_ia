@@ -28,7 +28,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
           style={{ paddingInline: 'var(--screen-gutter)' }}
         >
           <p className="eyebrow">Armario de ejemplo</p>
-          <Link href="/login" className="text-[10.5px] whitespace-nowrap text-ink-faint">
+          <Link href="/login" className="text-micro whitespace-nowrap text-ink-faint">
             ya tengo cuenta
           </Link>
         </div>

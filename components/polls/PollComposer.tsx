@@ -128,13 +128,13 @@ export function PollComposer() {
 
             {/* La subida se ve, pero no tapa la foto ni bloquea nada. */}
             {!slot.path && !slot.failed ? (
-              <span className="mono absolute bottom-2 left-2.5 rounded-full bg-[rgba(21,20,15,.6)] px-2 py-1 text-[9px] text-[#f7f4ee]">
+              <span className="mono absolute bottom-2 left-2.5 rounded-full bg-[rgba(21,20,15,.6)] px-2 py-1 text-micro text-[#f7f4ee]">
                 subiendo
               </span>
             ) : null}
 
             {slot.failed ? (
-              <span className="mono absolute bottom-2 left-2.5 rounded-full bg-danger px-2 py-1 text-[9px] text-[#f7f4ee]">
+              <span className="mono absolute bottom-2 left-2.5 rounded-full bg-danger px-2 py-1 text-micro text-[#f7f4ee]">
                 no ha subido
               </span>
             ) : null}
@@ -143,7 +143,7 @@ export function PollComposer() {
               type="button"
               onClick={() => remove(slot.preview)}
               aria-label={`Quitar la opción ${index + 1}`}
-              className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-[rgba(21,20,15,.55)] text-[13px] text-[#f7f4ee]"
+              className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-[rgba(21,20,15,.55)] text-small text-[#f7f4ee]"
             >
               ✕
             </button>
@@ -157,14 +157,14 @@ export function PollComposer() {
             <button
               type="button"
               onClick={() => cameraRef.current?.click()}
-              className="photo-slot flex flex-col items-center justify-center rounded-[var(--radius-card)] text-[11.5px] text-ink-soft"
+              className="photo-slot flex flex-col items-center justify-center rounded-[var(--radius-card)] text-small text-ink-soft"
             >
-              <span className="display text-[19px]">Hacer foto</span>
+              <span className="display text-lead">Hacer foto</span>
             </button>
             <button
               type="button"
               onClick={() => galleryRef.current?.click()}
-              className="flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-line text-[11.5px] text-ink-soft"
+              className="flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-line text-small text-ink-soft"
             >
               Elegir de la galería
             </button>
@@ -209,7 +209,7 @@ export function PollComposer() {
         ))}
       </div>
       <input type="hidden" name="minutes" value={minutes} />
-      <p className="mt-2.5 text-[10.5px] leading-[1.5] text-ink-faint">
+      <p className="mt-2.5 text-micro leading-[1.5] text-ink-faint">
         La verán las personas de tu círculo, y quien abra el enlace que mandes.
         Pasado ese rato se cierra sola y ya no entran más votos; las fotos se
         borran del todo a las 24 horas.
@@ -253,7 +253,7 @@ function Submit({ ready, uploading }: { ready: number; uploading: boolean }) {
       <Button type="submit" size="lg" fullWidth disabled={!enough || uploading || pending}>
         {pending ? 'Creando…' : 'Pedir opinión'}
       </Button>
-      <p className={cn('mt-3 text-center text-[10.5px]', enough ? 'text-ink-faint' : 'text-ink-soft')}>
+      <p className={cn('mt-3 text-center text-micro', enough ? 'text-ink-faint' : 'text-ink-soft')}>
         {uploading
           ? 'Esperando a que suban las fotos…'
           : enough

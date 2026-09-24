@@ -39,11 +39,11 @@ export default async function DuelPage({ params }: { params: Promise<{ id: strin
         <p className="eyebrow mb-2.5">
           Duelo · {duel.revealed ? 'a la vista' : 'a ciegas'}
         </p>
-        <h1 className="display text-[31px] leading-[1.06]">
+        <h1 className="display text-display leading-[1.06]">
           Duelo de
           <span className="display-italic block">armarios</span>
         </h1>
-        <p className="mt-3 text-[11.5px] text-ink-soft">Ocasión: {duel.occasion}</p>
+        <p className="mt-3 text-small text-ink-soft">Ocasión: {duel.occasion}</p>
       </header>
 
       {/* --- Esperando respuesta --------------------------------------------- */}
@@ -59,7 +59,7 @@ export default async function DuelPage({ params }: { params: Promise<{ id: strin
                 <input type="hidden" name="duelId" value={duel.id} />
                 <button
                   type="submit"
-                  className="h-[46px] w-full rounded-full bg-accent text-[12.5px] font-medium text-accent-ink"
+                  className="h-[46px] w-full rounded-full bg-accent text-small font-medium text-accent-ink"
                 >
                   Acepto
                 </button>
@@ -68,13 +68,13 @@ export default async function DuelPage({ params }: { params: Promise<{ id: strin
                 <input type="hidden" name="duelId" value={duel.id} />
                 <button
                   type="submit"
-                  className="h-[46px] rounded-full border border-line px-5 text-[12.5px] text-ink-soft"
+                  className="h-[46px] rounded-full border border-line px-5 text-small text-ink-soft"
                 >
                   Ahora no
                 </button>
               </form>
             </div>
-            <p className="mt-3 text-[10.5px] leading-[1.6] text-ink-faint">
+            <p className="mt-3 text-micro leading-[1.6] text-ink-faint">
               Tu ropa no entra en el duelo hasta que aceptes. Si dices que no,
               no se compone nada y ella solo ve que has dicho que no.
             </p>
@@ -109,7 +109,7 @@ export default async function DuelPage({ params }: { params: Promise<{ id: strin
             ))}
           </ul>
 
-          <p className="mt-4 text-center text-[10.5px] leading-[1.6] text-ink-faint">
+          <p className="mt-4 text-center text-micro leading-[1.6] text-ink-faint">
             {duel.revealed
               ? total === 0
                 ? 'Todavía no ha votado nadie.'
@@ -118,7 +118,7 @@ export default async function DuelPage({ params }: { params: Promise<{ id: strin
           </p>
 
           {duel.amChallenger || duel.amOpponent ? (
-            <p className="mt-2 text-center text-[10.5px] text-ink-faint">
+            <p className="mt-2 text-center text-micro text-ink-faint">
               No votas en tu propio duelo.
             </p>
           ) : null}
@@ -170,7 +170,7 @@ function Side({
         ) : null}
       </div>
 
-      <p className="display mt-2.5 text-[17px]">
+      <p className="display mt-2.5 text-lead">
         {revealed ? side.name : `Armario ${side.side.toUpperCase()}`}
       </p>
       {revealed ? (

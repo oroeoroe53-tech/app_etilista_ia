@@ -60,7 +60,7 @@ export default async function SwipePage() {
           <BackLink href="/outfits">outfits</BackLink>
           <header className="pt-4 pb-6">
             <p className="eyebrow mb-2.5">Descubre</p>
-            <h1 className="display text-[30px]">Por hoy ya está</h1>
+            <h1 className="display text-display">Por hoy ya está</h1>
           </header>
           <Notice>
             Has valorado {permiso.used} looks hoy. Mañana volvemos a empezar.
@@ -86,7 +86,7 @@ export default async function SwipePage() {
           <BackLink href="/outfits">outfits</BackLink>
           <header className="pt-4 pb-6">
             <p className="eyebrow mb-2.5">Descubre</p>
-            <h1 className="display text-[30px]">Aún no</h1>
+            <h1 className="display text-display">Aún no</h1>
           </header>
           <EmptyState
             title="Me falta armario"
@@ -140,8 +140,8 @@ export default async function SwipePage() {
 
         <header className="pt-4 pb-5">
           <p className="eyebrow mb-2.5">Descubre</p>
-          <h1 className="display text-[30px]">¿Te pondrías esto?</h1>
-          <p className="mt-2.5 text-[11.5px] leading-[1.5] text-ink-soft">
+          <h1 className="display text-display">¿Te pondrías esto?</h1>
+          <p className="mt-2.5 text-small leading-[1.5] text-ink-soft">
             No busco acertar: busco entenderte. Un “no” me enseña tanto como un “sí”.
           </p>
         </header>

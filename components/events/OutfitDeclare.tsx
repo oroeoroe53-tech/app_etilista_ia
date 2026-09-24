@@ -95,7 +95,7 @@ export function OutfitDeclare({
             aria-pressed={picked === value}
             onClick={() => setPicked(picked === value ? null : value)}
             className={cn(
-              'flex shrink-0 items-center gap-2 rounded-full border py-[7px] pr-3.5 pl-2 text-[11px] transition-colors',
+              'flex shrink-0 items-center gap-2 rounded-full border py-[7px] pr-3.5 pl-2 text-small transition-colors',
               picked === value
                 ? 'border-accent bg-accent text-accent-ink'
                 : 'border-[color-mix(in_srgb,var(--ink)_16%,transparent)] text-ink-soft',
@@ -135,7 +135,7 @@ export function OutfitDeclare({
             <img src={preview} alt="Tu look" className="h-full w-full object-cover" />
           ) : null}
         </button>
-        <p className="text-[11px] leading-[1.5] text-ink-soft">
+        <p className="text-small leading-[1.5] text-ink-soft">
           {uploading
             ? 'Subiendo…'
             : preview

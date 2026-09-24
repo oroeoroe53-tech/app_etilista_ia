@@ -42,7 +42,7 @@ export default async function SharedItemPage({
 
       <div className="pt-6" style={{ paddingInline: 'var(--screen-gutter)' }}>
         <p className="eyebrow mb-2.5">De {wardrobe.ownerName}</p>
-        <h1 className="display text-[27px] leading-[1.1]">{label}</h1>
+        <h1 className="display text-display-s leading-[1.1]">{label}</h1>
 
         <div className="mt-7">
           {item.onLoan ? (
@@ -57,7 +57,7 @@ export default async function SharedItemPage({
             </Notice>
           ) : (
             <>
-              <p className="mb-3 text-[11.5px] leading-[1.5] text-ink-soft">
+              <p className="mb-3 text-small leading-[1.5] text-ink-soft">
                 Dile para qué la quieres. Es lo que hace que te conteste.
               </p>
               <RequestForm

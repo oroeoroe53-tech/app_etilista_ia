@@ -192,7 +192,7 @@ export function NewItemFlow() {
               Galería
             </Button>
           </div>
-          <span className="text-[10.5px] text-ink-faint">Opcional</span>
+          <span className="text-micro text-ink-faint">Opcional</span>
         </div>
       )}
 

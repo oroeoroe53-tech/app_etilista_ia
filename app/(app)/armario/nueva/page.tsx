@@ -20,11 +20,11 @@ export default async function NewItemPage() {
 
       <header className="pt-4 pb-6">
         <p className="eyebrow mb-2.5">Nueva prenda</p>
-        <h1 className="display text-[30px]">
+        <h1 className="display text-display">
           Súbela y yo
           <span className="display-italic block">la describo</span>
         </h1>
-        <p className="mt-3 text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="mt-3 text-small leading-[1.5] text-ink-soft">
           Lo que no salga en tus fotos puedes añadirlo aquí. La foto es opcional.
         </p>
       </header>
@@ -34,7 +34,7 @@ export default async function NewItemPage() {
           <Notice tone="error">
             Tu armario ha llegado al límite del plan: {permiso.used} de {permiso.limit} prendas.
           </Notice>
-          <p className="text-[11.5px] leading-[1.5] text-ink-soft">
+          <p className="text-small leading-[1.5] text-ink-soft">
             Puedes borrar prendas que ya no uses para hacer hueco.
           </p>
           <Link href="/armario" className="block">

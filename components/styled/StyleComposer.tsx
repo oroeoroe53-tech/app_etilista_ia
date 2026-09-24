@@ -67,13 +67,13 @@ export function StyleComposer({
                 {chosen ? (
                   /* El número dice el orden: de arriba abajo, como se viste
                      una. Un tic solo diría «esta sí», que es menos. */
-                  <span className="mono absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-accent text-[10px] text-accent-ink">
+                  <span className="mono absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-accent text-micro text-accent-ink">
                     {order}
                   </span>
                 ) : null}
 
                 {item.onLoan ? (
-                  <span className="mono absolute bottom-1.5 left-1.5 rounded-full bg-[rgba(21,20,15,.6)] px-1.5 py-0.5 text-[8px] text-[#f7f4ee]">
+                  <span className="mono absolute bottom-1.5 left-1.5 rounded-full bg-[rgba(21,20,15,.6)] px-1.5 py-0.5 text-micro text-[#f7f4ee]">
                     prestada
                   </span>
                 ) : null}
@@ -115,7 +115,7 @@ function Submit({ count, name }: { count: number; name: string }) {
       <Button type="submit" size="lg" fullWidth disabled={!enough || pending}>
         {pending ? 'Mandando…' : `Mandárselo a ${name}`}
       </Button>
-      <p className="mt-3 text-center text-[10.5px] text-ink-faint">
+      <p className="mt-3 text-center text-micro text-ink-faint">
         {enough
           ? `${count} prendas · lo verá al entrar`
           : 'Elige al menos dos prendas.'}

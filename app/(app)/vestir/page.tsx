@@ -33,7 +33,7 @@ export default async function StyledLooksPage() {
 
       <header className="pt-2 pb-7">
         <p className="eyebrow mb-2.5">Con tu ropa</p>
-        <h1 className="display text-[31px] leading-[1.06]">
+        <h1 className="display text-display leading-[1.06]">
           Te han
           <span className="display-italic block">vestido</span>
         </h1>
@@ -73,7 +73,7 @@ function LookCard({ look }: { look: StyledLook }) {
   return (
     <article className="border-t border-line py-4 last:border-b">
       <div className="flex items-baseline justify-between gap-4">
-        <p className="display truncate text-[18px]">
+        <p className="display truncate text-lead">
           {look.forMe ? `De ${look.otherName}` : `Para ${look.otherName}`}
         </p>
 
@@ -88,7 +88,7 @@ function LookCard({ look }: { look: StyledLook }) {
       </div>
 
       {look.note ? (
-        <p className="mt-1.5 text-[12px] leading-[1.5] text-ink-soft">«{look.note}»</p>
+        <p className="mt-1.5 text-small leading-[1.5] text-ink-soft">«{look.note}»</p>
       ) : null}
 
       <ul className="bleed-row mt-3 flex gap-2">
@@ -110,7 +110,7 @@ function LookCard({ look }: { look: StyledLook }) {
             <input type="hidden" name="lookId" value={look.id} />
             <button
               type="submit"
-              className="rounded-full bg-accent px-4 py-[9px] text-[11.5px] text-accent-ink"
+              className="rounded-full bg-accent px-4 py-[9px] text-small text-accent-ink"
             >
               Visto, gracias
             </button>
@@ -119,7 +119,7 @@ function LookCard({ look }: { look: StyledLook }) {
 
         <form action={deleteStyledLook}>
           <input type="hidden" name="lookId" value={look.id} />
-          <button type="submit" className="py-1 text-[10.5px] text-ink-faint">
+          <button type="submit" className="py-1 text-micro text-ink-faint">
             quitar
           </button>
         </form>

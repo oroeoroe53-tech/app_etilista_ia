@@ -56,7 +56,7 @@ export default async function ChallengesPage() {
 
       <header className="pt-2 pb-7">
         <p className="eyebrow mb-2.5">Retos</p>
-        <h1 className="display text-[31px] leading-[1.06]">
+        <h1 className="display text-display leading-[1.06]">
           Esta semana
           <span className="display-italic block">se lleva esto</span>
         </h1>
@@ -64,13 +64,13 @@ export default async function ChallengesPage() {
 
       <section className="rounded-[var(--radius-card)] bg-raised p-4 shadow-card">
         <div className="flex items-baseline justify-between gap-3">
-          <p className="display text-[23px] leading-[1.1]">{challenge.name}</p>
+          <p className="display text-title leading-[1.1]">{challenge.name}</p>
           <span className="mono shrink-0 tabular-nums text-clay">
             {progress.done}/{progress.target}
           </span>
         </div>
 
-        <p className="mt-2 text-[11.5px] leading-[1.5] text-ink-soft">
+        <p className="mt-2 text-small leading-[1.5] text-ink-soft">
           {challenge.description}
         </p>
 
@@ -78,7 +78,7 @@ export default async function ChallengesPage() {
           <Meter value={(progress.done / progress.target) * 100} label="Progreso del reto" tone="clay" />
         </div>
 
-        <p className="mt-3 text-[10.5px] leading-[1.5] text-ink-faint">
+        <p className="mt-3 text-micro leading-[1.5] text-ink-faint">
           {progress.completed
             ? 'Completado. No hay que marcar nada: sale de lo que te has puesto.'
             : 'Se cuenta solo, de lo que marcas como puesto cada día.'}
@@ -90,7 +90,7 @@ export default async function ChallengesPage() {
           haya hecho su amiga, no doce desconocidas.
         */}
         {state.others.length > 0 ? (
-          <p className="mt-3 text-[11px] text-ink-soft">
+          <p className="mt-3 text-small text-ink-soft">
             {state.others.slice(0, 3).join(', ')}
             {state.others.length > 3 ? ` y ${state.others.length - 3} más` : ''} también
             {state.others.length === 1 ? ' está' : ' están'} con este.
@@ -103,8 +103,8 @@ export default async function ChallengesPage() {
             type="submit"
             className={
               state.joined
-                ? 'w-full py-2 text-center text-[11px] text-ink-faint underline underline-offset-4'
-                : 'h-[46px] w-full rounded-full bg-accent text-[12.5px] font-medium text-accent-ink'
+                ? 'w-full py-2 text-center text-small text-ink-faint underline underline-offset-4'
+                : 'h-[46px] w-full rounded-full bg-accent text-small font-medium text-accent-ink'
             }
           >
             {state.joined ? 'Salirme del reto' : 'Me apunto'}
@@ -117,12 +117,12 @@ export default async function ChallengesPage() {
         <ul>
           {upcoming.map((next, index) => (
             <li key={`${next.id}-${index}`} className="border-t border-line py-3.5 last:border-b">
-              <p className="display text-[17px]">{next.name}</p>
-              <p className="mt-0.5 text-[11px] text-ink-soft">{next.description}</p>
+              <p className="display text-lead">{next.name}</p>
+              <p className="mt-0.5 text-small text-ink-soft">{next.description}</p>
             </li>
           ))}
         </ul>
-        <p className="mt-4 text-[10.5px] leading-[1.6] text-ink-faint">
+        <p className="mt-4 text-micro leading-[1.6] text-ink-faint">
           Son {CHALLENGES.length} y van rotando. Ninguno pide comprar nada: todos
           se ganan con la ropa que ya tienes.
         </p>

@@ -23,9 +23,9 @@ const VARIANTS: Record<Variant, string> = {
 
 const SIZES: Record<Size, string> = {
   // 44px de alto mínimo: es el objetivo táctil que recomienda Apple.
-  sm: 'h-11 px-4 text-[12px]',
-  md: 'h-[46px] px-5 text-[13px]',
-  lg: 'h-[54px] px-6 text-[13px]',
+  sm: 'h-11 px-4 text-small',
+  md: 'h-[46px] px-5 text-small',
+  lg: 'h-[54px] px-6 text-small',
 }
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

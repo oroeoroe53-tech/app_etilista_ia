@@ -147,7 +147,7 @@ export function ItemForm({ action, values, submitLabel, imagePath }: ItemFormPro
           />
         </Row>
 
-        <p className="pt-3.5 text-[10.5px] leading-[1.4] text-ink-faint">
+        <p className="pt-3.5 text-micro leading-[1.4] text-ink-faint">
           Toca cualquier línea para corregirme. Aprendo de las correcciones.
         </p>
       </div>
@@ -179,7 +179,7 @@ export function ItemForm({ action, values, submitLabel, imagePath }: ItemFormPro
       </Block>
 
       <label className="flex items-center justify-between rounded-[18px] border border-line px-4 py-3">
-        <span className="text-[12px] text-ink-soft">La tengo disponible</span>
+        <span className="text-small text-ink-soft">La tengo disponible</span>
         <input
           type="checkbox"
           name="is_available"
@@ -211,11 +211,11 @@ function Row({
   return (
     <label className="block border-b border-line py-3 last-of-type:border-b-0">
       <span className="flex items-center justify-between gap-4">
-        <span className="shrink-0 text-[12px] text-ink-soft">{label}</span>
+        <span className="shrink-0 text-small text-ink-soft">{label}</span>
         <span className="min-w-0 flex-1">{children}</span>
       </span>
       {error ? (
-        <span role="alert" className="mt-1 block text-right text-[10.5px] text-danger">
+        <span role="alert" className="mt-1 block text-right text-micro text-danger">
           {error}
         </span>
       ) : null}
@@ -240,10 +240,10 @@ function Block({
       <p className="eyebrow mb-2.5">{label}</p>
       {children}
       {hint && !error ? (
-        <p className="mt-2 text-[10.5px] text-ink-faint">{hint}</p>
+        <p className="mt-2 text-micro text-ink-faint">{hint}</p>
       ) : null}
       {error ? (
-        <p role="alert" className="mt-2 text-[10.5px] text-danger">
+        <p role="alert" className="mt-2 text-micro text-danger">
           {error}
         </p>
       ) : null}

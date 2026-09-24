@@ -70,7 +70,7 @@ export default async function PollPage({ params }: { params: Promise<{ token: st
             <p className="eyebrow mb-2.5">
               {poll.isOwner ? 'Tu votación' : `${poll.ownerName} pregunta`}
             </p>
-            <h1 className="display text-[30px] leading-[1.08]">
+            <h1 className="display text-display leading-[1.08]">
               ¿Cuál
               <span className="display-italic"> me pongo?</span>
             </h1>
@@ -78,7 +78,7 @@ export default async function PollPage({ params }: { params: Promise<{ token: st
 
           {/* La cuenta atrás, arriba a la derecha, como la hora en un billete. */}
           <div className="shrink-0 pt-1 text-right">
-            <Countdown closesAt={poll.closesAt} className="text-[15px]" />
+            <Countdown closesAt={poll.closesAt} className="text-body" />
             <p className="mono mt-1 text-ink-faint">
               {poll.closed ? 'se acabó' : 'para votar'}
             </p>
@@ -86,7 +86,7 @@ export default async function PollPage({ params }: { params: Promise<{ token: st
         </div>
 
         {poll.question ? (
-          <p className="mt-3.5 text-[12.5px] leading-[1.5] text-ink-soft">{poll.question}</p>
+          <p className="mt-3.5 text-small leading-[1.5] text-ink-soft">{poll.question}</p>
         ) : null}
 
         {poll.totalVotes > 0 ? (
@@ -116,11 +116,11 @@ export default async function PollPage({ params }: { params: Promise<{ token: st
           <input type="hidden" name="outfitId" value={winner.outfitId} />
           <button
             type="submit"
-            className="h-[54px] w-full rounded-full bg-accent text-[13px] font-medium tracking-[0.03em] text-accent-ink"
+            className="h-[54px] w-full rounded-full bg-accent text-small font-medium tracking-[0.03em] text-accent-ink"
           >
             Me pongo este
           </button>
-          <p className="mt-2.5 text-center text-[10.5px] text-ink-faint">
+          <p className="mt-2.5 text-center text-micro text-ink-faint">
             Entra en tu diario y cuenta para la racha.
           </p>
         </form>
@@ -137,14 +137,14 @@ export default async function PollPage({ params }: { params: Promise<{ token: st
                 <input type="hidden" name="token" value={poll.token} />
                 <button
                   type="submit"
-                  className="w-full py-2 text-center text-[11.5px] text-ink-soft underline underline-offset-4"
+                  className="w-full py-2 text-center text-small text-ink-soft underline underline-offset-4"
                 >
                   Ya está, cerrar ahora
                 </button>
               </form>
             </>
           ) : (
-            <p className="text-center text-[11.5px] leading-[1.6] text-ink-soft">
+            <p className="text-center text-small leading-[1.6] text-ink-soft">
               Votación cerrada.{' '}
               {poll.totalVotes === 0
                 ? 'No llegó ningún voto a tiempo.'
@@ -156,11 +156,11 @@ export default async function PollPage({ params }: { params: Promise<{ token: st
 
       {/* --- Quiénes somos, al final y en voz baja -------------------------- */}
       <footer className="mt-12 border-t border-line pt-6 text-center">
-        <p className="text-[11px] leading-[1.6] text-ink-faint">
+        <p className="text-small leading-[1.6] text-ink-faint">
           Esto es <span className="display text-ink">Estilista</span>: te propone
           qué ponerte con la ropa que ya tienes.
         </p>
-        <p className="mt-2.5 text-[11px]">
+        <p className="mt-2.5 text-small">
           <Link href="/demo" className="text-ink-soft underline underline-offset-4">
             Ver cómo funciona
           </Link>
