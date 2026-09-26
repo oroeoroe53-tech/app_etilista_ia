@@ -94,7 +94,11 @@ export function NewItemFlow() {
       }
 
       const g = data.garment
-      setValues({
+      // La referencia se conserva: el analisis mira la prenda, no la etiqueta, y
+      // el formulario se vuelve a montar entero con estos valores. Sin esto, la
+      // marca que alguien acabara de escribir se borraria al pedir el analisis.
+      setValues((prev) => ({
+        ...prev,
         category: g.category,
         subcategory: g.subcategory ?? null,
         primary_color: g.primary_color,
@@ -109,7 +113,7 @@ export function NewItemFlow() {
         condition: 'good',
         is_available: true,
         notes: null,
-      })
+      }))
       // Vuelve a montar el formulario para que los `defaultValue` cojan lo nuevo.
       setFormKey((k) => k + 1)
       setAnalyzed(true)

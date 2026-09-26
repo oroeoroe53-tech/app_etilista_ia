@@ -413,6 +413,25 @@ body {
   letter-spacing: 0.04em;
 }
 
+/*
+ * El codigo de referencia de una prenda.
+ *
+ * Tiene que LEERSE: es lo que alguien copia a mano para buscarlo en la tienda, y
+ * `.mono` lo dejaria en 8.5px. Va suelto en su propia regla plana por el aviso
+ * de arriba, y despues de `.mono` para ganarle el orden.
+ */
+.mono-code {
+  font-size: var(--text-body);
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  /*
+   * `break-all` partia "satinada" en "satinad / a" en el texto de tres lineas.
+   * `anywhere` solo rompe cuando una palabra no cabe de ninguna manera, que es
+   * el caso de un codigo largo o de una direccion, y deja las palabras enteras.
+   */
+  overflow-wrap: anywhere;
+}
+
 /* El scroll horizontal de categorías no debe enseñar barra en escritorio. */
 .no-scrollbar {
   scrollbar-width: none;

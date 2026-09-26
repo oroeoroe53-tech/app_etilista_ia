@@ -4,6 +4,7 @@ import { useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
 import { Button, Select, TextInput, TextArea, ChipGroup, ScaleInput, Notice } from '@/components/ui'
 import type { ItemFormState } from '@/app/(app)/armario/actions'
+import { EMPTY_REFERENCE, type GarmentReference } from '@/lib/wardrobe/reference'
 import {
   CATEGORY_LIST, COLORS, FITS, MATERIALS, PATTERNS, SEASONS, STYLES,
 } from '@/lib/wardrobe/taxonomy'
@@ -13,7 +14,7 @@ import {
   colorLabel, categoryLabel,
 } from '@/lib/wardrobe/labels'
 
-export interface ItemFormValues {
+export interface ItemFormValues extends GarmentReference {
   category: string
   subcategory: string | null
   primary_color: string
@@ -31,6 +32,7 @@ export interface ItemFormValues {
 }
 
 export const EMPTY_ITEM: ItemFormValues = {
+  ...EMPTY_REFERENCE,
   category: 'tshirt',
   subcategory: null,
   primary_color: 'black',
@@ -168,6 +170,69 @@ export function ItemForm({ action, values, submitLabel, imagePath }: ItemFormPro
       <Block label="Cuánto abriga" error={errors.warmth}>
         <ScaleInput name="warmth" value={values.warmth} labels={WARMTH_LABELS} />
       </Block>
+
+      {/*
+        "De dónde es".
+
+        Va en su propia tarjeta y no entre los rasgos porque no es lo mismo: los
+        rasgos los dedujo una máquina de una foto, y esto lo sabe la etiqueta o
+        la tienda. Se rellena entero a mano, y hasta que la IA sea de verdad esa
+        es la única forma fiable: un código inventado manda a una amiga a nada.
+
+        La referencia es el código, no la marca. Por eso el código va primero y
+        con el formato de la tienda como pista: es lo que alguien pide cuando
+        dice "pásame la referencia".
+      */}
+      <div className="rounded-[22px] bg-raised p-4 shadow-card-soft">
+        <p className="eyebrow mb-1">De dónde es</p>
+
+        <Row label="Marca" error={errors.brand}>
+          <TextInput bare name="brand" defaultValue={values.brand ?? ''} maxLength={60}
+            placeholder="Zara, Mango…" autoCapitalize="words" />
+        </Row>
+
+        <Row label="Referencia" error={errors.reference_code}>
+          <TextInput bare name="reference_code" defaultValue={values.reference_code ?? ''}
+            maxLength={60} placeholder="2731/604/800" autoCapitalize="characters"
+            spellCheck={false} />
+        </Row>
+
+        <Row label="Nombre en la tienda" error={errors.product_name}>
+          <TextInput bare name="product_name" defaultValue={values.product_name ?? ''}
+            maxLength={120} placeholder="Falda midi plisada" />
+        </Row>
+
+        <Row label="Su color" error={errors.brand_color}>
+          <TextInput bare name="brand_color" defaultValue={values.brand_color ?? ''}
+            maxLength={40} placeholder="Arena" />
+        </Row>
+
+        <Row label="Talla" error={errors.size}>
+          <TextInput bare name="size" defaultValue={values.size ?? ''} maxLength={20}
+            placeholder="M" autoCapitalize="characters" />
+        </Row>
+
+        <Row label="Lo que pagaste" error={errors.price_cents}>
+          <TextInput bare name="price" type="number" step="0.01" min="0" inputMode="decimal"
+            defaultValue={values.price_cents !== null ? (values.price_cents / 100).toFixed(2) : ''}
+            placeholder="29,95" />
+        </Row>
+
+        <Row label="Cuándo" error={errors.bought_at}>
+          <TextInput bare name="bought_at" type="date" defaultValue={values.bought_at ?? ''} />
+        </Row>
+
+        <Row label="Enlace" error={errors.source_url}>
+          <TextInput bare name="source_url" type="url" defaultValue={values.source_url ?? ''}
+            maxLength={600} placeholder="El de la tienda" spellCheck={false}
+            autoCapitalize="none" />
+        </Row>
+
+        <p className="pt-3.5 text-micro leading-[1.4] text-ink-faint">
+          La referencia viene en la etiqueta. Es lo que te piden cuando te
+          preguntan de dónde es algo.
+        </p>
+      </div>
 
       <Block label="Notas" hint="Opcional">
         <TextArea

@@ -2,6 +2,8 @@ import { notFound, redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/supabase/server'
 import { getSharedWardrobe } from '@/lib/wardrobe/shared'
 import { describeGarment } from '@/lib/wardrobe/labels'
+import { hasReference } from '@/lib/wardrobe/reference'
+import { ReferenceCard } from '@/components/wardrobe/ReferenceCard'
 import { RequestForm } from '@/components/loans/RequestForm'
 import { BackLink, Notice, PhotoSlot } from '@/components/ui'
 
@@ -43,6 +45,13 @@ export default async function SharedItemPage({
       <div className="pt-6" style={{ paddingInline: 'var(--screen-gutter)' }}>
         <p className="eyebrow mb-2.5">De {wardrobe.ownerName}</p>
         <h1 className="display text-display-s leading-[1.1]">{label}</h1>
+
+        {/* La referencia, sin boton de corregir: la prenda no es tuya.
+            Es el atajo a la pregunta que se hace de verdad al ver la ropa de
+            otra persona, antes incluso que la de pedirsela prestada. */}
+        {hasReference(item.reference) ? (
+          <ReferenceCard reference={item.reference} garmentName={label} />
+        ) : null}
 
         <div className="mt-7">
           {item.onLoan ? (

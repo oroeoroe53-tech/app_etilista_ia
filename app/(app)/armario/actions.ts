@@ -24,6 +24,52 @@ function enumOf<T extends string>(values: readonly T[]) {
   return z.enum(values as unknown as [T, ...T[]])
 }
 
+/**
+ * La referencia: todo opcional, y el texto vacio se guarda como null.
+ *
+ * `source_url` se valida como URL y ademas se le exige http/https. Sin eso, un
+ * `javascript:...` guardado aqui acabaria en el `href` del boton de la ficha, y
+ * tocarlo lo ejecutaria —en tu prenda y en la que ve una amiga.
+ */
+const blank = z.literal('').transform(() => null)
+
+const referenceSchema = z.object({
+  brand: blank.or(z.string().trim().min(1).max(60)).nullable().default(null),
+  product_name: blank.or(z.string().trim().min(1).max(120)).nullable().default(null),
+  reference_code: blank.or(z.string().trim().min(1).max(60)).nullable().default(null),
+  brand_color: blank.or(z.string().trim().min(1).max(40)).nullable().default(null),
+  size: blank.or(z.string().trim().min(1).max(20)).nullable().default(null),
+
+  // Llega en euros desde el formulario y se guarda en centimos.
+  price_cents: blank
+    .or(
+      z.coerce
+        .number({ message: 'Escribe solo el importe.' })
+        .min(0, 'No puede ser negativo.')
+        .max(100000, 'Revisa el importe.')
+        .transform((euros) => Math.round(euros * 100)),
+    )
+    .nullable()
+    .default(null),
+
+  bought_at: blank
+    .or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Elige una fecha.'))
+    .nullable()
+    .default(null),
+
+  source_url: blank
+    .or(
+      z
+        .string()
+        .trim()
+        .max(600)
+        .url('Eso no parece una direccion.')
+        .refine((u) => /^https?:\/\//i.test(u), 'Solo enlaces http o https.'),
+    )
+    .nullable()
+    .default(null),
+})
+
 const attributesSchema = z.object({
   category: enumOf(CATEGORY_LIST),
   subcategory: z.string().trim().max(60).optional().or(z.literal('')),
@@ -39,7 +85,7 @@ const attributesSchema = z.object({
   condition: z.enum(['new', 'good', 'worn', 'retired']),
   is_available: z.boolean().default(true),
   notes: z.string().trim().max(500).optional().or(z.literal('')),
-})
+}).extend(referenceSchema.shape)
 
 export interface ItemFormState {
   error?: string
@@ -63,7 +109,32 @@ function readForm(formData: FormData) {
     condition: formData.get('condition') ?? 'good',
     is_available: formData.get('is_available') !== 'false',
     notes: formData.get('notes') ?? '',
+
+    brand: formData.get('brand') ?? '',
+    product_name: formData.get('product_name') ?? '',
+    reference_code: formData.get('reference_code') ?? '',
+    brand_color: formData.get('brand_color') ?? '',
+    size: formData.get('size') ?? '',
+    price_cents: formData.get('price') ?? '',
+    bought_at: formData.get('bought_at') ?? '',
+    source_url: formData.get('source_url') ?? '',
   }
+}
+
+/**
+ * De donde salio la referencia.
+ *
+ * Todo lo que llega por este formulario lo escribio una persona, asi que es
+ * 'manual' —y cuando llegue el lector de etiquetas, corregir a mano una ficha
+ * que leyo la maquina tiene que volver a marcarla como manual: deja de ser lo
+ * que vio la camara y pasa a ser lo que dice su dueña.
+ */
+function referenceSource(
+  data: z.infer<typeof referenceSchema>,
+): 'manual' | null {
+  const puesto =
+    data.brand ?? data.product_name ?? data.reference_code ?? data.source_url
+  return puesto !== null ? 'manual' : null
 }
 
 function explain(error: z.ZodError): ItemFormState {
@@ -94,6 +165,7 @@ export async function updateItem(
       ...parsed.data,
       subcategory: parsed.data.subcategory || null,
       notes: parsed.data.notes || null,
+      reference_source: referenceSource(parsed.data),
       // Que el usuario haya tocado la ficha es justamente la señal de verificación.
       user_verified: true,
     })
@@ -137,6 +209,7 @@ export async function createItem(
       user_id: user.id,
       subcategory: parsed.data.subcategory || null,
       notes: parsed.data.notes || null,
+      reference_source: referenceSource(parsed.data),
       image_path: typeof imagePath === 'string' && imagePath ? imagePath : null,
       source: 'manual',
       // La ha creado la persona a mano: nace verificada.

@@ -15,12 +15,14 @@ import {
 } from '@/lib/wardrobe/labels'
 import { layerOf, type Category, type Material, type Season, type Style } from '@/lib/wardrobe/taxonomy'
 import { findPairings, type PairCandidate } from '@/lib/wardrobe/pairs'
+import { hasReference, type GarmentReference } from '@/lib/wardrobe/reference'
 import { Button, PhotoSlot } from '@/components/ui'
 import { ItemActions } from '@/components/wardrobe/ItemActions'
+import { ReferenceCard } from '@/components/wardrobe/ReferenceCard'
 
 export const dynamic = 'force-dynamic'
 
-interface ItemRow {
+interface ItemRow extends GarmentReference {
   id: string
   category: string
   subcategory: string | null
@@ -175,6 +177,29 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
             Esta no la vi con claridad en tu foto. Échale un ojo y corrígeme si hace falta.
           </p>
         ) : null}
+
+        {/* --- De donde es ------------------------------------------------
+            Aqui arriba y no al final: "de donde es" es la segunda pregunta que
+            hace cualquiera despues de "que es", y es la que hoy se contesta a
+            mano por WhatsApp mirando la etiqueta.
+
+            Sin referencia no se deja una tarjeta vacia invitando a rellenarla:
+            una sola linea discreta, porque lo normal es fotografiar ropa que ya
+            esta en el armario, sin etiqueta y sin recibo. */}
+        {hasReference(item) ? (
+          <ReferenceCard
+            reference={item}
+            garmentName={nombre}
+            editHref={`/armario/${item.id}/editar`}
+          />
+        ) : (
+          <Link
+            href={`/armario/${item.id}/editar`}
+            className="mt-6 inline-block text-small text-ink-faint underline"
+          >
+            añadir la referencia
+          </Link>
+        )}
 
         {/* --- Dos cifras -------------------------------------------------
             El diseño pide aquí "14 looks posibles con ella". Ese número

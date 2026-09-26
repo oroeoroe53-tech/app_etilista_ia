@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { BUCKETS } from '@/lib/storage/paths'
+import { EMPTY_REFERENCE, type GarmentReference } from '@/lib/wardrobe/reference'
 
 /**
  * El armario de otra persona.
@@ -36,6 +37,15 @@ export interface SharedItem {
   onLoan: boolean
   /** Ya se la has pedido y esperas respuesta. */
   requestedByMe: boolean
+  /**
+   * De donde es, para contestar a la pregunta que se hace siempre.
+   *
+   * Va sin el precio ni la fecha de compra, y es a proposito: lo que pagaste es
+   * tuyo. Quien mira necesita el codigo para encontrar la prenda, no tu recibo.
+   * La talla si va, porque en un armario que se presta es justo lo que hace
+   * falta saber antes de pedir nada.
+   */
+  reference: GarmentReference
 }
 
 export interface SharedWardrobe {
@@ -79,7 +89,10 @@ export async function getSharedWardrobe(
     // 2. Solo la ropa de esa persona. El filtro es la mitad de la seguridad.
     supabase
       .from('clothing_items')
-      .select('id, category, primary_color, fit, pattern, image_path, is_available')
+      // El texto del select va de una pieza: el cliente de Supabase deduce el
+      // tipo de la fila leyendo ese literal, y partirlo con un `+` se lo impide.
+      // prettier-ignore
+      .select('id, category, primary_color, fit, pattern, image_path, is_available, brand, product_name, reference_code, brand_color, size, source_url')
       .eq('user_id', ownerId)
       .is('deleted_at', null)
       .order('created_at', { ascending: false }),
@@ -98,6 +111,12 @@ export async function getSharedWardrobe(
     pattern: string | null
     image_path: string | null
     is_available: boolean
+    brand: string | null
+    product_name: string | null
+    reference_code: string | null
+    brand_color: string | null
+    size: string | null
+    source_url: string | null
   }[]
 
   const live = (loans ?? []) as { item_id: string; borrower_id: string; status: string }[]
@@ -130,6 +149,15 @@ export async function getSharedWardrobe(
         imageUrl: row.image_path ? (urls.get(row.image_path) ?? null) : null,
         onLoan: loan?.status === 'accepted',
         requestedByMe: loan?.borrower_id === viewerId && loan?.status === 'requested',
+        reference: {
+          ...EMPTY_REFERENCE,
+          brand: row.brand,
+          product_name: row.product_name,
+          reference_code: row.reference_code,
+          brand_color: row.brand_color,
+          size: row.size,
+          source_url: row.source_url,
+        },
       }
     }),
   }
