@@ -39,6 +39,9 @@ export const RATE_LIMITS = {
   outfitRequest: { bucket: 'outfit_request', limit: 20, windowSeconds: 60 },
   swipe: { bucket: 'swipe', limit: 60, windowSeconds: 60 },
   upload: { bucket: 'upload', limit: 40, windowSeconds: 300 },
+  // Leer un enlace saca a nuestro servidor a internet. Diez por minuto es
+  // mas de lo que nadie pega a mano, y corta el bucle de un script.
+  readLink: { bucket: 'read_link', limit: 10, windowSeconds: 60 },
 } as const satisfies Record<string, RateLimitRule>
 
 export interface RateLimitResult {

@@ -68,6 +68,10 @@ const referenceSchema = z.object({
     )
     .nullable()
     .default(null),
+
+  // La pone el componente que lee el enlace. No es un dato de la prenda, es de
+  // donde salio lo que hay en los campos, y solo vale para esta vez.
+  reference_source_hint: z.enum(['link', '']).catch('').default(''),
 })
 
 const attributesSchema = z.object({
@@ -118,6 +122,7 @@ function readForm(formData: FormData) {
     price_cents: formData.get('price') ?? '',
     bought_at: formData.get('bought_at') ?? '',
     source_url: formData.get('source_url') ?? '',
+    reference_source_hint: formData.get('reference_source_hint') ?? '',
   }
 }
 
@@ -129,12 +134,25 @@ function readForm(formData: FormData) {
  * que leyo la maquina tiene que volver a marcarla como manual: deja de ser lo
  * que vio la camara y pasa a ser lo que dice su dueña.
  */
+/**
+ * Quita del objeto lo que no es una columna.
+ *
+ * `parsed.data` se vuelca entero sobre la tabla, asi que un campo que solo sirve
+ * para decidir algo aqui —la pista de donde salio la referencia— llegaria a
+ * Postgres como si fuera una columna y la escritura fallaria.
+ */
+function columnasSolo(data: z.infer<typeof attributesSchema>) {
+  const { reference_source_hint: _hint, ...columnas } = data
+  return columnas
+}
+
 function referenceSource(
   data: z.infer<typeof referenceSchema>,
-): 'manual' | null {
+): 'link' | 'manual' | null {
   const puesto =
     data.brand ?? data.product_name ?? data.reference_code ?? data.source_url
-  return puesto !== null ? 'manual' : null
+  if (puesto === null) return null
+  return data.reference_source_hint === 'link' ? 'link' : 'manual'
 }
 
 function explain(error: z.ZodError): ItemFormState {
@@ -162,7 +180,7 @@ export async function updateItem(
   const { error } = await supabase
     .from('clothing_items')
     .update({
-      ...parsed.data,
+      ...columnasSolo(parsed.data),
       subcategory: parsed.data.subcategory || null,
       notes: parsed.data.notes || null,
       reference_source: referenceSource(parsed.data),
@@ -205,7 +223,7 @@ export async function createItem(
   const { data, error } = await supabase
     .from('clothing_items')
     .insert({
-      ...parsed.data,
+      ...columnasSolo(parsed.data),
       user_id: user.id,
       subcategory: parsed.data.subcategory || null,
       notes: parsed.data.notes || null,

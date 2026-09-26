@@ -5,6 +5,7 @@ import { useFormStatus } from 'react-dom'
 import { Button, Select, TextInput, TextArea, ChipGroup, ScaleInput, Notice } from '@/components/ui'
 import type { ItemFormState } from '@/app/(app)/armario/actions'
 import { EMPTY_REFERENCE, type GarmentReference } from '@/lib/wardrobe/reference'
+import { PasteLink } from './PasteLink'
 import {
   CATEGORY_LIST, COLORS, FITS, MATERIALS, PATTERNS, SEASONS, STYLES,
 } from '@/lib/wardrobe/taxonomy'
@@ -184,7 +185,12 @@ export function ItemForm({ action, values, submitLabel, imagePath }: ItemFormPro
         dice "pásame la referencia".
       */}
       <div className="rounded-[22px] bg-raised p-4 shadow-card-soft">
-        <p className="eyebrow mb-1">De dónde es</p>
+        <p className="eyebrow mb-3">De dónde es</p>
+
+        {/* El enlace primero, porque es el atajo: quien lo tenga no escribe
+            nada. Quien no, sigue teniendo los campos debajo igual que antes. */}
+        <PasteLink />
+        <input type="hidden" name="reference_source_hint" defaultValue="" />
 
         <Row label="Marca" error={errors.brand}>
           <TextInput bare name="brand" defaultValue={values.brand ?? ''} maxLength={60}
