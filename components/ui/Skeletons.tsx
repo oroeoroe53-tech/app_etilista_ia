@@ -13,11 +13,24 @@ import { cn } from '@/lib/utils/cn'
  * deja de servir para nada.
  */
 
-export function Shimmer({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded-2xl bg-sunken', className)} />
+export function Shimmer({
+  className,
+  style,
+}: {
+  className?: string
+  style?: React.CSSProperties
+}) {
+  return <div className={cn('animate-pulse rounded-2xl bg-sunken', className)} style={style} />
 }
 
-/** Cuadrícula del armario: tres columnas, huecos de 118px, con su pie de texto. */
+/**
+ * Cuadricula del armario: dos columnas, la primera prenda a lo ancho.
+ *
+ * Estaba en tres columnas y huecos de 118px, de antes del rediseño editorial.
+ * Un esqueleto que no coincide con lo que llega hace que la pagina pegue un
+ * salto al cargar, y eso se percibe como lentitud aunque los datos hayan
+ * tardado lo mismo. Es justo lo que avisa la nota de arriba.
+ */
 export function WardrobeGridSkeleton({ rows = 2 }: { rows?: number }) {
   return (
     <div className="space-y-7">
@@ -28,12 +41,15 @@ export function WardrobeGridSkeleton({ rows = 2 }: { rows?: number }) {
             <Shimmer className="h-2 w-14 rounded" />
           </div>
           <div className="rule mb-3" />
-          <ul className="grid grid-cols-3 gap-[9px]">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <li key={i}>
-                <Shimmer className="h-[118px] w-full rounded-[14px]" />
-                <Shimmer className="mt-1.5 h-2 w-3/4 rounded" />
-                <Shimmer className="mt-1 h-2 w-1/2 rounded" />
+          <ul className="grid grid-cols-2 gap-[10px]">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <li key={i} className={i === 0 ? 'col-span-2' : undefined}>
+                <Shimmer
+                  className={cn(
+                    'w-full rounded-[18px]',
+                    i === 0 ? 'aspect-[16/11]' : 'aspect-[3/4]',
+                  )}
+                />
               </li>
             ))}
           </ul>
@@ -43,25 +59,31 @@ export function WardrobeGridSkeleton({ rows = 2 }: { rows?: number }) {
   )
 }
 
-/** Ficha de prenda: foto a sangre de 400px y el cuerpo debajo. */
+/**
+ * Ficha de prenda: la foto ocupa dos tercios de pantalla y el cuerpo sube sobre
+ * ella. Eran 400px fijos, de antes de que la foto pasara a mandar.
+ */
 export function ItemDetailSkeleton() {
   return (
     <div className="pb-nav">
-      <Shimmer className="h-[400px] w-full rounded-none" />
+      <Shimmer className="h-[62vh] max-h-[560px] min-h-[340px] w-full rounded-none" />
       <div
-        className="mx-auto w-full max-w-[30rem] pt-5"
+        className="relative z-10 -mt-8 rounded-t-[30px] bg-surface pt-7"
         style={{ paddingInline: 'var(--screen-gutter)' }}
       >
-        <Shimmer className="h-2 w-28 rounded" />
-        <Shimmer className="mt-2.5 h-8 w-2/3 rounded" />
-        <div className="mt-3.5 flex gap-[6px]">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Shimmer key={i} className="h-7 w-20 rounded-full" />
-          ))}
-        </div>
-        <div className="mt-5 flex gap-2.5">
-          <Shimmer className="h-[88px] flex-1 rounded-[18px]" />
-          <Shimmer className="h-[88px] flex-1 rounded-[18px]" />
+        <div className="mx-auto w-full max-w-[30rem]">
+          <Shimmer className="h-2 w-28 rounded" />
+          <Shimmer className="mt-2.5 h-9 w-2/3 rounded" />
+          <div className="mt-3.5 flex gap-[6px]">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Shimmer key={i} className="h-8 w-20 rounded-full" />
+            ))}
+          </div>
+          <Shimmer className="mt-6 h-[168px] w-full rounded-[22px]" />
+          <div className="mt-5 flex gap-2.5">
+            <Shimmer className="h-[88px] flex-1 rounded-[18px]" />
+            <Shimmer className="h-[88px] flex-1 rounded-[18px]" />
+          </div>
         </div>
       </div>
     </div>
@@ -162,6 +184,74 @@ export function PageTitleSkeleton() {
     <div className="pt-5 pb-5">
       <Shimmer className="mb-3 h-2 w-20 rounded" />
       <Shimmer className="h-8 w-44 rounded" />
+    </div>
+  )
+}
+
+/**
+ * Subpantalla: enlace de vuelta, cabecera y unos bloques.
+ *
+ * Existe porque **veinte pantallas no tenian `loading.tsx`**, y en esta
+ * aplicacion eso no era solo quedarse sin aviso de carga. Todas las paginas son
+ * dinamicas, y Next no precarga una ruta dinamica si no tiene un limite de
+ * carga: sin este fichero, tocar una tarjeta no descargaba nada por adelantado
+ * y encima no pasaba nada en pantalla hasta que contestaba el servidor.
+ *
+ * Es generico a proposito. Un esqueleto calcado de cada pantalla seria mejor,
+ * pero veinte de esos envejecen mal —lo acaba de demostrar el del armario, que
+ * seguia en tres columnas meses despues del rediseño—. Esto acierta la forma
+ * general: cabecera arriba y bloques debajo, con las medidas de la maqueta.
+ */
+export function SubScreenSkeleton({
+  back = true,
+  blocks = 3,
+  tall = 96,
+}: {
+  back?: boolean
+  blocks?: number
+  /** Alto de cada bloque, en pixeles. */
+  tall?: number
+}) {
+  return (
+    <div
+      className="mx-auto w-full max-w-[30rem] pt-safe pb-nav"
+      style={{ paddingInline: 'var(--screen-gutter)' }}
+    >
+      {back ? (
+        <div className="pt-5 pb-1">
+          <Shimmer className="h-3 w-24 rounded" />
+        </div>
+      ) : null}
+
+      <div className="pt-4 pb-6">
+        <Shimmer className="mb-3 h-2 w-20 rounded" />
+        <Shimmer className="h-9 w-56 rounded" />
+        <Shimmer className="mt-3.5 h-3 w-4/5 rounded" />
+      </div>
+
+      <div className="space-y-3">
+        {Array.from({ length: blocks }).map((_, i) => (
+          <Shimmer key={i} className="w-full rounded-[22px]" style={{ height: tall }} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Formulario: la tarjeta de lineas y el boton de guardar. */
+export function FormSkeleton({ rows = 6 }: { rows?: number }) {
+  return (
+    <div className="space-y-5">
+      <div className="rounded-[22px] bg-raised p-4 shadow-card-soft">
+        <Shimmer className="mb-3 h-2 w-24 rounded" />
+        {Array.from({ length: rows }).map((_, i) => (
+          <div key={i} className="flex items-center justify-between gap-4 py-3">
+            <Shimmer className="h-3 w-20 rounded" />
+            <Shimmer className="h-3 w-28 rounded" />
+          </div>
+        ))}
+      </div>
+      <Shimmer className="h-[54px] w-full rounded-full" />
     </div>
   )
 }
