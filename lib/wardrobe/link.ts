@@ -239,17 +239,22 @@ export function parseProductPage(html: string, finalUrl: string): Parsed {
     meta(html, 'product:price:amount') ?? meta(html, 'og:price:amount'),
   )
 
-  // 3. Lo último: el título de la pestaña, y el dominio como marca.
-  if (!out.product_name) {
-    const title = /<title[^>]*>([\s\S]*?)<\/title>/i.exec(html)
-    out.product_name = title?.[1] ? clean(decodeEntities(title[1]), 120) : null
-  }
+  /*
+   * El titulo de la pestaña NO vale como nombre del producto.
+   *
+   * Shein contesta a un servidor, pero con una pagina generica en vez de la
+   * ficha, y de ahi salia "Ropa de Mujer y Hombre, Comprar Moda Online | SHEIN"
+   * metido en el nombre de la prenda. Si una pagina no publica ni JSON-LD ni
+   * Open Graph, no es que tenga el nombre en otro sitio: es que no hemos leido
+   * su ficha. Mas vale el campo vacio que basura que hay que borrar a mano.
+   */
 
   if (!out.brand) {
     try {
-      // "zara.com" → "Zara". Es una suposición, y por eso va la última.
-      const host = new URL(finalUrl).hostname.replace(/^www\./, '')
-      const label = host.split('.')[0] ?? ''
+      // "es.shein.com" → "Shein", no "Es". Se coge la etiqueta del dominio, no
+      // la primera, que en media tienda es el pais.
+      const labels = new URL(finalUrl).hostname.split('.').filter(Boolean)
+      const label = (labels.length > 1 ? labels[labels.length - 2] : labels[0]) ?? ''
       out.brand = clean(label.charAt(0).toUpperCase() + label.slice(1), 60)
     } catch {
       out.brand = null
@@ -284,23 +289,36 @@ interface PatronDeTienda {
   /** Dominio, sin `www`. Vale tambien para los subdominios de pais. */
   host: RegExp
   marca: string
-  /** El primer grupo de la expresion es el codigo. */
+  /** Se prueba contra la RUTA, no contra la direccion entera. El primer grupo es el codigo. */
   codigo: RegExp
 }
 
-const TIENDAS: readonly PatronDeTienda[] = [
-  // Zara y las demas del grupo comparten la forma "-p" + ocho cifras.
-  { host: /(^|\.)zara\.com$/i, marca: 'Zara', codigo: /-p(\d{6,10})\.html/i },
-  { host: /(^|\.)massimodutti\.com$/i, marca: 'Massimo Dutti', codigo: /-l?(\d{6,10})\.html/i },
-  { host: /(^|\.)bershka\.com$/i, marca: 'Bershka', codigo: /-c\d+p(\d{6,12})\.html/i },
-  { host: /(^|\.)stradivarius\.com$/i, marca: 'Stradivarius', codigo: /-c\d+p(\d{6,12})\.html/i },
-  { host: /(^|\.)pullandbear\.com$/i, marca: 'Pull&Bear', codigo: /-l?(\d{6,10})\.html/i },
-  { host: /(^|\.)oysho\.com$/i, marca: 'Oysho', codigo: /-p(\d{6,10})\.html/i },
+/**
+ * El codigo se busca SOLO en la ruta, nunca en la parte de consulta.
+ *
+ * El enlace real de Zara que me paso Ana acababa en
+ * `?v1=596960515&v2=2417772`: nueve cifras que cualquier patron algo flojo
+ * cogeria por referencia, y la buena estaba en la ruta.
+ *
+ * Y los patrones van anclados al final de la ruta, con el `.html` opcional. La
+ * ficha de Massimo Dutti termina en `-l05041741`, sin `.html`, y exigirlo
+ * dejaba esa tienda sin leer. Dentro del grupo Inditex conviven tres formas
+ * —`-p`, `-l` y `-c0p`— asi que el patron acepta las tres.
+ */
+const INDITEX = /-(?:c\d+)?[lp](\d{6,12})(?:\.html)?$/i
 
-  { host: /(^|\.)mango\.com$/i, marca: 'Mango', codigo: /_(\d{8})(?:[/?#]|$)/ },
-  { host: /(^|\.)hm\.com$/i, marca: 'H&M', codigo: /productpage\.(\d{8,12})\.html/i },
-  { host: /(^|\.)uniqlo\.com$/i, marca: 'Uniqlo', codigo: /\/products\/([A-Z]\d{6}-\d{3})/i },
-  { host: /(^|\.)shein\.com$/i, marca: 'Shein', codigo: /-p-(\d{6,12})/i },
+const TIENDAS: readonly PatronDeTienda[] = [
+  { host: /(^|\.)zara\.com$/i, marca: 'Zara', codigo: INDITEX },
+  { host: /(^|\.)massimodutti\.com$/i, marca: 'Massimo Dutti', codigo: INDITEX },
+  { host: /(^|\.)bershka\.com$/i, marca: 'Bershka', codigo: INDITEX },
+  { host: /(^|\.)stradivarius\.com$/i, marca: 'Stradivarius', codigo: INDITEX },
+  { host: /(^|\.)pullandbear\.com$/i, marca: 'Pull&Bear', codigo: INDITEX },
+  { host: /(^|\.)oysho\.com$/i, marca: 'Oysho', codigo: INDITEX },
+
+  { host: /(^|\.)mango\.com$/i, marca: 'Mango', codigo: /_(\d{6,10})(?:\.html)?$/ },
+  { host: /(^|\.)hm\.com$/i, marca: 'H&M', codigo: /productpage\.(\d{8,12})\.html$/i },
+  { host: /(^|\.)uniqlo\.com$/i, marca: 'Uniqlo', codigo: /\/products\/([A-Z]\d{6}-\d{3})$/i },
+  { host: /(^|\.)shein\.com$/i, marca: 'Shein', codigo: /-p-(\d{6,12})(?:\.html)?$/i },
 ]
 
 export interface DesdeElEnlace {
@@ -327,7 +345,7 @@ export function referenceFromUrl(raw: string): DesdeElEnlace {
   const tienda = TIENDAS.find((t) => t.host.test(host))
   if (!tienda) return { brand: null, reference_code: null }
 
-  const match = tienda.codigo.exec(url.pathname + url.search)
+  const match = tienda.codigo.exec(url.pathname)
   return {
     brand: tienda.marca,
     reference_code: match?.[1] ?? null,

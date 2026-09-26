@@ -126,12 +126,21 @@ describe('parseProductPage', () => {
     expect(parseProductPage(html, 'https://x.com/y').product_name).toBe('Camisa oxford')
   })
 
-  it('sin nada, el título de la pestaña y el dominio como marca', () => {
+  it('sin nada, el dominio como marca y el nombre vacío', () => {
     const html = '<html><head><title>Falda plisada &amp; corta</title></head></html>'
     const ref = parseProductPage(html, 'https://www.bershka.com/es/falda.html')
 
-    expect(ref.product_name).toBe('Falda plisada & corta')
     expect(ref.brand).toBe('Bershka')
+    // El título de la pestaña no vale: Shein contesta con una página genérica y
+    // de ahí salía "Ropa de Mujer y Hombre, Comprar Moda Online | SHEIN" metido
+    // en el nombre de la prenda.
+    expect(ref.product_name).toBeNull()
+  })
+
+  it('la marca sale del dominio, no del país', () => {
+    // "es.shein.com" daba "Es".
+    const ref = parseProductPage('<html></html>', 'https://es.shein.com/camisa-p-1.html')
+    expect(ref.brand).toBe('Shein')
   })
 
   it('una página sin nada legible no rompe: todo vacío', () => {
@@ -154,8 +163,10 @@ describe('parseProductPage', () => {
 
   it('un nombre que solo son espacios cuenta como vacío', () => {
     const html = page({ '@type': 'Product', name: '   ', sku: 'A1' })
-    // Cae al título de la pestaña, que es lo que hay.
-    expect(parseProductPage(html, 'https://x.com/y').product_name).toBe('Falda | Zara')
+    const ref = parseProductPage(html, 'https://x.com/y')
+    expect(ref.product_name).toBeNull()
+    // La referencia sí estaba, y esa es la que importa.
+    expect(ref.reference_code).toBe('A1')
   })
 
   it('no se cuelga con un JSON anidado a mala fe', () => {
@@ -171,6 +182,53 @@ describe('parseProductPage', () => {
 })
 
 describe('referenceFromUrl', () => {
+  /**
+   * Enlaces de verdad, copiados de compras reales.
+   *
+   * Los de antes los escribi yo de memoria y colaron: la ficha de Massimo
+   * Dutti no acaba en `.html` y el patron la dejaba fuera. Estos tres son los
+   * que me paso Ana, con su cola de parametros incluida, y se quedan aqui para
+   * que no vuelva a pasar.
+   */
+  it('lee los enlaces reales, con parametros y todo', () => {
+    const reales: [string, string, string][] = [
+      [
+        'https://www.zara.com/es/es/cazadora-bomber-cuello-amplio-p04344652.html?v1=596960515&v2=2417772',
+        'Zara',
+        '04344652',
+      ],
+      [
+        'https://www.massimodutti.com/es/pantalon-skinny-flare-fit-terciopelo-l05041741?pelement=67765661',
+        'Massimo Dutti',
+        '05041741',
+      ],
+      [
+        'https://es.shein.com/Striped-Contrast-Rib-Knit-Long-Sleeve-T-Shirt-For-Women-p-465972271.html?imgRatio=3-4&mallCode=1',
+        'Shein',
+        '465972271',
+      ],
+    ]
+
+    for (const [url, marca, codigo] of reales) {
+      expect(referenceFromUrl(url), url).toEqual({ brand: marca, reference_code: codigo })
+    }
+  })
+
+  it('no coge las cifras de la cola de parametros', () => {
+    // El enlace de Zara acaba en `?v1=596960515`: nueve cifras que no son la
+    // referencia. El codigo se busca solo en la ruta, nunca en los parametros.
+    const ref = referenceFromUrl(
+      'https://www.zara.com/es/es/cazadora-p04344652.html?v1=596960515&v2=2417772',
+    )
+    expect(ref.reference_code).toBe('04344652')
+  })
+
+  it('la ficha de una tienda sin .html tambien se lee', () => {
+    expect(
+      referenceFromUrl('https://www.massimodutti.com/es/jersey-l05041741').reference_code,
+    ).toBe('05041741')
+  })
+
   it('saca la referencia del enlace de cada tienda', () => {
     const casos: [string, string, string][] = [
       ['https://www.zara.com/es/es/camisa-popelin-p00722302.html', 'Zara', '00722302'],
@@ -178,6 +236,7 @@ describe('referenceFromUrl', () => {
       ['https://www2.hm.com/es_es/productpage.1227537001.html', 'H&M', '1227537001'],
       ['https://www.uniqlo.com/es/es/products/E475297-000', 'Uniqlo', 'E475297-000'],
       ['https://www.bershka.com/es/camisa-c0p148925612.html', 'Bershka', '148925612'],
+      ['https://www.pullandbear.com/es/camisa-l09758302', 'Pull&Bear', '09758302'],
     ]
 
     for (const [url, marca, codigo] of casos) {
